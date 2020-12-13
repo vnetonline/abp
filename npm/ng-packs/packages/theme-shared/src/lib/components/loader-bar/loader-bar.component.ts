@@ -1,85 +1,141 @@
-import { StartLoader, StopLoader } from '@abp/ng.core';
-import { Component, Input, OnDestroy } from '@angular/core';
-import { NavigationEnd, NavigationStart, Router } from '@angular/router';
-import { takeUntilDestroy } from '@ngx-validate/core';
+import { StartLoader, StopLoader, SubscriptionService } from '@abp/ng.core';
+import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { NavigationEnd, NavigationError, NavigationStart, Router } from '@angular/router';
 import { Actions, ofActionSuccessful } from '@ngxs/store';
+import { Subscription, timer } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'abp-loader-bar',
   template: `
     <div id="abp-loader-bar" [ngClass]="containerClass" [class.is-loading]="isLoading">
-      <div [ngClass]="progressClass" [style.width.vw]="progressLevel"></div>
+      <div
+        class="abp-progress"
+        [class.progressing]="progressLevel"
+        [style.width.vw]="progressLevel"
+        [ngStyle]="{
+          'background-color': color,
+          'box-shadow': boxShadow
+        }"
+      ></div>
     </div>
   `,
   styleUrls: ['./loader-bar.component.scss'],
+  providers: [SubscriptionService],
 })
-export class LoaderBarComponent implements OnDestroy {
-  @Input()
-  containerClass: string = 'abp-loader-bar';
+export class LoaderBarComponent implements OnDestroy, OnInit {
+  protected _isLoading: boolean;
 
   @Input()
-  progressClass: string = 'abp-progress';
-
-  @Input()
-  isLoading: boolean = false;
-
-  @Input()
-  filter = (action: StartLoader | StopLoader) => action.payload.url.indexOf('openid-configuration') < 0;
-
-  progressLevel: number = 0;
-
-  interval: any;
-
-  constructor(private actions: Actions, private router: Router) {
-    actions
-      .pipe(
-        ofActionSuccessful(StartLoader, StopLoader),
-        filter(this.filter),
-        takeUntilDestroy(this),
-      )
-      .subscribe(action => {
-        if (action instanceof StartLoader) this.startLoading();
-        else this.stopLoading();
-      });
-
-    router.events
-      .pipe(
-        filter(event => event instanceof NavigationStart || event instanceof NavigationEnd),
-        takeUntilDestroy(this),
-      )
-      .subscribe(event => {
-        if (event instanceof NavigationStart) this.startLoading();
-        else this.stopLoading();
-      });
+  set isLoading(value: boolean) {
+    this._isLoading = value;
+    this.cdRef.detectChanges();
+  }
+  get isLoading(): boolean {
+    return this._isLoading;
   }
 
-  ngOnDestroy() {}
+  @Input()
+  containerClass = 'abp-loader-bar';
+
+  @Input()
+  color = '#77b6ff';
+
+  progressLevel = 0;
+
+  interval: Subscription;
+
+  timer: Subscription;
+
+  intervalPeriod = 350;
+
+  stopDelay = 800;
+
+  @Input()
+  filter = (action: StartLoader | StopLoader) =>
+    action.payload.url.indexOf('openid-configuration') < 0;
+
+  private readonly clearProgress = () => {
+    this.progressLevel = 0;
+    this.cdRef.detectChanges();
+  };
+
+  private readonly reportProgress = () => {
+    if (this.progressLevel < 75) {
+      this.progressLevel += 1 + Math.random() * 9;
+    } else if (this.progressLevel < 90) {
+      this.progressLevel += 0.4;
+    } else if (this.progressLevel < 100) {
+      this.progressLevel += 0.1;
+    } else {
+      this.interval.unsubscribe();
+    }
+    this.cdRef.detectChanges();
+  };
+
+  get boxShadow(): string {
+    return `0 0 10px rgba(${this.color}, 0.5)`;
+  }
+
+  constructor(
+    private actions: Actions,
+    private router: Router,
+    private cdRef: ChangeDetectorRef,
+    private subscription: SubscriptionService,
+  ) {}
+
+  private subscribeToLoadActions() {
+    this.subscription.addOne(
+      this.actions.pipe(ofActionSuccessful(StartLoader, StopLoader), filter(this.filter)),
+      action => {
+        if (action instanceof StartLoader) this.startLoading();
+        else this.stopLoading();
+      },
+    );
+  }
+
+  private subscribeToRouterEvents() {
+    this.subscription.addOne(
+      this.router.events.pipe(
+        filter(
+          event =>
+            event instanceof NavigationStart ||
+            event instanceof NavigationEnd ||
+            event instanceof NavigationError,
+        ),
+      ),
+      event => {
+        if (event instanceof NavigationStart) this.startLoading();
+        else this.stopLoading();
+      },
+    );
+  }
+
+  ngOnInit() {
+    this.subscribeToLoadActions();
+    this.subscribeToRouterEvents();
+  }
+
+  ngOnDestroy() {
+    if (this.interval) this.interval.unsubscribe();
+  }
 
   startLoading() {
-    this.isLoading = true;
-    const interval = setInterval(() => {
-      if (this.progressLevel < 75) {
-        this.progressLevel += Math.random() * 10;
-      } else if (this.progressLevel < 90) {
-        this.progressLevel += 0.4;
-      } else if (this.progressLevel < 100) {
-        this.progressLevel += 0.1;
-      } else {
-        clearInterval(interval);
-      }
-    }, 300);
+    if (this.isLoading || (this.interval && !this.interval.closed)) return;
 
-    this.interval = interval;
+    this.isLoading = true;
+
+    this.interval = timer(0, this.intervalPeriod).subscribe(this.reportProgress);
   }
 
   stopLoading() {
-    clearInterval(this.interval);
+    if (this.interval) this.interval.unsubscribe();
+
     this.progressLevel = 100;
     this.isLoading = false;
 
-    setTimeout(() => {
-      this.progressLevel = 0;
-    }, 800);
+    if (this.timer && !this.timer.closed) return;
+
+    this.timer = timer(this.stopDelay).subscribe(this.clearProgress);
   }
 }

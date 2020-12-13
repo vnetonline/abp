@@ -1,19 +1,21 @@
 ﻿using Volo.Abp.FeatureManagement.Localization;
 using Volo.Abp.Localization;
-using Volo.Abp.Localization.Resources.AbpValidation;
+using Volo.Abp.Localization.ExceptionHandling;
 using Volo.Abp.Modularity;
+using Volo.Abp.Validation;
+using Volo.Abp.Validation.Localization;
 using Volo.Abp.VirtualFileSystem;
 
 namespace Volo.Abp.FeatureManagement
 {
     [DependsOn(
-        typeof(AbpLocalizationModule)
+        typeof(AbpValidationModule)
         )]
     public class AbpFeatureManagementDomainSharedModule : AbpModule
     {
         public override void ConfigureServices(ServiceConfigurationContext context)
         {
-            Configure<VirtualFileSystemOptions>(options =>
+            Configure<AbpVirtualFileSystemOptions>(options =>
             {
                 options.FileSets.AddEmbedded<AbpFeatureManagementDomainSharedModule>();
             });
@@ -24,7 +26,12 @@ namespace Volo.Abp.FeatureManagement
                     .Add<AbpFeatureManagementResource>("en")
                     .AddBaseTypes(
                         typeof(AbpValidationResource)
-                    ).AddVirtualJson("Volo/Abp/FeatureManagement/Localization/Resources/Domain");
+                    ).AddVirtualJson("Volo/Abp/FeatureManagement/Localization/Domain");
+            });
+
+            Configure<AbpExceptionLocalizationOptions>(options =>
+            {
+                options.MapCodeNamespace("Volo.Abp.FeatureManagement", typeof(AbpFeatureManagementResource));
             });
         }
     }

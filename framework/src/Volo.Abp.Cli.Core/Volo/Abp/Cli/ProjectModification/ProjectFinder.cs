@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace Volo.Abp.Cli.ProjectModification
 {
     public static class ProjectFinder
     {
+        [CanBeNull]
         public static string FindNuGetTargetProjectFile(string[] projectFiles, NuGetPackageTarget target)
         {
             if (!projectFiles.Any())
@@ -39,8 +41,14 @@ namespace Volo.Abp.Cli.ProjectModification
                     return FindProjectEndsWith(projectFiles, assemblyNames, ".HttpApi");
                 case NuGetPackageTarget.HttpApiClient:
                     return FindProjectEndsWith(projectFiles, assemblyNames, ".HttpApi.Client");
+                case NuGetPackageTarget.SignalR:
+                    return FindProjectEndsWith(projectFiles, assemblyNames, ".SignalR") ??
+                           FindProjectEndsWith(projectFiles, assemblyNames, ".Web") ??
+                           FindProjectEndsWith(projectFiles, assemblyNames, ".HttpApi.Host");
+                case NuGetPackageTarget.Blazor:
+                    return FindProjectEndsWith(projectFiles, assemblyNames, ".Blazor");
                 default:
-                    throw new ApplicationException($"{nameof(NuGetPackageTarget)}.{target} has not implemented!");
+                    return null;
             }
         }
 
@@ -83,26 +91,22 @@ namespace Volo.Abp.Cli.ProjectModification
 
         public static string[] GetProjectFiles(string solutionFile)
         {
-            var baseProjectFolder = GetBaseProjectFolder(solutionFile);
-            return Directory.GetFiles(baseProjectFolder, "*.csproj", SearchOption.AllDirectories);
+            return GetBaseProjectFolders(solutionFile)
+                .Select(baseProjectFolder =>
+                    Directory.GetFiles(baseProjectFolder, "*.csproj", SearchOption.AllDirectories))
+                .SelectMany(files => files)
+                .ToArray();
         }
 
         public static string[] GetAssemblyNames(string[] projectFiles)
         {
-            return projectFiles.Select(GetAssemblyName).ToArray();
-        }
-
-        public static string GetAssemblyName(string projectFile)
-        {
-            return projectFile
-                .Substring(projectFile.LastIndexOf(Path.DirectorySeparatorChar) + 1)
-                .RemovePostFix(StringComparison.OrdinalIgnoreCase, ".csproj");
+            return projectFiles.Select(ProjectFileNameHelper.GetAssemblyNameFromProjectPath).ToArray();
         }
 
         private static string FindProjectEndsWith(
             string[] projectFiles,
-            string[] assemblyNames, 
-            string postfix, 
+            string[] assemblyNames,
+            string postfix,
             string excludePostfix = null)
         {
             for (var i = 0; i < assemblyNames.Length; i++)
@@ -118,16 +122,39 @@ namespace Volo.Abp.Cli.ProjectModification
             return null;
         }
 
-        private static string GetBaseProjectFolder(string solutionFile)
+        private static string[] GetBaseProjectFolders(string solutionFile)
         {
+            var projectFolders = new List<string>();
             var baseFolder = Path.GetDirectoryName(solutionFile);
+            if (baseFolder == null)
+            {
+                return projectFolders.ToArray();
+            }
+
+            var hostFolder = Path.Combine(baseFolder, "host");
+            if (Directory.Exists(hostFolder))
+            {
+                projectFolders.Add(hostFolder);
+            }
+
             var srcFolder = Path.Combine(baseFolder, "src");
             if (Directory.Exists(srcFolder))
             {
-                baseFolder = srcFolder;
+                projectFolders.Add(srcFolder);
             }
 
-            return baseFolder;
+            var testFolder = Path.Combine(baseFolder, "test");
+            if (Directory.Exists(testFolder))
+            {
+                projectFolders.Add(testFolder);
+            }
+
+            if (!projectFolders.Any())
+            {
+                projectFolders.Add(baseFolder);
+            }
+
+            return projectFolders.ToArray();
         }
     }
 }

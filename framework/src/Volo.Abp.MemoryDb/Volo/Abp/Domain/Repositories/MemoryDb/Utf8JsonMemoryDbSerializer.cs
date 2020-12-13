@@ -1,27 +1,27 @@
 ﻿using System;
-using System.Text;
+using System.Text.Json;
+using Microsoft.Extensions.Options;
 using Volo.Abp.DependencyInjection;
-using Volo.Abp.Json;
 
 namespace Volo.Abp.Domain.Repositories.MemoryDb
 {
     public class Utf8JsonMemoryDbSerializer : IMemoryDbSerializer, ITransientDependency
     {
-        private readonly IJsonSerializer _jsonSerializer;
+        protected Utf8JsonMemoryDbSerializerOptions Options { get; }
 
-        public Utf8JsonMemoryDbSerializer(IJsonSerializer jsonSerializer)
+        public Utf8JsonMemoryDbSerializer(IOptions<Utf8JsonMemoryDbSerializerOptions> options)
         {
-            _jsonSerializer = jsonSerializer;
+            Options = options.Value;
         }
 
         byte[] IMemoryDbSerializer.Serialize(object obj)
         {
-            return Encoding.UTF8.GetBytes(_jsonSerializer.Serialize(obj));
+            return JsonSerializer.SerializeToUtf8Bytes(obj, Options.JsonSerializerOptions);
         }
 
         public object Deserialize(byte[] value, Type type)
         {
-            return _jsonSerializer.Deserialize(type, Encoding.UTF8.GetString(value));
+            return JsonSerializer.Deserialize(value, type, Options.JsonSerializerOptions);
         }
     }
 }

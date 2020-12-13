@@ -1,22 +1,23 @@
 ﻿using Microsoft.Extensions.Options;
 using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.DynamicProxy;
-using Volo.Abp.EventBus.Distributed;
 using Volo.Abp.ObjectMapping;
 
 namespace Volo.Abp.Domain.Entities.Events.Distributed
 {
     public class EntityToEtoMapper : IEntityToEtoMapper, ITransientDependency
     {
-        protected IObjectMapper ObjectMapper { get; }
-        protected DistributedEventBusOptions Options { get; }
+        protected IServiceScopeFactory HybridServiceScopeFactory { get; }
+
+        protected AbpDistributedEntityEventOptions Options { get; }
 
         public EntityToEtoMapper(
-            IOptions<DistributedEventBusOptions> options,
-            IObjectMapper objectMapper)
+            IOptions<AbpDistributedEntityEventOptions> options,
+            IServiceScopeFactory hybridServiceScopeFactory)
         {
-            ObjectMapper = objectMapper;
+            HybridServiceScopeFactory = hybridServiceScopeFactory;
             Options = options.Value;
         }
 
@@ -31,15 +32,23 @@ namespace Volo.Abp.Domain.Entities.Events.Distributed
             }
 
             var entityType = ProxyHelper.UnProxy(entity).GetType();
-            var etoType = Options.EtoMappings.GetOrDefault(entityType);
-            if (etoType == null)
+            var etoMappingItem = Options.EtoMappings.GetOrDefault(entityType);
+            if (etoMappingItem == null)
             {
                 var keys = entity.GetKeys().JoinAsString(",");
                 return new EntityEto(entityType.FullName, keys);
             }
 
-            //TODO: Also add KeysAsString property to resulting json for compatibility with the EntityEto!
-            return ObjectMapper.Map(entityType, etoType, entityObj);
+            using (var scope = HybridServiceScopeFactory.CreateScope())
+            {
+                var objectMapperType = etoMappingItem.ObjectMappingContextType == null
+                    ? typeof(IObjectMapper)
+                    : typeof(IObjectMapper<>).MakeGenericType(etoMappingItem.ObjectMappingContextType);
+
+                var objectMapper = (IObjectMapper) scope.ServiceProvider.GetRequiredService(objectMapperType);
+
+                return objectMapper.Map(entityType, etoMappingItem.EtoType, entityObj);
+            }
         }
     }
 }

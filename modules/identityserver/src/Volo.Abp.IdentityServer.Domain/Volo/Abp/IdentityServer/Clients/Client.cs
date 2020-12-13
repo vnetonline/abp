@@ -36,6 +36,8 @@ namespace Volo.Abp.IdentityServer.Clients
 
         public virtual bool AllowPlainTextPkce { get; set; }
 
+        public virtual bool RequireRequestObject { get; set; }
+
         public virtual bool AllowAccessTokensViaBrowser { get; set; }
 
         public virtual string FrontChannelLogoutUri { get; set; }
@@ -49,6 +51,8 @@ namespace Volo.Abp.IdentityServer.Clients
         public virtual bool AllowOfflineAccess { get; set; }
 
         public virtual int IdentityTokenLifetime { get; set; }
+
+        public virtual string AllowedIdentityTokenSigningAlgorithms { get; set; }
 
         public virtual int AccessTokenLifetime { get; set; }
 
@@ -108,18 +112,19 @@ namespace Volo.Abp.IdentityServer.Clients
         }
 
         public Client(Guid id, [NotNull] string clientId)
+        : base(id)
         {
             Check.NotNull(clientId, nameof(clientId));
 
-            Id = id;
             ClientId = clientId;
 
             //TODO: Replace magics with constants?
 
             ProtocolType = IdentityServerConstants.ProtocolTypes.OpenIdConnect;
             RequireClientSecret = true;
-            RequireConsent = true;
+            RequireConsent = false;
             AllowRememberConsent = true;
+            RequirePkce = true;
             FrontChannelLogoutSessionRequired = true;
             BackChannelLogoutSessionRequired = true;
             IdentityTokenLifetime = 300;

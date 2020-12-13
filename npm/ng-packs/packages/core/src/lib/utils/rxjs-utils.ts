@@ -1,3 +1,4 @@
+// tslint:disable: max-line-length
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -5,6 +6,9 @@ function isFunction(value) {
   return typeof value === 'function';
 }
 
+/**
+ * @deprecated no longer working, please use SubscriptionService (https://docs.abp.io/en/abp/latest/UI/Angular/Subscription-Service) instead.
+ */
 export const takeUntilDestroy = (componentInstance, destroyMethodName = 'ngOnDestroy') => <T>(
   source: Observable<T>,
 ) => {
@@ -18,6 +22,7 @@ export const takeUntilDestroy = (componentInstance, destroyMethodName = 'ngOnDes
     componentInstance['__takeUntilDestroy'] = new Subject();
 
     componentInstance[destroyMethodName] = function() {
+      // tslint:disable-next-line: no-unused-expression
       isFunction(originalDestroy) && originalDestroy.apply(this, arguments);
       componentInstance['__takeUntilDestroy'].next(true);
       componentInstance['__takeUntilDestroy'].complete();

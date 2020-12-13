@@ -1,30 +1,73 @@
 ﻿# ABP Documentation
 
-ABP is an **open source application framework** focused on ASP.NET Core based web application development, but also supports developing other types of applications.
-
-Explore the left navigation menu to deep dive in the documentation.
-
-## Project Status
-
-ABP is the **next generation** of the open source [ASP.NET Boilerplate](https://aspnetboilerplate.com/) framework. It's currently in early preview stage and not ready to use in production. The documentation is still in progress and it is far from complete.
-
-For short-term and production level applications, it's suggested to use [ASP.NET Boilerplate](https://aspnetboilerplate.com/) framework which has rich feature set, mature, actively maintained and up-to-date.
+ABP Framework is a complete **infrastructure** based on the **ASP.NET Core** to create **modern web applications** and **APIs** by following the software development **best practices** and the **latest technologies**.
 
 ## Getting Started
 
-Easiest way to start a new project with ABP is to use the startup templates:
+* [Getting Started Guide](Getting-Started.md) is the easiest way to start a new web application with the ABP Framework.
+* [Web Application Development Tutorial](Tutorials/Part-1.md) is a complete tutorial to develop a full stack web application.
 
-* [ASP.NET Core MVC Template](Getting-Started-AspNetCore-MVC-Template.md)
+### UI Framework Options
 
-If you want to start from scratch (with an empty project) then manually install the ABP Framework and use the following tutorials:
+<img width="500" src="images/ui-options.png">
 
-* [Console Application](Getting-Started-Console-Application.md)
-* [ASP.NET Core Web Application](Getting-Started-AspNetCore-Application.md)
+### Database Provider Options
 
-## Source Code
+<img width="500" src="images/db-options.png">
 
-ABP is hosted on GitHub. See [the source code](https://github.com/abpframework/abp).
+## Exploring the Documentation
 
-## Want to Contribute?
+ABP has a **comprehensive documentation** that not only explains the ABP Framework, but also includes **guides** and **samples** to help you on creating a **maintainable solution** by introducing and discussing common **software development principle and best practices**.
+
+### Architecture
+
+ABP offers a complete, modular and layered software architecture based on [Domain Driven Design](Domain-Driven-Design.md) principles and patterns. It also provides the necessary infrastructure to implement this architecture.
+
+* See the [Modularity](Module-Development-Basics.md) document to understand the module system.
+* [Implementing Domain Driven Design](Domain-Driven-Design-Implementation-Guide.md) document is an ultimate guide for who want to understand and implement the DDD.
+* [Microservice Architecture](Microservice-Architecture.md) document explains how ABP helps to create a microservice solution.
+
+### Infrastructure
+
+There are a lot of features provided by the ABP Framework to achieve real world scenarios easier, like [Event Bus](Event-Bus.md), [Background Job System](Background-Jobs.md), [Audit Logging](Audit-Logging.md), [BLOB Storing](Blob-Storing.md), [Data Seeding](Data-Seeding.md), [Data Filtering](Data-Filtering.md).
+
+### Cross Cutting Concerns
+
+ABP also simplifies (and even automates wherever possible) cross cutting concerns and common non-functional requirements like [Exception Handling](Exception-Handling.md), [Validation](Validation.md), [Authorization](Authorization.md), [Localization](Localization.md), [Caching](Caching.md), [Dependency Injection](Dependency-Injection.md), [Setting Management](Settings.md), etc. 
+
+### Application Modules
+
+Application Modules provides pre-built application functionalities;
+
+* [**Account**](Modules/Account.md): Provides UI for the account management and allows user to login/register to the application.
+* **[Identity](Modules/Identity.md)**: Manages organization units, roles, users and their permissions, based on the Microsoft Identity library.
+* [**IdentityServer**](Modules/IdentityServer.md): Integrates to IdentityServer4.
+* [**Tenant Management**](Modules/Tenant-Management.md): Manages tenants for a [multi-tenant](Multi-Tenancy.md) (SaaS) application.
+
+See the [Application Modules](Modules/Index.md) document for all pre-built modules.
+
+### Startup Templates
+
+The [Startup templates](Startup-Templates/Index.md) are pre-built Visual Studio solution templates. You can create your own solution based on these templates to **immediately start your development**.
+
+## ABP Community
+
+### The Source Code
+
+ABP is hosted on GitHub. See [the source code](https://github.com/abpframework).
+
+### ABP Community Web Site
+
+The [ABP Community](https://community.abp.io/) is a website to publish articles and share knowledge about the ABP Framework. You can also create content for the community!
+
+### Blog
+
+Follow the [ABP Blog](https://blog.abp.io/) to learn the latest happenings in the ABP Framework.
+
+### Samples
+
+See the [sample projects](Samples/Index.md) built with the ABP Framework.
+
+### Want to Contribute?
 
 ABP is a community-driven open source project. See [the contribution guide](Contribution/Index.md) if you want to be a part of this project.

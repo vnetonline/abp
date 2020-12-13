@@ -3,6 +3,7 @@ using MongoDB.Driver.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,20 +15,21 @@ using Volo.Abp.EventBus.Distributed;
 using Volo.Abp.EventBus.Local;
 using Volo.Abp.Guids;
 using Volo.Abp.MongoDB;
-using Volo.Abp.MultiTenancy;
-using Volo.Abp.Threading;
 
 namespace Volo.Abp.Domain.Repositories.MongoDB
 {
     public class MongoDbRepository<TMongoDbContext, TEntity>
         : RepositoryBase<TEntity>,
-        IMongoDbRepository<TEntity>
+        IMongoDbRepository<TEntity>,
+        IMongoQueryable<TEntity>
         where TMongoDbContext : IAbpMongoDbContext
         where TEntity : class, IEntity
     {
         public virtual IMongoCollection<TEntity> Collection => DbContext.Collection<TEntity>();
 
         public virtual IMongoDatabase Database => DbContext.Database;
+
+        public virtual IClientSessionHandle SessionHandle => DbContext.SessionHandle;
 
         public virtual TMongoDbContext DbContext => DbContextProvider.GetDbContext();
 
@@ -50,69 +52,36 @@ namespace Volo.Abp.Domain.Repositories.MongoDB
             LocalEventBus = NullLocalEventBus.Instance;
             DistributedEventBus = NullDistributedEventBus.Instance;
             EntityChangeEventHelper = NullEntityChangeEventHelper.Instance;
+            GuidGenerator = SimpleGuidGenerator.Instance;
         }
 
-        public override TEntity Insert(TEntity entity, bool autoSave = false)
-        {
-            /* EntityCreatedEvent (OnUowCompleted) is triggered as the first because it should be
-             * triggered before other events triggered inside an EntityCreating event handler.
-             * This is also true for other "ed" & "ing" events.
-             */
-
-            AsyncHelper.RunSync(() => ApplyAbpConceptsForAddedEntityAsync(entity));
-
-            Collection.InsertOne(entity);
-
-            return entity;
-        }
-
-        public override async Task<TEntity> InsertAsync(
+        public async override Task<TEntity> InsertAsync(
             TEntity entity,
             bool autoSave = false,
             CancellationToken cancellationToken = default)
         {
             await ApplyAbpConceptsForAddedEntityAsync(entity);
 
-            await Collection.InsertOneAsync(
-                entity,
-                cancellationToken: GetCancellationToken(cancellationToken)
-            );
-
-            return entity;
-        }
-
-        public override TEntity Update(TEntity entity, bool autoSave = false)
-        {
-            SetModificationAuditProperties(entity);
-
-            if (entity is ISoftDelete softDeleteEntity && softDeleteEntity.IsDeleted)
+            if (SessionHandle != null)
             {
-                SetDeletionAuditProperties(entity);
-                AsyncHelper.RunSync(() => TriggerEntityDeleteEventsAsync(entity));
+                await Collection.InsertOneAsync(
+                    SessionHandle,
+                    entity,
+                    cancellationToken: GetCancellationToken(cancellationToken)
+                );
             }
             else
             {
-                AsyncHelper.RunSync(() => TriggerEntityUpdateEventsAsync(entity));
-            }
-
-            AsyncHelper.RunSync(() => TriggerDomainEventsAsync(entity));
-
-            var oldConcurrencyStamp = SetNewConcurrencyStamp(entity);
-
-            var result = Collection.ReplaceOne(
-                CreateEntityFilter(entity, true, oldConcurrencyStamp),
-                entity
-            );
-
-            if (result.MatchedCount <= 0)
-            {
-                ThrowOptimisticConcurrencyException();
+                await Collection.InsertOneAsync(
+                    entity,
+                    cancellationToken: GetCancellationToken(cancellationToken)
+                );
             }
 
             return entity;
         }
 
-        public override async Task<TEntity> UpdateAsync(
+        public async override Task<TEntity> UpdateAsync(
             TEntity entity,
             bool autoSave = false,
             CancellationToken cancellationToken = default)
@@ -132,12 +101,27 @@ namespace Volo.Abp.Domain.Repositories.MongoDB
             await TriggerDomainEventsAsync(entity);
 
             var oldConcurrencyStamp = SetNewConcurrencyStamp(entity);
+            ReplaceOneResult result;
 
-            var result = await Collection.ReplaceOneAsync(
-                CreateEntityFilter(entity, true, oldConcurrencyStamp),
-                entity,
-                cancellationToken: GetCancellationToken(cancellationToken)
-            );
+            if (SessionHandle != null)
+            {
+                result = await Collection.ReplaceOneAsync(
+                    SessionHandle,
+                    CreateEntityFilter(entity, true, oldConcurrencyStamp),
+                    entity,
+                    cancellationToken: GetCancellationToken(cancellationToken)
+                );
+
+
+            }
+            else
+            {
+                result = await Collection.ReplaceOneAsync(
+                    CreateEntityFilter(entity, true, oldConcurrencyStamp),
+                    entity,
+                    cancellationToken: GetCancellationToken(cancellationToken)
+                );
+            }
 
             if (result.MatchedCount <= 0)
             {
@@ -147,38 +131,7 @@ namespace Volo.Abp.Domain.Repositories.MongoDB
             return entity;
         }
 
-        public override void Delete(TEntity entity, bool autoSave = false)
-        {
-            AsyncHelper.RunSync(() => ApplyAbpConceptsForDeletedEntityAsync(entity));
-            var oldConcurrencyStamp = SetNewConcurrencyStamp(entity);
-
-            if (entity is ISoftDelete softDeleteEntity)
-            {
-                softDeleteEntity.IsDeleted = true;
-                var result = Collection.ReplaceOne(
-                    CreateEntityFilter(entity, true, oldConcurrencyStamp),
-                    entity
-                );
-
-                if (result.MatchedCount <= 0)
-                {
-                    ThrowOptimisticConcurrencyException();
-                }
-            }
-            else
-            {
-                var result = Collection.DeleteOne(
-                    CreateEntityFilter(entity, true, oldConcurrencyStamp)
-                );
-
-                if (result.DeletedCount <= 0)
-                {
-                    ThrowOptimisticConcurrencyException();
-                }
-            }
-        }
-
-        public override async Task DeleteAsync(
+        public async override Task DeleteAsync(
             TEntity entity,
             bool autoSave = false,
             CancellationToken cancellationToken = default)
@@ -186,14 +139,28 @@ namespace Volo.Abp.Domain.Repositories.MongoDB
             await ApplyAbpConceptsForDeletedEntityAsync(entity);
             var oldConcurrencyStamp = SetNewConcurrencyStamp(entity);
 
-            if (entity is ISoftDelete softDeleteEntity)
+            if (entity is ISoftDelete softDeleteEntity && !IsHardDeleted(entity))
             {
                 softDeleteEntity.IsDeleted = true;
-                var result = await Collection.ReplaceOneAsync(
-                    CreateEntityFilter(entity, true, oldConcurrencyStamp),
-                    entity,
-                    cancellationToken: GetCancellationToken(cancellationToken)
-                );
+                ReplaceOneResult result;
+
+                if (SessionHandle != null)
+                {
+                    result = await Collection.ReplaceOneAsync(
+                        SessionHandle,
+                        CreateEntityFilter(entity, true, oldConcurrencyStamp),
+                        entity,
+                        cancellationToken: GetCancellationToken(cancellationToken)
+                    );
+                }
+                else
+                {
+                    result = await Collection.ReplaceOneAsync(
+                        CreateEntityFilter(entity, true, oldConcurrencyStamp),
+                        entity,
+                        cancellationToken: GetCancellationToken(cancellationToken)
+                    );
+                }
 
                 if (result.MatchedCount <= 0)
                 {
@@ -202,10 +169,23 @@ namespace Volo.Abp.Domain.Repositories.MongoDB
             }
             else
             {
-                var result = await Collection.DeleteOneAsync(
-                    CreateEntityFilter(entity, true, oldConcurrencyStamp),
-                    GetCancellationToken(cancellationToken)
-                );
+                DeleteResult result;
+
+                if (SessionHandle != null)
+                {
+                    result = await Collection.DeleteOneAsync(
+                        SessionHandle,
+                        CreateEntityFilter(entity, true, oldConcurrencyStamp),
+                        cancellationToken: GetCancellationToken(cancellationToken)
+                    );
+                }
+                else
+                {
+                    result = await Collection.DeleteOneAsync(
+                        CreateEntityFilter(entity, true, oldConcurrencyStamp),
+                        GetCancellationToken(cancellationToken)
+                    );
+                }
 
                 if (result.DeletedCount <= 0)
                 {
@@ -214,39 +194,31 @@ namespace Volo.Abp.Domain.Repositories.MongoDB
             }
         }
 
-        public override List<TEntity> GetList(bool includeDetails = false)
-        {
-            return GetMongoQueryable().ToList();
-        }
-
-        public override async Task<List<TEntity>> GetListAsync(bool includeDetails = false, CancellationToken cancellationToken = default)
+        public async override Task<List<TEntity>> GetListAsync(bool includeDetails = false, CancellationToken cancellationToken = default)
         {
             return await GetMongoQueryable().ToListAsync(GetCancellationToken(cancellationToken));
         }
 
-        public override long GetCount()
-        {
-            return GetMongoQueryable().LongCount();
-        }
-
-        public override async Task<long> GetCountAsync(CancellationToken cancellationToken = default)
+        public async override Task<long> GetCountAsync(CancellationToken cancellationToken = default)
         {
             return await GetMongoQueryable().LongCountAsync(GetCancellationToken(cancellationToken));
         }
 
-        public override void Delete(Expression<Func<TEntity, bool>> predicate, bool autoSave = false)
+        public async override Task<List<TEntity>> GetPagedListAsync(
+            int skipCount,
+            int maxResultCount,
+            string sorting,
+            bool includeDetails = false,
+            CancellationToken cancellationToken = default)
         {
-            var entities = GetMongoQueryable()
-                .Where(predicate)
-                .ToList();
-
-            foreach (var entity in entities)
-            {
-                Delete(entity, autoSave);
-            }
+            return await GetMongoQueryable()
+                .OrderBy(sorting)
+                .As<IMongoQueryable<TEntity>>()
+                .PageBy<TEntity, IMongoQueryable<TEntity>>(skipCount, maxResultCount)
+                .ToListAsync(GetCancellationToken(cancellationToken));
         }
 
-        public override async Task DeleteAsync(
+        public async override Task DeleteAsync(
             Expression<Func<TEntity, bool>> predicate,
             bool autoSave = false,
             CancellationToken cancellationToken = default)
@@ -266,17 +238,35 @@ namespace Volo.Abp.Domain.Repositories.MongoDB
             return GetMongoQueryable();
         }
 
+        public async override Task<TEntity> FindAsync(
+            Expression<Func<TEntity, bool>> predicate,
+            bool includeDetails = true,
+            CancellationToken cancellationToken = default)
+        {
+            return await GetMongoQueryable()
+                .Where(predicate)
+                .SingleOrDefaultAsync(GetCancellationToken(cancellationToken));
+        }
+
         public virtual IMongoQueryable<TEntity> GetMongoQueryable()
         {
-            return ApplyDataFilters(
-                Collection.AsQueryable()
-            );
+            return ApplyDataFilters(SessionHandle != null ? Collection.AsQueryable(SessionHandle) : Collection.AsQueryable());
+        }
+        protected virtual bool IsHardDeleted(TEntity entity)
+        {
+            var hardDeletedEntities = UnitOfWorkManager?.Current?.Items.GetOrDefault(UnitOfWorkItemNames.HardDeletedEntities) as HashSet<IEntity>;
+            if (hardDeletedEntities == null)
+            {
+                return false;
+            }
+
+            return hardDeletedEntities.Contains(entity);
         }
 
         protected virtual FilterDefinition<TEntity> CreateEntityFilter(TEntity entity, bool withConcurrencyStamp = false, string concurrencyStamp = null)
         {
             throw new NotImplementedException(
-                $"{nameof(CreateEntityFilter)} is not implemented for MongoDB by default. It should be overrided and implemented by the deriving class!"
+                $"{nameof(CreateEntityFilter)} is not implemented for MongoDB by default. It should be overriden and implemented by the deriving class!"
             );
         }
 
@@ -315,10 +305,24 @@ namespace Volo.Abp.Domain.Repositories.MongoDB
 
         protected virtual void CheckAndSetId(TEntity entity)
         {
-            if (entity is IEntity<Guid> entityWithGuidId && entityWithGuidId.Id == default)
+            if (entity is IEntity<Guid> entityWithGuidId)
             {
-                entityWithGuidId.Id = GuidGenerator.Create();
+                TrySetGuidId(entityWithGuidId);
             }
+        }
+
+        protected virtual void TrySetGuidId(IEntity<Guid> entity)
+        {
+            if (entity.Id != default)
+            {
+                return;
+            }
+
+            EntityHelper.TrySetId(
+                entity,
+                () => GuidGenerator.Create(),
+                true
+            );
         }
 
         protected virtual void SetCreationAuditProperties(TEntity entity)
@@ -344,8 +348,8 @@ namespace Volo.Abp.Domain.Repositories.MongoDB
                 return;
             }
 
-            var localEvents = generatesDomainEventsEntity.GetLocalEvents().ToArray();
-            if (localEvents.Any())
+            var localEvents = generatesDomainEventsEntity.GetLocalEvents()?.ToArray();
+            if (localEvents != null && localEvents.Any())
             {
                 foreach (var localEvent in localEvents)
                 {
@@ -355,8 +359,8 @@ namespace Volo.Abp.Domain.Repositories.MongoDB
                 generatesDomainEventsEntity.ClearLocalEvents();
             }
 
-            var distributedEvents = generatesDomainEventsEntity.GetDistributedEvents().ToArray();
-            if (distributedEvents.Any())
+            var distributedEvents = generatesDomainEventsEntity.GetDistributedEvents()?.ToArray();
+            if (distributedEvents != null && distributedEvents.Any())
             {
                 foreach (var distributedEvent in distributedEvents)
                 {
@@ -388,6 +392,35 @@ namespace Volo.Abp.Domain.Repositories.MongoDB
         {
             throw new AbpDbConcurrencyException("Database operation expected to affect 1 row but actually affected 0 row. Data may have been modified or deleted since entities were loaded. This exception has been thrown on optimistic concurrency check.");
         }
+
+        /// <summary>
+        /// IMongoQueryable<TEntity>
+        /// </summary>
+        /// <returns></returns>
+        public QueryableExecutionModel GetExecutionModel()
+        {
+            return GetMongoQueryable().GetExecutionModel();
+        }
+
+        /// <summary>
+        /// IMongoQueryable<TEntity>
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public IAsyncCursor<TEntity> ToCursor(CancellationToken cancellationToken = new CancellationToken())
+        {
+            return GetMongoQueryable().ToCursor(cancellationToken);
+        }
+
+        /// <summary>
+        /// IMongoQueryable<TEntity>
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public Task<IAsyncCursor<TEntity>> ToCursorAsync(CancellationToken cancellationToken = new CancellationToken())
+        {
+            return GetMongoQueryable().ToCursorAsync(cancellationToken);
+        }
     }
 
     public class MongoDbRepository<TMongoDbContext, TEntity, TKey>
@@ -396,22 +429,12 @@ namespace Volo.Abp.Domain.Repositories.MongoDB
         where TMongoDbContext : IAbpMongoDbContext
         where TEntity : class, IEntity<TKey>
     {
+        public IMongoDbRepositoryFilterer<TEntity, TKey> RepositoryFilterer { get; set; }
+
         public MongoDbRepository(IMongoDbContextProvider<TMongoDbContext> dbContextProvider)
             : base(dbContextProvider)
         {
 
-        }
-
-        public virtual TEntity Get(TKey id, bool includeDetails = true)
-        {
-            var entity = Find(id, includeDetails);
-
-            if (entity == null)
-            {
-                throw new EntityNotFoundException(typeof(TEntity), id);
-            }
-
-            return entity;
         }
 
         public virtual async Task<TEntity> GetAsync(
@@ -434,19 +457,16 @@ namespace Volo.Abp.Domain.Repositories.MongoDB
             bool includeDetails = true,
             CancellationToken cancellationToken = default)
         {
+            if (SessionHandle != null)
+            {
+                return await Collection
+                    .Find(SessionHandle, RepositoryFilterer.CreateEntityFilter(id, true))
+                    .FirstOrDefaultAsync(GetCancellationToken(cancellationToken));
+            }
+
             return await Collection
-                .Find(CreateEntityFilter(id, true))
+                .Find(RepositoryFilterer.CreateEntityFilter(id, true))
                 .FirstOrDefaultAsync(GetCancellationToken(cancellationToken));
-        }
-
-        public virtual TEntity Find(TKey id, bool includeDetails = true)
-        {
-            return Collection.Find(CreateEntityFilter(id, true)).FirstOrDefault();
-        }
-
-        public virtual void Delete(TKey id, bool autoSave = false)
-        {
-            Collection.DeleteOne(CreateEntityFilter(id));
         }
 
         public virtual Task DeleteAsync(
@@ -454,57 +474,12 @@ namespace Volo.Abp.Domain.Repositories.MongoDB
             bool autoSave = false,
             CancellationToken cancellationToken = default)
         {
-            return Collection.DeleteOneAsync(
-                CreateEntityFilter(id),
-                GetCancellationToken(cancellationToken)
-            );
+            return DeleteAsync(x => x.Id.Equals(id), autoSave, cancellationToken);
         }
 
         protected override FilterDefinition<TEntity> CreateEntityFilter(TEntity entity, bool withConcurrencyStamp = false, string concurrencyStamp = null)
         {
-            if (!withConcurrencyStamp || !(entity is IHasConcurrencyStamp entityWithConcurrencyStamp))
-            {
-                return Builders<TEntity>.Filter.Eq(e => e.Id, entity.Id);
-            }
-
-            if (concurrencyStamp == null)
-            {
-                concurrencyStamp = entityWithConcurrencyStamp.ConcurrencyStamp;
-            }
-
-            return Builders<TEntity>.Filter.And(
-                Builders<TEntity>.Filter.Eq(e => e.Id, entity.Id),
-                Builders<TEntity>.Filter.Eq(e => ((IHasConcurrencyStamp)e).ConcurrencyStamp, concurrencyStamp)
-            );
-        }
-
-        protected virtual FilterDefinition<TEntity> CreateEntityFilter(TKey id, bool applyFilters = false)
-        {
-            var filters = new List<FilterDefinition<TEntity>>
-            {
-                Builders<TEntity>.Filter.Eq(e => e.Id, id)
-            };
-
-            if (applyFilters)
-            {
-                AddGlobalFilters(filters);
-            }
-
-            return Builders<TEntity>.Filter.And(filters);
-        }
-
-        protected virtual void AddGlobalFilters(List<FilterDefinition<TEntity>> filters)
-        {
-            if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)) && DataFilter.IsEnabled<ISoftDelete>())
-            {
-                filters.Add(Builders<TEntity>.Filter.Eq(e => ((ISoftDelete)e).IsDeleted, false));
-            }
-
-            if (typeof(IMultiTenant).IsAssignableFrom(typeof(TEntity)))
-            {
-                var tenantId = CurrentTenant.Id;
-                filters.Add(Builders<TEntity>.Filter.Eq(e => ((IMultiTenant)e).TenantId, tenantId));
-            }
+            return RepositoryFilterer.CreateEntityFilter(entity, withConcurrencyStamp, concurrencyStamp);
         }
     }
 }

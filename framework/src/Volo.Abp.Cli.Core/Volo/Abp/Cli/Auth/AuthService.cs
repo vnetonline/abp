@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using IdentityModel;
@@ -17,19 +18,24 @@ namespace Volo.Abp.Cli.Auth
             AuthenticationService = authenticationService;
         }
 
-        public async Task LoginAsync(string userName, string password)
+        public async Task LoginAsync(string userName, string password, string organizationName = null)
         {
-            var accessToken = await AuthenticationService.GetAccessTokenAsync(
-                new IdentityClientConfiguration(
-                    CliUrls.AccountAbpIo,
-                    "role email abpio_www abpio_commercial",
-                    "abp-cli",
-                    "1q2w3e*",
-                    OidcConstants.GrantTypes.Password,
-                    userName, 
-                    password
-                )
+            var configuration = new IdentityClientConfiguration(
+                CliUrls.AccountAbpIo,
+                "role email abpio abpio_www abpio_commercial offline_access", 
+                "abp-cli",
+                "1q2w3e*",
+                OidcConstants.GrantTypes.Password,
+                userName,
+                password
             );
+
+            if (!organizationName.IsNullOrWhiteSpace())
+            {
+                configuration["[o]abp-organization-name"] = organizationName;
+            }
+
+            var accessToken = await AuthenticationService.GetAccessTokenAsync(configuration);
 
             File.WriteAllText(CliPaths.AccessToken, accessToken, Encoding.UTF8);
         }
@@ -38,6 +44,11 @@ namespace Volo.Abp.Cli.Auth
         {
             FileHelper.DeleteIfExists(CliPaths.AccessToken);
             return Task.CompletedTask;
+        }
+
+        public static bool IsLoggedIn()
+        {
+            return File.Exists(CliPaths.AccessToken);
         }
     }
 }

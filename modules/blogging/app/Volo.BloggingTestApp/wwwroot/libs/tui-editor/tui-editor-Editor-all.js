@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.4.3
+ * @version 1.4.10
  * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
@@ -12,8 +12,8 @@
 	else if(typeof exports === 'object')
 		exports["Editor"] = factory(require("jquery"), require("tui-code-snippet"), require("codemirror"), require("to-mark"), require("tui-chart"), require("squire-rte"), require("markdown-it"), require("highlight.js"), require("tui-color-picker"), require("plantuml-encoder"));
 	else
-		root["tui"] = root["tui"] || {}, root["tui"]["Editor"] = factory(root["$"], (root["tui"] && root["tui"]["util"]), root["CodeMirror"], root["toMark"], (root["tui"] && root["tui"]["chart"]), root["Squire"], root["markdownit"], root["hljs"], (root["tui"] && root["tui"]["colorPicker"]), root["plantumlEncoder"]);
-})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_10__, __WEBPACK_EXTERNAL_MODULE_42__, __WEBPACK_EXTERNAL_MODULE_57__, __WEBPACK_EXTERNAL_MODULE_79__, __WEBPACK_EXTERNAL_MODULE_85__, __WEBPACK_EXTERNAL_MODULE_94__, __WEBPACK_EXTERNAL_MODULE_204__, __WEBPACK_EXTERNAL_MODULE_206__) {
+		root["tui"] = root["tui"] || {}, root["tui"]["Editor"] = factory(root["$"], root["tui"]["util"], root["CodeMirror"], root["toMark"], root["tui"]["chart"], root["Squire"], root["markdownit"], root["hljs"], root["tui"]["colorPicker"], root["plantumlEncoder"]);
+})(window, function(__WEBPACK_EXTERNAL_MODULE__0__, __WEBPACK_EXTERNAL_MODULE__1__, __WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__24__, __WEBPACK_EXTERNAL_MODULE__57__, __WEBPACK_EXTERNAL_MODULE__79__, __WEBPACK_EXTERNAL_MODULE__85__, __WEBPACK_EXTERNAL_MODULE__94__, __WEBPACK_EXTERNAL_MODULE__207__, __WEBPACK_EXTERNAL_MODULE__209__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -52,12 +52,32 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
 /******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
 /******/ 	};
 /******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -73,7 +93,8 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
 /******/
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "dist/";
+/******/ 	__webpack_require__.p = "/dist";
+/******/
 /******/
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(__webpack_require__.s = 55);
@@ -83,13 +104,13 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 0 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_0__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__0__;
 
 /***/ }),
 /* 1 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__1__;
 
 /***/ }),
 /* 2 */
@@ -120,7 +141,7 @@ var _command = __webpack_require__(84);
 
 var _command2 = _interopRequireDefault(_command);
 
-var _util = __webpack_require__(38);
+var _util = __webpack_require__(39);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -130,14 +151,13 @@ var KEYMAP_OS_INDEX = _util.isMac ? 1 : 0;
 
 /**
  * Class CommandManager
+ * @param {ToastUIEditor} base nedInstance
+ * @param {object} [options={}] - option object
+ *     @param {boolean} [options.useCommandShortcut=true] - execute command with keyMap
+ * @ignore
  */
 
 var CommandManager = function () {
-  /**
-   * @param {ToastUIEditor} base nedInstance
-   * @param {object} [options={}] - option object
-   *  @param {boolean} [options.useCommandShortcut=true] - execute command with keyMap
-   */
   function CommandManager(base) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
@@ -177,7 +197,6 @@ var CommandManager = function () {
 
     /**
      * Add command
-     * @memberof CommandManager
      * @param {Command} command Command instance
      * @returns {Command} Command
      */
@@ -220,7 +239,6 @@ var CommandManager = function () {
      * _initEvent
      * Bind event handler to eventManager
      * @private
-     * @memberof CommandManager
      */
 
   }, {
@@ -247,7 +265,6 @@ var CommandManager = function () {
 
     /**
      * Execute command
-     * @memberof CommandManager
      * @param {String} name Command name
      * @param {*} ...args Command argument
      * @returns {*}
@@ -292,10 +309,10 @@ var CommandManager = function () {
 
 /**
  * Create command by given editor type and property object
- * @memberof CommandManager
  * @param {string} type Command type
  * @param {{name: string, keyMap: Array}} props Property
  * @returns {*}
+ * @static
  */
 
 
@@ -344,10 +361,6 @@ var DEFAULT_CODE = 'en_US';
  */
 
 var I18n = function () {
-  /**
-   * Creates an instance of I18n.
-   * @memberof I18n
-   */
   function I18n() {
     _classCallCheck(this, I18n);
 
@@ -463,7 +476,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var FIND_ZWB = /\u200B/g;
 
 /**
- * isTextNode
  * Check if node is text node
  * @param {Node} node node to check
  * @returns {boolean} result
@@ -474,7 +486,6 @@ var isTextNode = function isTextNode(node) {
 };
 
 /**
- * isElemNode
  * Check if node is element node
  * @param {Node} node node to check
  * @returns {boolean} result
@@ -496,7 +507,6 @@ var isBlockNode = function isBlockNode(node) {
 };
 
 /**
- * getNodeName
  * Get node name of node
  * @param {Node} node node
  * @returns {string} node name
@@ -511,7 +521,6 @@ var getNodeName = function getNodeName(node) {
 };
 
 /**
- * getTextLength
  * Get node offset length of node(for Range API)
  * @param {Node} node node
  * @returns {number} length
@@ -530,7 +539,6 @@ var getTextLength = function getTextLength(node) {
 };
 
 /**
- * getOffsetLength
  * Get node offset length of node(for Range API)
  * @param {Node} node node
  * @returns {number} length
@@ -549,7 +557,6 @@ var getOffsetLength = function getOffsetLength(node) {
 };
 
 /**
- * getNodeOffsetOfParent
  * get node offset between parent's childnodes
  * @param {Node} node node
  * @returns {number} offset(index)
@@ -572,7 +579,6 @@ var getNodeOffsetOfParent = function getNodeOffsetOfParent(node) {
 };
 
 /**
- * getChildNodeByOffset
  * get child node by offset
  * @param {Node} node node
  * @param {number} index offset index
@@ -592,7 +598,6 @@ var getChildNodeByOffset = function getChildNodeByOffset(node, index) {
 };
 
 /**
- * getNodeWithDirectionUntil
  * find next node from passed node
  * @param {strong} direction previous or next
  * @param {Node} node node
@@ -623,7 +628,6 @@ var getNodeWithDirectionUntil = function getNodeWithDirectionUntil(direction, no
 };
 
 /**
- * getPrevOffsetNodeUntil
  * get prev node of childnode pointed with index
  * @param {Node} node node
  * @param {number} index offset index
@@ -662,7 +666,6 @@ var getParentUntilBy = function getParentUntilBy(node, matchCondition, stopCondi
 };
 
 /**
- * getParentUntil
  * get parent node until paseed node name
  * @param {Node} node node
  * @param {string|HTMLNode} untilNode node name or node to limit
@@ -686,7 +689,6 @@ var getParentUntil = function getParentUntil(node, untilNode) {
 };
 
 /**
- * getNodeWithDirectionUnderParent
  * get node on the given direction under given parent
  * @param {strong} direction previous or next
  * @param {Node} node node
@@ -708,7 +710,6 @@ var getNodeWithDirectionUnderParent = function getNodeWithDirectionUnderParent(d
 };
 
 /**
- * getTopPrevNodeUnder
  * get top previous top level node under given node
  * @param {Node} node node
  * @param {Node} underNode underNode
@@ -720,7 +721,6 @@ var getTopPrevNodeUnder = function getTopPrevNodeUnder(node, underNode) {
 };
 
 /**
- * getNextTopBlockNode
  * get next top level block node
  * @param {Node} node node
  * @param {Node} underNode underNode
@@ -774,6 +774,7 @@ var getPrevTextNode = function getPrevTextNode(node) {
  * @param {HTMLNode} root - root node
  * @param {HTMLNode} node - node to test
  * @returns {Boolean} true if root contains node
+ * @ignore
  */
 var containsNode = function containsNode(root, node) {
   var walker = document.createTreeWalker(root, 4, null, false);
@@ -1111,11 +1112,261 @@ var mergeNode = function mergeNode(node, targetNode) {
     _tuiCodeSnippet2.default.forEachArray(node.childNodes, function () {
       targetNode.appendChild(node.firstChild);
     });
+
+    targetNode.normalize();
   }
 
   if (node.parentNode) {
     node.parentNode.removeChild(node);
   }
+};
+
+/**
+ * Create hr that is not contenteditable
+ * @returns {node} hr is wraped div
+ * @ignore
+ */
+var createHorizontalRule = function createHorizontalRule() {
+  var div = document.createElement('div');
+  var hr = document.createElement('hr');
+
+  div.setAttribute('contenteditable', false);
+  hr.setAttribute('contenteditable', false);
+
+  div.appendChild(hr);
+
+  return div;
+};
+
+/**
+ * Create Empty Line
+ * @returns {node} <div><br></div>
+ * @private
+ */
+var createEmptyLine = function createEmptyLine() {
+  var div = document.createElement('div');
+  div.appendChild(document.createElement('br'));
+
+  return div;
+};
+
+/**
+ * Find same tagName child node and change wrapping order.
+ * For example, if below node need to optimize 'B' tag.
+ * <i><s><b>test</b></s></i>
+ * should be changed tag's order.
+ * <b><i><s>test</s></i></b>
+ * @param {node} node
+ * @param {string} tagName
+ * @returns {node}
+ * @private
+ */
+var changeTagOrder = function changeTagOrder(node, tagName) {
+  if (node.nodeName !== 'SPAN') {
+    var parentNode = node.parentNode;
+
+    var tempNode = node;
+
+    while (tempNode.childNodes && tempNode.childNodes.length === 1 && !isTextNode(tempNode.firstChild)) {
+      tempNode = tempNode.firstChild;
+
+      if (tempNode.nodeName === 'SPAN') {
+        break;
+      }
+
+      if (tempNode.nodeName === tagName) {
+        var wrapper = document.createElement(tagName);
+
+        mergeNode(tempNode, tempNode.parentNode);
+        parentNode.replaceChild(wrapper, node);
+        wrapper.appendChild(node);
+
+        return wrapper;
+      }
+    }
+  }
+
+  return node;
+};
+
+/**
+ * Find same tagName nodes and merge from startNode to endNode.
+ * @param {node} startNode
+ * @param {node} endNode
+ * @param {string} tagName
+ * @returns {node}
+ * @private
+ */
+var mergeSameNodes = function mergeSameNodes(startNode, endNode, tagName) {
+  var startBlockNode = changeTagOrder(startNode, tagName);
+
+  if (startBlockNode.nodeName === tagName) {
+    var endBlockNode = changeTagOrder(endNode, tagName);
+    var mergeTargetNode = startBlockNode;
+    var nextNode = startBlockNode.nextSibling;
+
+    while (nextNode) {
+      var tempNext = nextNode.nextSibling;
+
+      nextNode = changeTagOrder(nextNode, tagName);
+
+      if (nextNode.nodeName === tagName) {
+        // eslint-disable-next-line max-depth
+        if (mergeTargetNode) {
+          mergeNode(nextNode, mergeTargetNode);
+        } else {
+          mergeTargetNode = nextNode;
+        }
+      } else {
+        mergeTargetNode = null;
+      }
+
+      if (nextNode === endBlockNode) {
+        break;
+      }
+
+      nextNode = tempNext;
+    }
+  }
+};
+
+/**
+ * Find same tagName nodes in range and merge nodes.
+ * For example range is like this
+ * <s><b>AAA</b></s><b>BBB</b>
+ * nodes is changed below
+ * <b><s>AAA</s>BBB</b>
+ * @param {range} range
+ * @param {string} tagName
+ * @private
+ */
+var optimizeRange = function optimizeRange(range, tagName) {
+  var collapsed = range.collapsed,
+      commonAncestorContainer = range.commonAncestorContainer,
+      startContainer = range.startContainer,
+      endContainer = range.endContainer;
+
+
+  if (!collapsed) {
+    var optimizedNode = null;
+
+    if (startContainer !== endContainer) {
+      mergeSameNodes(getParentUntil(startContainer, commonAncestorContainer), getParentUntil(endContainer, commonAncestorContainer), tagName);
+
+      optimizedNode = commonAncestorContainer;
+    } else if (isTextNode(startContainer)) {
+      optimizedNode = startContainer.parentNode;
+    }
+
+    if (optimizedNode && optimizedNode.nodeName === tagName) {
+      var _optimizedNode = optimizedNode,
+          previousSibling = _optimizedNode.previousSibling;
+
+      var tempNode = void 0;
+
+      if (previousSibling) {
+        tempNode = changeTagOrder(previousSibling);
+
+        if (tempNode.nodeName === tagName) {
+          mergeNode(optimizedNode, tempNode);
+        }
+      }
+
+      var _optimizedNode2 = optimizedNode,
+          nextSibling = _optimizedNode2.nextSibling;
+
+
+      if (nextSibling) {
+        tempNode = changeTagOrder(nextSibling);
+
+        if (tempNode.nodeName === tagName) {
+          mergeNode(tempNode, optimizedNode);
+        }
+      }
+    }
+  }
+};
+
+/**
+ * Gets all text node from root element.
+ * @param {HTMLElement} root Root element
+ * @returns {Array} list of text nodes
+ * @ignore
+ */
+var getAllTextNode = function getAllTextNode(root) {
+  var walker = document.createTreeWalker(root, 4, null, false);
+  var result = [];
+
+  while (walker.nextNode()) {
+    var node = walker.currentNode;
+
+    if (isTextNode(node)) {
+      result.push(node);
+    }
+  }
+
+  return result;
+};
+
+/**
+ * Check whether the node is 'TD' or 'TH'
+ * @param {HTMLElement} node - the target node
+ * @returns {boolean} - whether the node is 'TD' or 'TH'
+ * @ignore
+ */
+var isCellNode = function isCellNode(node) {
+  if (!node) {
+    return false;
+  }
+
+  return node.nodeName === 'TD' || node.nodeName === 'TH';
+};
+
+/**
+ * Get the last node on the target node by the condition
+ * @param {HTMLElement} node - the target node
+ * @returns {function} - the condition to find the node
+ * @ignore
+ */
+var getLastNodeBy = function getLastNodeBy(node, condition) {
+  var lastNode = node && node.lastChild;
+
+  while (lastNode && condition(lastNode)) {
+    lastNode = lastNode.lastChild;
+  }
+
+  return lastNode;
+};
+
+/**
+ * Get the parent node on the target node by the condition
+ * @param {HTMLElement} node - the target node
+ * @returns {function} - the condition to find the node
+ * @ignore
+ */
+var getParentNodeBy = function getParentNodeBy(node, condition) {
+  while (node && condition(node.parentNode, node)) {
+    node = node.parentNode;
+  }
+
+  return node;
+};
+
+/**
+ * Get the sibling node on the target node by the condition
+ * @param {HTMLElement} node - the target node
+ * @param {string} direction - the direction to find node ('previous', 'next')
+ * @returns {function} - the condition to find the node
+ * @ignore
+ */
+var getSiblingNodeBy = function getSiblingNodeBy(node, direction, condition) {
+  var directionKey = direction + 'Sibling';
+
+  while (node && condition(node[directionKey], node)) {
+    node = node[directionKey];
+  }
+
+  return node;
 };
 
 exports.default = {
@@ -1150,7 +1401,17 @@ exports.default = {
   isListNode: isListNode,
   isFirstListItem: isFirstListItem,
   isFirstLevelListItem: isFirstLevelListItem,
-  mergeNode: mergeNode
+  mergeNode: mergeNode,
+  createHorizontalRule: createHorizontalRule,
+  createEmptyLine: createEmptyLine,
+  changeTagOrder: changeTagOrder,
+  mergeSameNodes: mergeSameNodes,
+  optimizeRange: optimizeRange,
+  getAllTextNode: getAllTextNode,
+  isCellNode: isCellNode,
+  getLastNodeBy: getLastNodeBy,
+  getParentNodeBy: getParentNodeBy,
+  getSiblingNodeBy: getSiblingNodeBy
 };
 
 /***/ }),
@@ -1171,11 +1432,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var Editor = void 0;
 try {
-  Editor = __webpack_require__(29);
+  Editor = __webpack_require__(30);
 } catch (e) {}
 if (!Editor) {
   try {
-    Editor = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"../viewer\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+    Editor = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module '../viewer'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
   } catch (e) {}
 }
 
@@ -1661,32 +1922,27 @@ var LAYOUT_TEMPLATE_MODAL = '<div class="' + CLASS_PREFIX + 'wrapper">\n        
 
 /**
  * A number, or a string containing a number.
- * @typedef {Object} LayerPopupOption
-    * @property {string[]} [openerCssQuery] - Css Query list to bind clickevent that open popup
-    * @property {string[]} [closerCssQuery] - Css Query list to bind clickevent that close popup
-    * @property {jQuery} $el - popup root element
-    * @property {jQuery|string} [content] - popup content that html string or jQuery element
-    * @property {string} [textContent] - popup text content
-    * @property {string} title - popup title
-    * @property {boolean} [header] - whether to draw header
-    * @property {jQuery} [$target] - element to append popup
-    * @property {boolean} modal - true: modal, false: modeless
-    * @property {string} [headerButtons] - replace header(close) button
+ * @typedef {object} LayerPopupOption
+ * @property {string[]} [openerCssQuery] - Css Query list to bind clickevent that open popup
+ * @property {string[]} [closerCssQuery] - Css Query list to bind clickevent that close popup
+ * @property {jQuery} $el - popup root element
+ * @property {jQuery|string} [content] - popup content that html string or jQuery element
+ * @property {string} [textContent] - popup text content
+ * @property {string} title - popup title
+ * @property {boolean} [header] - whether to draw header
+ * @property {jQuery} [$target] - element to append popup
+ * @property {boolean} modal - true: modal, false: modeless
+ * @property {string} [headerButtons] - replace header(close) button
  */
 
 /**
  * Class LayerPopup
- * @extends {UIController}
+ * @param {LayerPopupOption} options - popup option
  */
 
 var LayerPopup = function (_UIController) {
   _inherits(LayerPopup, _UIController);
 
-  /**
-   * Creates an instance of LayerPopup.
-   * @param {LayerPopupOption} options - popup option
-   * @memberof LayerPopup
-   */
   function LayerPopup(options) {
     _classCallCheck(this, LayerPopup);
 
@@ -1713,8 +1969,7 @@ var LayerPopup = function (_UIController) {
    * init instance.
    * store properties & prepare before initialize DOM
    * @param {LayerPopupOption} options - layer popup options
-   * @memberof LayerPopup
-   * @protected
+   * @private
    */
 
 
@@ -1739,8 +1994,7 @@ var LayerPopup = function (_UIController) {
 
     /**
      * initialize DOM, render popup
-     * @memberof LayerPopup
-     * @protected
+     * @private
      */
 
   }, {
@@ -1771,8 +2025,7 @@ var LayerPopup = function (_UIController) {
 
     /**
      * bind DOM events
-     * @memberof LayerPopup
-     * @protected
+     * @private
      */
 
   }, {
@@ -1802,8 +2055,7 @@ var LayerPopup = function (_UIController) {
 
     /**
      * bind editor events
-     * @memberof LayerPopup
-     * @protected
+     * @private
      * @abstract
      */
 
@@ -1836,7 +2088,6 @@ var LayerPopup = function (_UIController) {
     /**
      * set popup content
      * @param {jQuery|HTMLElement|string} $content - content
-     * @memberof LayerPopup
      */
 
   }, {
@@ -1849,7 +2100,6 @@ var LayerPopup = function (_UIController) {
     /**
      * set title
      * @param {string} title - title text
-     * @memberof LayerPopup
      */
 
   }, {
@@ -1863,7 +2113,6 @@ var LayerPopup = function (_UIController) {
 
     /**
      * get title element
-     * @memberof LayerPopup
      * @returns {HTMLElement} - title html element
      */
 
@@ -1875,7 +2124,6 @@ var LayerPopup = function (_UIController) {
 
     /**
      * hide popup
-     * @memberof LayerPopup
      */
 
   }, {
@@ -1888,7 +2136,6 @@ var LayerPopup = function (_UIController) {
 
     /**
      * show popup
-     * @memberof LayerPopup
      */
 
   }, {
@@ -1902,7 +2149,6 @@ var LayerPopup = function (_UIController) {
     /**
      * whether this popup is visible
      * @returns {boolean} - true: shown, false: hidden
-     * @memberof LayerPopup
      */
 
   }, {
@@ -1913,7 +2159,6 @@ var LayerPopup = function (_UIController) {
 
     /**
      * remove popup content
-     * @memberof LayerPopup
      */
 
   }, {
@@ -1941,8 +2186,8 @@ var LayerPopup = function (_UIController) {
     /**
      * make popup size fit to window
      * @param {boolean} fit - true to make popup fit to window
-     * @memberof LayerPopup
      * @protected
+     * @ignore
      */
 
   }, {
@@ -1953,9 +2198,9 @@ var LayerPopup = function (_UIController) {
 
     /**
      * make popup size fit to window
-     * @memberof LayerPopup
-     * @protected
      * @returns {boolean} - true for fit to window
+     * @protected
+     * @ignore
      */
 
   }, {
@@ -1966,9 +2211,9 @@ var LayerPopup = function (_UIController) {
 
     /**
      * toggle size fit to window
-     * @memberof LayerPopup
-     * @protected
      * @returns {boolean} - true for fit to window
+     * @protected
+     * @ignore
      */
 
   }, {
@@ -2054,13 +2299,13 @@ function _createTheadOrTbodyHtml(trs, wrapperNodeName) {
  * @private
  */
 function createTableHtml(renderData) {
-  var thead = [renderData[0]];
+  var thead = renderData[0] ? [renderData[0]] : [];
   var tbody = renderData.slice(1);
   var theadHtml = _createTheadOrTbodyHtml(thead, 'THEAD');
   var tbodyHtml = _createTheadOrTbodyHtml(tbody, 'TBODY');
   var className = renderData.className ? ' class="' + renderData.className + '"' : '';
 
-  return '<table' + className + '>' + (theadHtml + tbodyHtml) + '</renderData>';
+  return '<table' + className + '>' + (theadHtml + tbodyHtml) + '</table>';
 }
 
 /**
@@ -2344,10 +2589,36 @@ exports.default = {
 /* 10 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_10__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__10__;
 
 /***/ }),
 /* 11 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || new Function("return this")();
+} catch (e) {
+	// This works if the window reference is available
+	if (typeof window === "object") g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2381,7 +2652,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_10__;
 
 /*<replacement>*/
 
-var processNextTick = __webpack_require__(19);
+var pna = __webpack_require__(19);
 /*</replacement>*/
 
 /*<replacement>*/
@@ -2401,14 +2672,17 @@ util.inherits = __webpack_require__(13);
 /*</replacement>*/
 
 var Readable = __webpack_require__(48);
-var Writable = __webpack_require__(28);
+var Writable = __webpack_require__(29);
 
 util.inherits(Duplex, Readable);
 
-var keys = objectKeys(Writable.prototype);
-for (var v = 0; v < keys.length; v++) {
-  var method = keys[v];
-  if (!Duplex.prototype[method]) Duplex.prototype[method] = Writable.prototype[method];
+{
+  // avoid scope creep, the keys array can then be collected
+  var keys = objectKeys(Writable.prototype);
+  for (var v = 0; v < keys.length; v++) {
+    var method = keys[v];
+    if (!Duplex.prototype[method]) Duplex.prototype[method] = Writable.prototype[method];
+  }
 }
 
 function Duplex(options) {
@@ -2427,6 +2701,16 @@ function Duplex(options) {
   this.once('end', onend);
 }
 
+Object.defineProperty(Duplex.prototype, 'writableHighWaterMark', {
+  // making it explicit this property is not enumerable
+  // because otherwise some prototype manipulation in
+  // userland will fail
+  enumerable: false,
+  get: function () {
+    return this._writableState.highWaterMark;
+  }
+});
+
 // the no-half-open enforcer
 function onend() {
   // if we allow half-open state, or if the writable side ended,
@@ -2435,7 +2719,7 @@ function onend() {
 
   // no more data can be written.
   // But allow more writes to happen in this tick.
-  processNextTick(onEndNT, this);
+  pna.nextTick(onEndNT, this);
 }
 
 function onEndNT(self) {
@@ -2467,41 +2751,8 @@ Duplex.prototype._destroy = function (err, cb) {
   this.push(null);
   this.end();
 
-  processNextTick(cb, err);
+  pna.nextTick(cb, err);
 };
-
-function forEach(xs, f) {
-  for (var i = 0, l = xs.length; i < l; i++) {
-    f(xs[i], i);
-  }
-}
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1,eval)("this");
-} catch(e) {
-	// This works if the window reference is available
-	if(typeof window === "object")
-		g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
 
 /***/ }),
 /* 13 */
@@ -2510,24 +2761,28 @@ module.exports = g;
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor
-    ctor.prototype = Object.create(superCtor.prototype, {
-      constructor: {
-        value: ctor,
-        enumerable: false,
-        writable: true,
-        configurable: true
-      }
-    });
+    if (superCtor) {
+      ctor.super_ = superCtor
+      ctor.prototype = Object.create(superCtor.prototype, {
+        constructor: {
+          value: ctor,
+          enumerable: false,
+          writable: true,
+          configurable: true
+        }
+      })
+    }
   };
 } else {
   // old school shim for old browsers
   module.exports = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor
-    var TempCtor = function () {}
-    TempCtor.prototype = superCtor.prototype
-    ctor.prototype = new TempCtor()
-    ctor.prototype.constructor = ctor
+    if (superCtor) {
+      ctor.super_ = superCtor
+      var TempCtor = function () {}
+      TempCtor.prototype = superCtor.prototype
+      ctor.prototype = new TempCtor()
+      ctor.prototype.constructor = ctor
+    }
   }
 }
 
@@ -2576,30 +2831,22 @@ function makeUIInstanceId() {
 
 /**
  * Class UIController
+ * @param {Object} [options] - options
+ *     @param {jQuery} [options.rootElement] - root element
+ *     @param {string} [options.tagName] - tag name
+ *     @param {string} [options.className] - class name
  */
 
 var UIController = function () {
 
   /**
-   * Creates an instance of UIController.
-   * @param {Object} [options] - options
-   * @param {jQuery} [options.rootElement] - root element
-   * @param {string} [options.tagName] - tag name
-   * @param {string} [options.className] - class name
-   * @memberof UIController
-   */
-
-
-  /**
    * UI jQuery element
    * @type {Object}
-   * @memberof UIController
    */
 
   /**
    * tag name
    * @type {string}
-   * @memberof UIController
    */
   function UIController() {
     var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -2622,7 +2869,6 @@ var UIController = function () {
   /**
    * @param {string|object} aType - event name and selector string
    * @param {function} aFn - event handler
-   * @memberof UIController
    */
 
 
@@ -2630,14 +2876,12 @@ var UIController = function () {
    * UI Id
    * @type {number}
    * @private
-   * @memberof UIController
    */
 
 
   /**
    * ui controller class name
    * @type {string}
-   * @memberof UIController
    */
 
 
@@ -2659,7 +2903,6 @@ var UIController = function () {
      * bind event
      * @param {string} type - event name and selector
      * @param {function} fn - handler function
-     * @memberof UIController
      * @private
      */
 
@@ -2681,7 +2924,6 @@ var UIController = function () {
      * unbind event handler
      * @param {string} type - event name and selector
      * @param {function} fn - handler function
-     * @memberof UIController
      */
 
   }, {
@@ -2746,7 +2988,6 @@ var UIController = function () {
     /**
      * trigger event
      * @param {...object} args - event name & extra params
-     * @memberof UIController
      */
 
   }, {
@@ -2767,7 +3008,6 @@ var UIController = function () {
 
     /**
      * remove
-     * @memberof UIController
      */
 
   }, {
@@ -2780,7 +3020,6 @@ var UIController = function () {
 
     /**
      * destroy
-     * @memberof UIController
      */
 
   }, {
@@ -2830,14 +3069,11 @@ var URLRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/([^\s]*))?$/g;
 
 /**
  * Class ImportManager
+ * @param {EventManager} eventManager - eventManager
+ * @ignore
  */
 
 var ImportManager = function () {
-  /**
-   * Creates an instance of ImportManager.
-   * @param {EventManager} eventManager - eventManager
-   * @memberof ImportManager
-   */
   function ImportManager(eventManager) {
     _classCallCheck(this, ImportManager);
 
@@ -2851,7 +3087,6 @@ var ImportManager = function () {
    * graceful decode uri component
    * @param {string} originalURI - string to be decoded
    * @returns {string} decoded string
-   * @memberof ImportManager
    * @static
    */
 
@@ -2862,7 +3097,6 @@ var ImportManager = function () {
 
     /**
      * Initialize event handler
-     * @memberof ImportManager
      * @private
      */
     value: function _initEvent() {
@@ -2898,7 +3132,6 @@ var ImportManager = function () {
 
     /**
      * Initialize default image importer
-     * @memberof ImportManager
      * @private
      */
 
@@ -2918,7 +3151,6 @@ var ImportManager = function () {
 
     /**
      * Emit add image blob hook
-     * @memberof ImportManager
      * @param {object} blob - blob or file
      * @param {string} type - type of an event the item belongs to. paste or drop
      * @private
@@ -2971,7 +3203,6 @@ var ImportManager = function () {
 
     /**
      * Get blob or excel data from clipboard
-     * @memberof ImportManager
      * @param {object} evData Clipboard data
      * @private
      */
@@ -2991,7 +3222,6 @@ var ImportManager = function () {
 
     /**
      * Process for blob item
-     * @memberof ImportManager
      * @param {Array.<string>} items Item array
      * @param {object} evData Event data
      * @private
@@ -3042,10 +3272,9 @@ var ImportManager = function () {
 
     /**
      * encode markdown critical characters
-     * @static
      * @param {string} text - string to encode
      * @returns {string} - markdown character encoded string
-     * @memberof ImportManager
+     * @static
      */
 
   }, {
@@ -3056,10 +3285,9 @@ var ImportManager = function () {
 
     /**
      * escape markdown critical characters
-     * @static
      * @param {string} text - string to escape
      * @returns {string} - markdown character escaped string
-     * @memberof ImportManager
+     * @static
      */
 
   }, {
@@ -3207,7 +3435,7 @@ function objectToString(o) {
   return Object.prototype.toString.call(o);
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(51).Buffer))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(51).Buffer))
 
 /***/ }),
 /* 17 */
@@ -3243,23 +3471,17 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 
 /**
- * Toolbar Item
- * @extends {UIController}
+ * Class ToolbarItem
+ * @param {Object} [options={name: 'toolbar-item'}] [description]
  */
 var ToolbarItem = function (_UIController) {
   _inherits(ToolbarItem, _UIController);
 
   /**
-   * toolbar item constructor
-   * @memberof ToolbarItem
-   * @param {Object} [options={name: 'toolbar-item'}] [description]
-   */
-
-  /**
    * item name
-   * @memberof ToolbarDivider
    * @type {String}
    * @static
+   * @private
    */
   function ToolbarItem() {
     var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
@@ -3278,15 +3500,15 @@ var ToolbarItem = function (_UIController) {
 
   /**
    * get the name of the toolbar item
-   * @memberof ToolbarItem
    * @returns {string} - the name of the toolbar item
    */
 
 
   /**
    * toolbar item class name
-   * @memberof ToolbarItem
    * @type {String}
+   * @static
+   * @private
    */
 
 
@@ -3509,12 +3731,13 @@ process.umask = function() { return 0; };
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
-if (!process.version ||
+if (typeof process === 'undefined' ||
+    !process.version ||
     process.version.indexOf('v0.') === 0 ||
     process.version.indexOf('v1.') === 0 && process.version.indexOf('v1.8.') !== 0) {
-  module.exports = nextTick;
+  module.exports = { nextTick: nextTick };
 } else {
-  module.exports = process.nextTick;
+  module.exports = process
 }
 
 function nextTick(fn, arg1, arg2, arg3) {
@@ -3551,7 +3774,8 @@ function nextTick(fn, arg1, arg2, arg3) {
   }
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(18)))
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(18)))
 
 /***/ }),
 /* 20 */
@@ -3638,7 +3862,7 @@ var _toolbarItem = __webpack_require__(17);
 
 var _toolbarItem2 = _interopRequireDefault(_toolbarItem);
 
-var _tooltip = __webpack_require__(30);
+var _tooltip = __webpack_require__(31);
 
 var _tooltip2 = _interopRequireDefault(_tooltip);
 
@@ -3656,29 +3880,22 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /**
  * Class Button UI
- * @extends {ToolbarItem}
+ * @param {object} options - button options
+ *     @param {string} options.className - button class name
+ *     @param {string} options.command - command name to execute on click
+ *     @param {string} options.event - event name to trigger on click
+ *     @param {string} options.text - text on button
+ *     @param {string} options.tooltip - text on tooltip
+ *     @param {string} options.style - button style
+ *     @param {string} options.state - button state
+ * @param {jquery} $el - button rootElement
  * @deprecated
  */
 var Button = function (_ToolbarItem) {
   _inherits(Button, _ToolbarItem);
 
   /**
-   * Creates an instance of Button.
-   * @param {object} options - button options
-   *  @param {jquery} $el - button rootElement
-   *  @param {string} options.className - button class name
-   *  @param {string} options.command - command name to execute on click
-   *  @param {string} options.event - event name to trigger on click
-   *  @param {string} options.text - text on button
-   *  @param {string} options.tooltip - text on tooltip
-   *  @param {string} options.style - button style
-   *  @param {string} options.state - button state
-   * @memberof Button
-   */
-
-  /**
    * item name
-   * @memberof Button
    * @type {String}
    * @static
    */
@@ -3711,14 +3928,12 @@ var Button = function (_ToolbarItem) {
   /**
    * set tooltip text
    * @param {string} text - tooltip text to show
-   * @memberof Button
    */
 
 
   /**
    * ToolbarItem className
    * @type {String}
-   * @memberof Button
    * @static
    */
 
@@ -3780,7 +3995,6 @@ var Button = function (_ToolbarItem) {
 
     /**
      * enable button
-     * @memberof Button
      */
 
   }, {
@@ -3791,7 +4005,6 @@ var Button = function (_ToolbarItem) {
 
     /**
      * disable button
-     * @memberof Button
      */
 
   }, {
@@ -3803,7 +4016,6 @@ var Button = function (_ToolbarItem) {
     /**
      * check whether this button is enabled
      * @returns {Boolean} - true for enabled
-     * @memberof Button
      */
 
   }, {
@@ -4115,15 +4327,12 @@ var sharedInstance = void 0;
 
 /**
  * Class KeyMapper
+ * @param {object} [options] options
+ * @param {string} options.splitter splitter string default is +
+ * @ignore
  */
 
 var KeyMapper = function () {
-  /**
-   * Creates an instance of KeyMapper.
-   * @param {object} [options] options
-   *  @param {string} options.splitter splitter string default is +
-   * @memberof KeyMapper
-   */
   function KeyMapper(options) {
     _classCallCheck(this, KeyMapper);
 
@@ -4133,7 +4342,6 @@ var KeyMapper = function () {
   /**
    * Set key splitter
    * @param {object} options Option object
-   * @memberof KeyMapper
    * @private
    */
 
@@ -4147,7 +4355,6 @@ var KeyMapper = function () {
 
     /**
      * Convert event to keyMap
-     * @memberof KeyMapper
      * @param {event} event Event object
      * @returns {string}
      */
@@ -4184,7 +4391,6 @@ var KeyMapper = function () {
 
     /**
      * Get character from key code
-     * @memberof KeyMapper
      * @param {number} keyCode Key code
      * @returns {string}
      * @private
@@ -4200,7 +4406,6 @@ var KeyMapper = function () {
 
     /**
      * Get sharedInstance
-     * @memberof KeyMapper
      * @returns {KeyMapper}
      */
 
@@ -4216,10 +4421,9 @@ var KeyMapper = function () {
 
     /**
      * get key code for a character
-     * @static
      * @param {string} char - a character to be converted
      * @returns {number} key code for the char
-     * @memberof KeyMapper
+     * @static
      */
 
   }, {
@@ -4263,6 +4467,10 @@ var HTML_ATTR_LIST_RX = new RegExp('^(abbr|align|alt|axis|bgcolor|border|cellpad
 
 var SVG_ATTR_LIST_RX = new RegExp('^(accent-height|accumulate|additive|alphabetic|arabic-form|ascent|' + 'baseProfile|bbox|begin|by|calcMode|cap-height|class|color|color-rendering|content|' + 'cx|cy|d|dx|dy|descent|display|dur|end|fill|fill-rule|font-family|font-size|font-stretch|' + 'font-style|font-variant|font-weight|from|fx|fy|g1|g2|glyph-name|gradientUnits|hanging|' + 'height|horiz-adv-x|horiz-origin-x|ideographic|k|keyPoints|keySplines|keyTimes|lang|' + 'marker-end|marker-mid|marker-start|markerHeight|markerUnits|markerWidth|mathematical|' + 'max|min|offset|opacity|orient|origin|overline-position|overline-thickness|panose-1|' + 'path|pathLength|points|preserveAspectRatio|r|refX|refY|repeatCount|repeatDur|' + 'requiredExtensions|requiredFeatures|restart|rotate|rx|ry|slope|stemh|stemv|stop-color|' + 'stop-opacity|strikethrough-position|strikethrough-thickness|stroke|stroke-dasharray|' + 'stroke-dashoffset|stroke-linecap|stroke-linejoin|stroke-miterlimit|stroke-opacity|' + 'stroke-width|systemLanguage|target|text-anchor|to|transform|type|u1|u2|underline-position|' + 'underline-thickness|unicode|unicode-range|units-per-em|values|version|viewBox|visibility|' + 'width|widths|x|x-height|x1|x2|xlink:actuate|xlink:arcrole|xlink:role|xlink:show|xlink:title|' + 'xlink:type|xml:base|xml:lang|xml:space|xmlns|xmlns:xlink|y|y1|y2|zoomAndPan)', 'g');
 
+var ATTR_VALUE_BLACK_LIST_RX = {
+  'href': /^(javascript:).*/g
+};
+
 /**
  * htmlSanitizer
  * @param {string|Node} html html or Node
@@ -4279,6 +4487,7 @@ function htmlSanitizer(html, needHtmlText) {
 
   removeUnnecessaryTags($html);
   leaveOnlyWhitelistAttribute($html);
+  removeInvalidAttributeValues($html);
 
   return finalizeHtml($html, needHtmlText);
 }
@@ -4289,7 +4498,7 @@ function htmlSanitizer(html, needHtmlText) {
  * @param {jQuery} $html jQuery instance
  */
 function removeUnnecessaryTags($html) {
-  $html.find('script, iframe, textarea, form, button, select, meta, style, link, title').remove();
+  $html.find('script, iframe, textarea, form, button, select, meta, style, link, title, embed, object, details, summary').remove();
 }
 
 /**
@@ -4315,6 +4524,30 @@ function leaveOnlyWhitelistAttribute($html) {
       }
     });
   });
+}
+
+/**
+ * Remove invalid attribute values
+ * @private
+ * @param {jQuery} $html jQuery instance
+ */
+function removeInvalidAttributeValues($html) {
+  var _loop = function _loop(attr) {
+    if (ATTR_VALUE_BLACK_LIST_RX.hasOwnProperty(attr)) {
+      $html.find('[' + attr + ']').each(function (index, node) {
+        var attrs = node.attributes;
+        var valueBlackListRX = ATTR_VALUE_BLACK_LIST_RX[attr];
+        var attrItem = attrs.getNamedItem(attr);
+        if (valueBlackListRX && attrItem && attrItem.value.toLowerCase().match(valueBlackListRX)) {
+          attrs.removeNamedItem(attr);
+        }
+      });
+    }
+  };
+
+  for (var attr in ATTR_VALUE_BLACK_LIST_RX) {
+    _loop(attr);
+  }
 }
 
 /**
@@ -4348,6 +4581,12 @@ exports.default = htmlSanitizer;
 
 /***/ }),
 /* 24 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__24__;
+
+/***/ }),
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4376,10 +4615,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Class Code Block Manager
  */
 var CodeBlockManager = function () {
-  /**
-   * Creates an instance of CodeBlockManager.
-   * @memberof CodeBlockManager
-   */
   function CodeBlockManager() {
     _classCallCheck(this, CodeBlockManager);
 
@@ -4403,7 +4638,6 @@ var CodeBlockManager = function () {
      * get replacer for code block
      * @param {string} language - code block type
      * @returns {function} - replacer function
-     * @memberof CodeBlockManager
      */
 
   }, {
@@ -4437,7 +4671,6 @@ var CodeBlockManager = function () {
     /**
      * get supported languages by highlight-js
      * @returns {Array<string>} - supported languages by highlight-js
-     * @static
      */
 
   }], [{
@@ -4467,7 +4700,7 @@ exports.CodeBlockManager = CodeBlockManager;
 exports.default = new CodeBlockManager();
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4626,9 +4859,10 @@ var changeSyntax = exports.changeSyntax = function changeSyntax(doc, range, symb
 };
 
 /***/ }),
-/* 26 */
-/***/ (function(module, exports) {
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -4650,9 +4884,39 @@ var changeSyntax = exports.changeSyntax = function changeSyntax(doc, range, symb
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+
+
+var R = typeof Reflect === 'object' ? Reflect : null
+var ReflectApply = R && typeof R.apply === 'function'
+  ? R.apply
+  : function ReflectApply(target, receiver, args) {
+    return Function.prototype.apply.call(target, receiver, args);
+  }
+
+var ReflectOwnKeys
+if (R && typeof R.ownKeys === 'function') {
+  ReflectOwnKeys = R.ownKeys
+} else if (Object.getOwnPropertySymbols) {
+  ReflectOwnKeys = function ReflectOwnKeys(target) {
+    return Object.getOwnPropertyNames(target)
+      .concat(Object.getOwnPropertySymbols(target));
+  };
+} else {
+  ReflectOwnKeys = function ReflectOwnKeys(target) {
+    return Object.getOwnPropertyNames(target);
+  };
+}
+
+function ProcessEmitWarning(warning) {
+  if (console && console.warn) console.warn(warning);
+}
+
+var NumberIsNaN = Number.isNaN || function NumberIsNaN(value) {
+  return value !== value;
+}
+
 function EventEmitter() {
-  this._events = this._events || {};
-  this._maxListeners = this._maxListeners || undefined;
+  EventEmitter.init.call(this);
 }
 module.exports = EventEmitter;
 
@@ -4660,294 +4924,410 @@ module.exports = EventEmitter;
 EventEmitter.EventEmitter = EventEmitter;
 
 EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._eventsCount = 0;
 EventEmitter.prototype._maxListeners = undefined;
 
 // By default EventEmitters will print a warning if more than 10 listeners are
 // added to it. This is a useful default which helps finding memory leaks.
-EventEmitter.defaultMaxListeners = 10;
+var defaultMaxListeners = 10;
+
+Object.defineProperty(EventEmitter, 'defaultMaxListeners', {
+  enumerable: true,
+  get: function() {
+    return defaultMaxListeners;
+  },
+  set: function(arg) {
+    if (typeof arg !== 'number' || arg < 0 || NumberIsNaN(arg)) {
+      throw new RangeError('The value of "defaultMaxListeners" is out of range. It must be a non-negative number. Received ' + arg + '.');
+    }
+    defaultMaxListeners = arg;
+  }
+});
+
+EventEmitter.init = function() {
+
+  if (this._events === undefined ||
+      this._events === Object.getPrototypeOf(this)._events) {
+    this._events = Object.create(null);
+    this._eventsCount = 0;
+  }
+
+  this._maxListeners = this._maxListeners || undefined;
+};
 
 // Obviously not all Emitters should be limited to 10. This function allows
 // that to be increased. Set to zero for unlimited.
-EventEmitter.prototype.setMaxListeners = function(n) {
-  if (!isNumber(n) || n < 0 || isNaN(n))
-    throw TypeError('n must be a positive number');
+EventEmitter.prototype.setMaxListeners = function setMaxListeners(n) {
+  if (typeof n !== 'number' || n < 0 || NumberIsNaN(n)) {
+    throw new RangeError('The value of "n" is out of range. It must be a non-negative number. Received ' + n + '.');
+  }
   this._maxListeners = n;
   return this;
 };
 
-EventEmitter.prototype.emit = function(type) {
-  var er, handler, len, args, i, listeners;
+function $getMaxListeners(that) {
+  if (that._maxListeners === undefined)
+    return EventEmitter.defaultMaxListeners;
+  return that._maxListeners;
+}
 
-  if (!this._events)
-    this._events = {};
+EventEmitter.prototype.getMaxListeners = function getMaxListeners() {
+  return $getMaxListeners(this);
+};
 
-  // If there is no 'error' event listener then throw.
-  if (type === 'error') {
-    if (!this._events.error ||
-        (isObject(this._events.error) && !this._events.error.length)) {
-      er = arguments[1];
-      if (er instanceof Error) {
-        throw er; // Unhandled 'error' event
-      } else {
-        // At least give some kind of context to the user
-        var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
-        err.context = er;
-        throw err;
-      }
-    }
-  }
+EventEmitter.prototype.emit = function emit(type) {
+  var args = [];
+  for (var i = 1; i < arguments.length; i++) args.push(arguments[i]);
+  var doError = (type === 'error');
 
-  handler = this._events[type];
-
-  if (isUndefined(handler))
+  var events = this._events;
+  if (events !== undefined)
+    doError = (doError && events.error === undefined);
+  else if (!doError)
     return false;
 
-  if (isFunction(handler)) {
-    switch (arguments.length) {
-      // fast cases
-      case 1:
-        handler.call(this);
-        break;
-      case 2:
-        handler.call(this, arguments[1]);
-        break;
-      case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
-      // slower
-      default:
-        args = Array.prototype.slice.call(arguments, 1);
-        handler.apply(this, args);
+  // If there is no 'error' event listener then throw.
+  if (doError) {
+    var er;
+    if (args.length > 0)
+      er = args[0];
+    if (er instanceof Error) {
+      // Note: The comments on the `throw` lines are intentional, they show
+      // up in Node's output if this results in an unhandled exception.
+      throw er; // Unhandled 'error' event
     }
-  } else if (isObject(handler)) {
-    args = Array.prototype.slice.call(arguments, 1);
-    listeners = handler.slice();
-    len = listeners.length;
-    for (i = 0; i < len; i++)
-      listeners[i].apply(this, args);
+    // At least give some kind of context to the user
+    var err = new Error('Unhandled error.' + (er ? ' (' + er.message + ')' : ''));
+    err.context = er;
+    throw err; // Unhandled 'error' event
+  }
+
+  var handler = events[type];
+
+  if (handler === undefined)
+    return false;
+
+  if (typeof handler === 'function') {
+    ReflectApply(handler, this, args);
+  } else {
+    var len = handler.length;
+    var listeners = arrayClone(handler, len);
+    for (var i = 0; i < len; ++i)
+      ReflectApply(listeners[i], this, args);
   }
 
   return true;
 };
 
-EventEmitter.prototype.addListener = function(type, listener) {
+function _addListener(target, type, listener, prepend) {
   var m;
+  var events;
+  var existing;
 
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
+  if (typeof listener !== 'function') {
+    throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
+  }
 
-  if (!this._events)
-    this._events = {};
+  events = target._events;
+  if (events === undefined) {
+    events = target._events = Object.create(null);
+    target._eventsCount = 0;
+  } else {
+    // To avoid recursion in the case that type === "newListener"! Before
+    // adding it to the listeners, first emit "newListener".
+    if (events.newListener !== undefined) {
+      target.emit('newListener', type,
+                  listener.listener ? listener.listener : listener);
 
-  // To avoid recursion in the case that type === "newListener"! Before
-  // adding it to the listeners, first emit "newListener".
-  if (this._events.newListener)
-    this.emit('newListener', type,
-              isFunction(listener.listener) ?
-              listener.listener : listener);
+      // Re-assign `events` because a newListener handler could have caused the
+      // this._events to be assigned to a new object
+      events = target._events;
+    }
+    existing = events[type];
+  }
 
-  if (!this._events[type])
+  if (existing === undefined) {
     // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;
-  else if (isObject(this._events[type]))
-    // If we've already got an array, just append.
-    this._events[type].push(listener);
-  else
-    // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener];
-
-  // Check for listener leak
-  if (isObject(this._events[type]) && !this._events[type].warned) {
-    if (!isUndefined(this._maxListeners)) {
-      m = this._maxListeners;
+    existing = events[type] = listener;
+    ++target._eventsCount;
+  } else {
+    if (typeof existing === 'function') {
+      // Adding the second element, need to change to array.
+      existing = events[type] =
+        prepend ? [listener, existing] : [existing, listener];
+      // If we've already got an array, just append.
+    } else if (prepend) {
+      existing.unshift(listener);
     } else {
-      m = EventEmitter.defaultMaxListeners;
+      existing.push(listener);
     }
 
-    if (m && m > 0 && this._events[type].length > m) {
-      this._events[type].warned = true;
-      console.error('(node) warning: possible EventEmitter memory ' +
-                    'leak detected. %d listeners added. ' +
-                    'Use emitter.setMaxListeners() to increase limit.',
-                    this._events[type].length);
-      if (typeof console.trace === 'function') {
-        // not supported in IE 10
-        console.trace();
-      }
+    // Check for listener leak
+    m = $getMaxListeners(target);
+    if (m > 0 && existing.length > m && !existing.warned) {
+      existing.warned = true;
+      // No error code for this since it is a Warning
+      // eslint-disable-next-line no-restricted-syntax
+      var w = new Error('Possible EventEmitter memory leak detected. ' +
+                          existing.length + ' ' + String(type) + ' listeners ' +
+                          'added. Use emitter.setMaxListeners() to ' +
+                          'increase limit');
+      w.name = 'MaxListenersExceededWarning';
+      w.emitter = target;
+      w.type = type;
+      w.count = existing.length;
+      ProcessEmitWarning(w);
     }
   }
 
-  return this;
+  return target;
+}
+
+EventEmitter.prototype.addListener = function addListener(type, listener) {
+  return _addListener(this, type, listener, false);
 };
 
 EventEmitter.prototype.on = EventEmitter.prototype.addListener;
 
-EventEmitter.prototype.once = function(type, listener) {
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
+EventEmitter.prototype.prependListener =
+    function prependListener(type, listener) {
+      return _addListener(this, type, listener, true);
+    };
 
-  var fired = false;
-
-  function g() {
-    this.removeListener(type, g);
-
-    if (!fired) {
-      fired = true;
-      listener.apply(this, arguments);
-    }
+function onceWrapper() {
+  var args = [];
+  for (var i = 0; i < arguments.length; i++) args.push(arguments[i]);
+  if (!this.fired) {
+    this.target.removeListener(this.type, this.wrapFn);
+    this.fired = true;
+    ReflectApply(this.listener, this.target, args);
   }
+}
 
-  g.listener = listener;
-  this.on(type, g);
+function _onceWrap(target, type, listener) {
+  var state = { fired: false, wrapFn: undefined, target: target, type: type, listener: listener };
+  var wrapped = onceWrapper.bind(state);
+  wrapped.listener = listener;
+  state.wrapFn = wrapped;
+  return wrapped;
+}
 
+EventEmitter.prototype.once = function once(type, listener) {
+  if (typeof listener !== 'function') {
+    throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
+  }
+  this.on(type, _onceWrap(this, type, listener));
   return this;
 };
 
-// emits a 'removeListener' event iff the listener was removed
-EventEmitter.prototype.removeListener = function(type, listener) {
-  var list, position, length, i;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events || !this._events[type])
-    return this;
-
-  list = this._events[type];
-  length = list.length;
-  position = -1;
-
-  if (list === listener ||
-      (isFunction(list.listener) && list.listener === listener)) {
-    delete this._events[type];
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-
-  } else if (isObject(list)) {
-    for (i = length; i-- > 0;) {
-      if (list[i] === listener ||
-          (list[i].listener && list[i].listener === listener)) {
-        position = i;
-        break;
+EventEmitter.prototype.prependOnceListener =
+    function prependOnceListener(type, listener) {
+      if (typeof listener !== 'function') {
+        throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
       }
-    }
-
-    if (position < 0)
+      this.prependListener(type, _onceWrap(this, type, listener));
       return this;
+    };
 
-    if (list.length === 1) {
-      list.length = 0;
-      delete this._events[type];
-    } else {
-      list.splice(position, 1);
-    }
+// Emits a 'removeListener' event if and only if the listener was removed.
+EventEmitter.prototype.removeListener =
+    function removeListener(type, listener) {
+      var list, events, position, i, originalListener;
 
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-  }
+      if (typeof listener !== 'function') {
+        throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
+      }
 
-  return this;
+      events = this._events;
+      if (events === undefined)
+        return this;
+
+      list = events[type];
+      if (list === undefined)
+        return this;
+
+      if (list === listener || list.listener === listener) {
+        if (--this._eventsCount === 0)
+          this._events = Object.create(null);
+        else {
+          delete events[type];
+          if (events.removeListener)
+            this.emit('removeListener', type, list.listener || listener);
+        }
+      } else if (typeof list !== 'function') {
+        position = -1;
+
+        for (i = list.length - 1; i >= 0; i--) {
+          if (list[i] === listener || list[i].listener === listener) {
+            originalListener = list[i].listener;
+            position = i;
+            break;
+          }
+        }
+
+        if (position < 0)
+          return this;
+
+        if (position === 0)
+          list.shift();
+        else {
+          spliceOne(list, position);
+        }
+
+        if (list.length === 1)
+          events[type] = list[0];
+
+        if (events.removeListener !== undefined)
+          this.emit('removeListener', type, originalListener || listener);
+      }
+
+      return this;
+    };
+
+EventEmitter.prototype.off = EventEmitter.prototype.removeListener;
+
+EventEmitter.prototype.removeAllListeners =
+    function removeAllListeners(type) {
+      var listeners, events, i;
+
+      events = this._events;
+      if (events === undefined)
+        return this;
+
+      // not listening for removeListener, no need to emit
+      if (events.removeListener === undefined) {
+        if (arguments.length === 0) {
+          this._events = Object.create(null);
+          this._eventsCount = 0;
+        } else if (events[type] !== undefined) {
+          if (--this._eventsCount === 0)
+            this._events = Object.create(null);
+          else
+            delete events[type];
+        }
+        return this;
+      }
+
+      // emit removeListener for all listeners on all events
+      if (arguments.length === 0) {
+        var keys = Object.keys(events);
+        var key;
+        for (i = 0; i < keys.length; ++i) {
+          key = keys[i];
+          if (key === 'removeListener') continue;
+          this.removeAllListeners(key);
+        }
+        this.removeAllListeners('removeListener');
+        this._events = Object.create(null);
+        this._eventsCount = 0;
+        return this;
+      }
+
+      listeners = events[type];
+
+      if (typeof listeners === 'function') {
+        this.removeListener(type, listeners);
+      } else if (listeners !== undefined) {
+        // LIFO order
+        for (i = listeners.length - 1; i >= 0; i--) {
+          this.removeListener(type, listeners[i]);
+        }
+      }
+
+      return this;
+    };
+
+function _listeners(target, type, unwrap) {
+  var events = target._events;
+
+  if (events === undefined)
+    return [];
+
+  var evlistener = events[type];
+  if (evlistener === undefined)
+    return [];
+
+  if (typeof evlistener === 'function')
+    return unwrap ? [evlistener.listener || evlistener] : [evlistener];
+
+  return unwrap ?
+    unwrapListeners(evlistener) : arrayClone(evlistener, evlistener.length);
+}
+
+EventEmitter.prototype.listeners = function listeners(type) {
+  return _listeners(this, type, true);
 };
 
-EventEmitter.prototype.removeAllListeners = function(type) {
-  var key, listeners;
-
-  if (!this._events)
-    return this;
-
-  // not listening for removeListener, no need to emit
-  if (!this._events.removeListener) {
-    if (arguments.length === 0)
-      this._events = {};
-    else if (this._events[type])
-      delete this._events[type];
-    return this;
-  }
-
-  // emit removeListener for all listeners on all events
-  if (arguments.length === 0) {
-    for (key in this._events) {
-      if (key === 'removeListener') continue;
-      this.removeAllListeners(key);
-    }
-    this.removeAllListeners('removeListener');
-    this._events = {};
-    return this;
-  }
-
-  listeners = this._events[type];
-
-  if (isFunction(listeners)) {
-    this.removeListener(type, listeners);
-  } else if (listeners) {
-    // LIFO order
-    while (listeners.length)
-      this.removeListener(type, listeners[listeners.length - 1]);
-  }
-  delete this._events[type];
-
-  return this;
-};
-
-EventEmitter.prototype.listeners = function(type) {
-  var ret;
-  if (!this._events || !this._events[type])
-    ret = [];
-  else if (isFunction(this._events[type]))
-    ret = [this._events[type]];
-  else
-    ret = this._events[type].slice();
-  return ret;
-};
-
-EventEmitter.prototype.listenerCount = function(type) {
-  if (this._events) {
-    var evlistener = this._events[type];
-
-    if (isFunction(evlistener))
-      return 1;
-    else if (evlistener)
-      return evlistener.length;
-  }
-  return 0;
+EventEmitter.prototype.rawListeners = function rawListeners(type) {
+  return _listeners(this, type, false);
 };
 
 EventEmitter.listenerCount = function(emitter, type) {
-  return emitter.listenerCount(type);
+  if (typeof emitter.listenerCount === 'function') {
+    return emitter.listenerCount(type);
+  } else {
+    return listenerCount.call(emitter, type);
+  }
 };
 
-function isFunction(arg) {
-  return typeof arg === 'function';
+EventEmitter.prototype.listenerCount = listenerCount;
+function listenerCount(type) {
+  var events = this._events;
+
+  if (events !== undefined) {
+    var evlistener = events[type];
+
+    if (typeof evlistener === 'function') {
+      return 1;
+    } else if (evlistener !== undefined) {
+      return evlistener.length;
+    }
+  }
+
+  return 0;
 }
 
-function isNumber(arg) {
-  return typeof arg === 'number';
+EventEmitter.prototype.eventNames = function eventNames() {
+  return this._eventsCount > 0 ? ReflectOwnKeys(this._events) : [];
+};
+
+function arrayClone(arr, n) {
+  var copy = new Array(n);
+  for (var i = 0; i < n; ++i)
+    copy[i] = arr[i];
+  return copy;
 }
 
-function isObject(arg) {
-  return typeof arg === 'object' && arg !== null;
+function spliceOne(list, index) {
+  for (; index + 1 < list.length; index++)
+    list[index] = list[index + 1];
+  list.pop();
 }
 
-function isUndefined(arg) {
-  return arg === void 0;
+function unwrapListeners(arr) {
+  var ret = new Array(arr.length);
+  for (var i = 0; i < ret.length; ++i) {
+    ret[i] = arr[i].listener || arr[i];
+  }
+  return ret;
 }
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(48);
 exports.Stream = exports;
 exports.Readable = exports;
-exports.Writable = __webpack_require__(28);
-exports.Duplex = __webpack_require__(11);
+exports.Writable = __webpack_require__(29);
+exports.Duplex = __webpack_require__(12);
 exports.Transform = __webpack_require__(54);
-exports.PassThrough = __webpack_require__(179);
+exports.PassThrough = __webpack_require__(182);
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4980,7 +5360,7 @@ exports.PassThrough = __webpack_require__(179);
 
 /*<replacement>*/
 
-var processNextTick = __webpack_require__(19);
+var pna = __webpack_require__(19);
 /*</replacement>*/
 
 module.exports = Writable;
@@ -5007,7 +5387,7 @@ function CorkedRequest(state) {
 /* </replacement> */
 
 /*<replacement>*/
-var asyncWrite = !process.browser && ['v0.10', 'v0.9.'].indexOf(process.version.slice(0, 5)) > -1 ? setImmediate : processNextTick;
+var asyncWrite = !process.browser && ['v0.10', 'v0.9.'].indexOf(process.version.slice(0, 5)) > -1 ? setImmediate : pna.nextTick;
 /*</replacement>*/
 
 /*<replacement>*/
@@ -5023,7 +5403,7 @@ util.inherits = __webpack_require__(13);
 
 /*<replacement>*/
 var internalUtil = {
-  deprecate: __webpack_require__(178)
+  deprecate: __webpack_require__(181)
 };
 /*</replacement>*/
 
@@ -5032,6 +5412,7 @@ var Stream = __webpack_require__(50);
 /*</replacement>*/
 
 /*<replacement>*/
+
 var Buffer = __webpack_require__(20).Buffer;
 var OurUint8Array = global.Uint8Array || function () {};
 function _uint8ArrayToBuffer(chunk) {
@@ -5040,6 +5421,7 @@ function _uint8ArrayToBuffer(chunk) {
 function _isUint8Array(obj) {
   return Buffer.isBuffer(obj) || obj instanceof OurUint8Array;
 }
+
 /*</replacement>*/
 
 var destroyImpl = __webpack_require__(52);
@@ -5049,22 +5431,31 @@ util.inherits(Writable, Stream);
 function nop() {}
 
 function WritableState(options, stream) {
-  Duplex = Duplex || __webpack_require__(11);
+  Duplex = Duplex || __webpack_require__(12);
 
   options = options || {};
+
+  // Duplex streams are both readable and writable, but share
+  // the same options object.
+  // However, some cases require setting options to different
+  // values for the readable and the writable sides of the duplex stream.
+  // These options can be provided separately as readableXXX and writableXXX.
+  var isDuplex = stream instanceof Duplex;
 
   // object stream flag to indicate whether or not this stream
   // contains buffers or objects.
   this.objectMode = !!options.objectMode;
 
-  if (stream instanceof Duplex) this.objectMode = this.objectMode || !!options.writableObjectMode;
+  if (isDuplex) this.objectMode = this.objectMode || !!options.writableObjectMode;
 
   // the point at which write() starts returning false
   // Note: 0 is a valid value, means that we always return false if
   // the entire buffer is not flushed immediately on write()
   var hwm = options.highWaterMark;
+  var writableHwm = options.writableHighWaterMark;
   var defaultHwm = this.objectMode ? 16 : 16 * 1024;
-  this.highWaterMark = hwm || hwm === 0 ? hwm : defaultHwm;
+
+  if (hwm || hwm === 0) this.highWaterMark = hwm;else if (isDuplex && (writableHwm || writableHwm === 0)) this.highWaterMark = writableHwm;else this.highWaterMark = defaultHwm;
 
   // cast to ints.
   this.highWaterMark = Math.floor(this.highWaterMark);
@@ -5178,6 +5569,7 @@ if (typeof Symbol === 'function' && Symbol.hasInstance && typeof Function.protot
   Object.defineProperty(Writable, Symbol.hasInstance, {
     value: function (object) {
       if (realHasInstance.call(this, object)) return true;
+      if (this !== Writable) return false;
 
       return object && object._writableState instanceof WritableState;
     }
@@ -5189,7 +5581,7 @@ if (typeof Symbol === 'function' && Symbol.hasInstance && typeof Function.protot
 }
 
 function Writable(options) {
-  Duplex = Duplex || __webpack_require__(11);
+  Duplex = Duplex || __webpack_require__(12);
 
   // Writable ctor is applied to Duplexes, too.
   // `realHasInstance` is necessary because using plain `instanceof`
@@ -5229,7 +5621,7 @@ function writeAfterEnd(stream, cb) {
   var er = new Error('write after end');
   // TODO: defer error events consistently everywhere, not just the cb
   stream.emit('error', er);
-  processNextTick(cb, er);
+  pna.nextTick(cb, er);
 }
 
 // Checks that a user-supplied chunk is valid, especially for the particular
@@ -5246,7 +5638,7 @@ function validChunk(stream, state, chunk, cb) {
   }
   if (er) {
     stream.emit('error', er);
-    processNextTick(cb, er);
+    pna.nextTick(cb, er);
     valid = false;
   }
   return valid;
@@ -5255,7 +5647,7 @@ function validChunk(stream, state, chunk, cb) {
 Writable.prototype.write = function (chunk, encoding, cb) {
   var state = this._writableState;
   var ret = false;
-  var isBuf = _isUint8Array(chunk) && !state.objectMode;
+  var isBuf = !state.objectMode && _isUint8Array(chunk);
 
   if (isBuf && !Buffer.isBuffer(chunk)) {
     chunk = _uint8ArrayToBuffer(chunk);
@@ -5308,6 +5700,16 @@ function decodeChunk(state, chunk, encoding) {
   }
   return chunk;
 }
+
+Object.defineProperty(Writable.prototype, 'writableHighWaterMark', {
+  // making it explicit this property is not enumerable
+  // because otherwise some prototype manipulation in
+  // userland will fail
+  enumerable: false,
+  get: function () {
+    return this._writableState.highWaterMark;
+  }
+});
 
 // if we're already writing something, then just put this
 // in the queue, and wait our turn.  Otherwise, call _write
@@ -5366,10 +5768,10 @@ function onwriteError(stream, state, sync, er, cb) {
   if (sync) {
     // defer the callback if we are being called synchronously
     // to avoid piling up things on the stack
-    processNextTick(cb, er);
+    pna.nextTick(cb, er);
     // this can emit finish, and it will always happen
     // after error
-    processNextTick(finishMaybe, stream, state);
+    pna.nextTick(finishMaybe, stream, state);
     stream._writableState.errorEmitted = true;
     stream.emit('error', er);
   } else {
@@ -5467,6 +5869,7 @@ function clearBuffer(stream, state) {
     } else {
       state.corkedRequestsFree = new CorkedRequest(state);
     }
+    state.bufferedRequestCount = 0;
   } else {
     // Slow case, write chunks one-by-one
     while (entry) {
@@ -5477,6 +5880,7 @@ function clearBuffer(stream, state) {
 
       doWrite(stream, state, false, len, chunk, encoding, cb);
       entry = entry.next;
+      state.bufferedRequestCount--;
       // if we didn't call the onwrite immediately, then
       // it means that we need to wait until it does.
       // also, that means that the chunk and cb are currently
@@ -5489,7 +5893,6 @@ function clearBuffer(stream, state) {
     if (entry === null) state.lastBufferedRequest = null;
   }
 
-  state.bufferedRequestCount = 0;
   state.bufferedRequest = entry;
   state.bufferProcessing = false;
 }
@@ -5543,7 +5946,7 @@ function prefinish(stream, state) {
     if (typeof stream._final === 'function') {
       state.pendingcb++;
       state.finalCalled = true;
-      processNextTick(callFinal, stream, state);
+      pna.nextTick(callFinal, stream, state);
     } else {
       state.prefinished = true;
       stream.emit('prefinish');
@@ -5567,7 +5970,7 @@ function endWritable(stream, state, cb) {
   state.ending = true;
   finishMaybe(stream, state);
   if (cb) {
-    if (state.finished) processNextTick(cb);else stream.once('finish', cb);
+    if (state.finished) pna.nextTick(cb);else stream.once('finish', cb);
   }
   state.ended = true;
   stream.writable = false;
@@ -5615,17 +6018,17 @@ Writable.prototype._destroy = function (err, cb) {
   this.end();
   cb(err);
 };
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(18), __webpack_require__(176).setImmediate, __webpack_require__(12)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(18), __webpack_require__(179).setImmediate, __webpack_require__(11)))
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Implemtents Editor
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Implements Editor
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
@@ -5655,7 +6058,7 @@ var _markdownEditor = __webpack_require__(58);
 
 var _markdownEditor2 = _interopRequireDefault(_markdownEditor);
 
-var _mdPreview = __webpack_require__(33);
+var _mdPreview = __webpack_require__(34);
 
 var _mdPreview2 = _interopRequireDefault(_mdPreview);
 
@@ -5667,7 +6070,7 @@ var _layout = __webpack_require__(83);
 
 var _layout2 = _interopRequireDefault(_layout);
 
-var _eventManager = __webpack_require__(39);
+var _eventManager = __webpack_require__(40);
 
 var _eventManager2 = _interopRequireDefault(_eventManager);
 
@@ -5675,7 +6078,7 @@ var _commandManager2 = __webpack_require__(2);
 
 var _commandManager3 = _interopRequireDefault(_commandManager2);
 
-var _extManager = __webpack_require__(40);
+var _extManager = __webpack_require__(41);
 
 var _extManager2 = _interopRequireDefault(_extManager);
 
@@ -5683,11 +6086,11 @@ var _importManager = __webpack_require__(15);
 
 var _importManager2 = _interopRequireDefault(_importManager);
 
-var _wwCodeBlockManager = __webpack_require__(37);
+var _wwCodeBlockManager = __webpack_require__(38);
 
 var _wwCodeBlockManager2 = _interopRequireDefault(_wwCodeBlockManager);
 
-var _convertor = __webpack_require__(41);
+var _convertor = __webpack_require__(42);
 
 var _convertor2 = _interopRequireDefault(_convertor);
 
@@ -5707,179 +6110,181 @@ var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _wwTableManager = __webpack_require__(35);
+var _wwTableManager = __webpack_require__(36);
 
 var _wwTableManager2 = _interopRequireDefault(_wwTableManager);
 
-var _wwTableSelectionManager = __webpack_require__(36);
+var _wwTableSelectionManager = __webpack_require__(37);
 
 var _wwTableSelectionManager2 = _interopRequireDefault(_wwTableSelectionManager);
 
-var _codeBlockManager = __webpack_require__(24);
+var _codeBlockManager = __webpack_require__(25);
 
 var _codeBlockManager2 = _interopRequireDefault(_codeBlockManager);
 
-var _bold = __webpack_require__(113);
+var _toMarkRenderer = __webpack_require__(113);
+
+var _toMarkRenderer2 = _interopRequireDefault(_toMarkRenderer);
+
+var _bold = __webpack_require__(114);
 
 var _bold2 = _interopRequireDefault(_bold);
 
-var _italic = __webpack_require__(114);
+var _italic = __webpack_require__(115);
 
 var _italic2 = _interopRequireDefault(_italic);
 
-var _strike = __webpack_require__(115);
+var _strike = __webpack_require__(116);
 
 var _strike2 = _interopRequireDefault(_strike);
 
-var _blockquote = __webpack_require__(116);
+var _blockquote = __webpack_require__(117);
 
 var _blockquote2 = _interopRequireDefault(_blockquote);
 
-var _heading = __webpack_require__(117);
+var _heading = __webpack_require__(118);
 
 var _heading2 = _interopRequireDefault(_heading);
 
-var _paragraph = __webpack_require__(118);
+var _paragraph = __webpack_require__(119);
 
 var _paragraph2 = _interopRequireDefault(_paragraph);
 
-var _hr = __webpack_require__(119);
+var _hr = __webpack_require__(120);
 
 var _hr2 = _interopRequireDefault(_hr);
 
-var _addLink = __webpack_require__(120);
+var _addLink = __webpack_require__(121);
 
 var _addLink2 = _interopRequireDefault(_addLink);
 
-var _addImage = __webpack_require__(121);
+var _addImage = __webpack_require__(122);
 
 var _addImage2 = _interopRequireDefault(_addImage);
 
-var _ul = __webpack_require__(122);
+var _ul = __webpack_require__(123);
 
 var _ul2 = _interopRequireDefault(_ul);
 
-var _ol = __webpack_require__(123);
+var _ol = __webpack_require__(124);
 
 var _ol2 = _interopRequireDefault(_ol);
 
-var _indent = __webpack_require__(124);
+var _indent = __webpack_require__(125);
 
 var _indent2 = _interopRequireDefault(_indent);
 
-var _outdent = __webpack_require__(125);
+var _outdent = __webpack_require__(126);
 
 var _outdent2 = _interopRequireDefault(_outdent);
 
-var _table = __webpack_require__(126);
+var _table = __webpack_require__(127);
 
 var _table2 = _interopRequireDefault(_table);
 
-var _task = __webpack_require__(127);
+var _task = __webpack_require__(128);
 
 var _task2 = _interopRequireDefault(_task);
 
-var _code = __webpack_require__(128);
+var _code = __webpack_require__(129);
 
 var _code2 = _interopRequireDefault(_code);
 
-var _codeBlock = __webpack_require__(129);
+var _codeBlock = __webpack_require__(130);
 
 var _codeBlock2 = _interopRequireDefault(_codeBlock);
 
-var _bold3 = __webpack_require__(130);
+var _bold3 = __webpack_require__(131);
 
 var _bold4 = _interopRequireDefault(_bold3);
 
-var _italic3 = __webpack_require__(131);
+var _italic3 = __webpack_require__(132);
 
 var _italic4 = _interopRequireDefault(_italic3);
 
-var _strike3 = __webpack_require__(132);
+var _strike3 = __webpack_require__(133);
 
 var _strike4 = _interopRequireDefault(_strike3);
 
-var _blockquote3 = __webpack_require__(133);
+var _blockquote3 = __webpack_require__(134);
 
 var _blockquote4 = _interopRequireDefault(_blockquote3);
 
-var _addImage3 = __webpack_require__(134);
+var _addImage3 = __webpack_require__(135);
 
 var _addImage4 = _interopRequireDefault(_addImage3);
 
-var _addLink3 = __webpack_require__(135);
+var _addLink3 = __webpack_require__(136);
 
 var _addLink4 = _interopRequireDefault(_addLink3);
 
-var _hr3 = __webpack_require__(136);
+var _hr3 = __webpack_require__(137);
 
 var _hr4 = _interopRequireDefault(_hr3);
 
-var _heading3 = __webpack_require__(137);
+var _heading3 = __webpack_require__(138);
 
 var _heading4 = _interopRequireDefault(_heading3);
 
-var _paragraph3 = __webpack_require__(138);
+var _paragraph3 = __webpack_require__(139);
 
 var _paragraph4 = _interopRequireDefault(_paragraph3);
 
-var _ul3 = __webpack_require__(139);
+var _ul3 = __webpack_require__(140);
 
 var _ul4 = _interopRequireDefault(_ul3);
 
-var _ol3 = __webpack_require__(140);
+var _ol3 = __webpack_require__(141);
 
 var _ol4 = _interopRequireDefault(_ol3);
 
-var _table3 = __webpack_require__(141);
+var _table3 = __webpack_require__(142);
 
 var _table4 = _interopRequireDefault(_table3);
 
-var _tableAddRow = __webpack_require__(142);
+var _tableAddRow = __webpack_require__(143);
 
 var _tableAddRow2 = _interopRequireDefault(_tableAddRow);
 
-var _tableAddCol = __webpack_require__(143);
+var _tableAddCol = __webpack_require__(144);
 
 var _tableAddCol2 = _interopRequireDefault(_tableAddCol);
 
-var _tableRemoveRow = __webpack_require__(144);
+var _tableRemoveRow = __webpack_require__(145);
 
 var _tableRemoveRow2 = _interopRequireDefault(_tableRemoveRow);
 
-var _tableRemoveCol = __webpack_require__(145);
+var _tableRemoveCol = __webpack_require__(146);
 
 var _tableRemoveCol2 = _interopRequireDefault(_tableRemoveCol);
 
-var _tableAlignCol = __webpack_require__(146);
+var _tableAlignCol = __webpack_require__(147);
 
 var _tableAlignCol2 = _interopRequireDefault(_tableAlignCol);
 
-var _tableRemove = __webpack_require__(147);
+var _tableRemove = __webpack_require__(148);
 
 var _tableRemove2 = _interopRequireDefault(_tableRemove);
 
-var _indent3 = __webpack_require__(148);
+var _indent3 = __webpack_require__(149);
 
 var _indent4 = _interopRequireDefault(_indent3);
 
-var _outdent3 = __webpack_require__(149);
+var _outdent3 = __webpack_require__(150);
 
 var _outdent4 = _interopRequireDefault(_outdent3);
 
-var _task3 = __webpack_require__(150);
+var _task3 = __webpack_require__(151);
 
 var _task4 = _interopRequireDefault(_task3);
 
-var _code3 = __webpack_require__(151);
+var _code3 = __webpack_require__(152);
 
 var _code4 = _interopRequireDefault(_code3);
 
-var _codeBlock3 = __webpack_require__(152);
+var _codeBlock3 = __webpack_require__(153);
 
 var _codeBlock4 = _interopRequireDefault(_codeBlock3);
-
-__webpack_require__(153);
 
 __webpack_require__(154);
 
@@ -5915,6 +6320,10 @@ __webpack_require__(169);
 
 __webpack_require__(170);
 
+__webpack_require__(171);
+
+__webpack_require__(172);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -5926,47 +6335,44 @@ var availableLinkAttributes = ['rel', 'target', 'contenteditable', 'hreflang', '
 
 /**
  * @callback addImageBlobHook
- * @param  {File|Blob} fileOrBlob - image blob
- * @param  {callback} callback - callback function to be called after
- * @param  {string} source - source of an event the item belongs to. 'paste', 'drop', 'ui'
+ * @param {File|Blob} fileOrBlob - image blob
+ * @param {callback} callback - callback function to be called after
+ * @param {string} source - source of an event the item belongs to. 'paste', 'drop', 'ui'
  */
 
 /**
- * Class ToastUIEditor
+ * ToastUI Editor
+ * @param {object} options Option object
+ *     @param {HTMLElement} options.el - container element
+ *     @param {string} [options.height='300px'] - Editor's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
+ *     @param {string} [options.minHeight='200px'] - Editor's min-height style value in pixel ex) '300px'
+ *     @param {string} [options.initialValue] - Editor's initial value
+ *     @param {string} [options.previewStyle] - Markdown editor's preview style (tab, vertical)
+ *     @param {string} [options.initialEditType] - Initial editor type (markdown, wysiwyg)
+ *     @param {object[]} [options.events] - eventlist Event list
+ *         @param {function} options.events.load - It would be emitted when editor fully load
+ *         @param {function} options.events.change - It would be emitted when content changed
+ *         @param {function} options.events.stateChange - It would be emitted when format change by cursor position
+ *         @param {function} options.events.focus - It would be emitted when editor get focus
+ *         @param {function} options.events.blur - It would be emitted when editor loose focus
+ *     @param {object[]} [options.hooks] - Hook list
+ *         @param {function} options.hooks.previewBeforeHook - Submit preview to hook URL before preview be shown
+ *         @param {addImageBlobHook} options.hooks.addImageBlobHook - hook for image upload.
+ *     @param {string} [options.language='en_US'] - language
+ *     @param {boolean} [options.useCommandShortcut=true] - whether use keyboard shortcuts to perform commands
+ *     @param {boolean} [options.useDefaultHTMLSanitizer=true] - use default htmlSanitizer
+ *     @param {string[]} [options.codeBlockLanguages] - supported code block languages to be listed. default is what highlight.js supports
+ *     @param {boolean} [options.usageStatistics=true] - send hostname to google analytics
+ *     @param {string[]} [options.toolbarItems] - toolbar items.
+ *     @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
+ *     @param {string[]} [options.exts] - extensions
+ *     @param {object} [options.customConvertor] - convertor extention
+ *     @param {string} [options.placeholder] - The placeholder text of the editable element.
+ *     @param {string} [options.previewDelayTime] - the delay time for rendering preview
+ *     @param {object} [options.linkAttribute] - Attributes of anchor element that shold be rel, target, contenteditable, hreflang, type
  */
 
 var ToastUIEditor = function () {
-  /**
-   * ToastUI Editor
-   * @param {object} options Option object
-    * @param {HTMLElement} options.el - container element
-    * @param {string} [options.height='300px'] - Editor's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
-    * @param {string} [options.minHeight='200px'] - Editor's min-height style value in pixel ex) '300px'
-    * @param {string} [options.initialValue] - Editor's initial value
-    * @param {string} [options.previewStyle] - Markdown editor's preview style (tab, vertical)
-    * @param {string} [options.initialEditType] - Initial editor type (markdown, wysiwyg)
-    * @param {object[]} [options.events] - eventlist Event list
-      * @param {function} options.events.load - It would be emitted when editor fully load
-      * @param {function} options.events.change - It would be emitted when content changed
-      * @param {function} options.events.stateChange - It would be emitted when format change by cursor position
-      * @param {function} options.events.focus - It would be emitted when editor get focus
-      * @param {function} options.events.blur - It would be emitted when editor loose focus
-    * @param {object[]} [options.hooks] - Hook list
-      * @param {function} options.hooks.previewBeforeHook - Submit preview to hook URL before preview be shown
-      * @param {addImageBlobHook} options.hooks.addImageBlobHook - hook for image upload.
-    * @param {string} [options.language='en_US'] - language
-    * @param {boolean} [options.useCommandShortcut=true] - whether use keyboard shortcuts to perform commands
-    * @param {boolean} [options.useDefaultHTMLSanitizer=true] - use default htmlSanitizer
-    * @param {string[]} [options.codeBlockLanguages] - supported code block languages to be listed. default is what highlight.js supports
-    * @param {boolean} [options.usageStatistics=true] - send hostname to google analytics
-    * @param {string[]} [options.toolbarItems] - toolbar items.
-    * @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
-    * @param {string[]} [options.exts] - extensions
-    * @param {object} [options.customConvertor] - convertor extention
-    * @param {string} [options.placeholder] - The placeholder text of the editable element.
-    * @param {string} [options.previewDelayTime] - the delay time for rendering preview
-    * @param {object} [options.linkAttribute] - Attributes of anchor element that shold be rel, target, contenteditable, hreflang, type
-    */
   function ToastUIEditor(options) {
     var _this = this;
 
@@ -6030,8 +6436,13 @@ var ToastUIEditor = function () {
 
     this.mdEditor = _markdownEditor2.default.factory(this.layout.getMdEditorContainerEl(), this.eventManager, this.options);
     this.preview = new _mdPreview2.default(this.layout.getPreviewEl(), this.eventManager, this.convertor, false, this.options.previewDelayTime);
-    this.wwEditor = _wysiwygEditor2.default.factory(this.layout.getWwEditorContainerEl(), this.eventManager);
-    this.toMarkOptions = null;
+    this.wwEditor = _wysiwygEditor2.default.factory(this.layout.getWwEditorContainerEl(), this.eventManager, {
+      useDefaultHTMLSanitizer: this.options.useDefaultHTMLSanitizer
+    });
+    this.toMarkOptions = {
+      gfm: true,
+      renderer: _toMarkRenderer2.default
+    };
 
     if (this.options.linkAttribute) {
       var attribute = this._sanitizeLinkAttribute(this.options.linkAttribute);
@@ -6075,6 +6486,7 @@ var ToastUIEditor = function () {
    * sanitize attribute for link
    * @param {object} attribute - attribute for link
    * @returns {object} sanitized attribute
+   * @private
    */
 
 
@@ -6094,7 +6506,6 @@ var ToastUIEditor = function () {
 
     /**
      * change preview style
-     * @memberof ToastUIEditor
      * @param {string} style - 'tab'|'vertical'
      */
 
@@ -6109,7 +6520,6 @@ var ToastUIEditor = function () {
 
     /**
      * call commandManager's exec method
-     * @memberof ToastUIEditor
      * @param {*} ...args Command argument
      */
 
@@ -6123,7 +6533,6 @@ var ToastUIEditor = function () {
 
     /**
      * add default commands
-     * @memberof ToastUIEditor
      * @private
      */
 
@@ -6194,7 +6603,6 @@ var ToastUIEditor = function () {
 
     /**
      * Bind eventHandler to event type
-     * @memberof ToastUIEditor
      * @param {string} type Event type
      * @param {function} handler Event handler
      */
@@ -6207,7 +6615,6 @@ var ToastUIEditor = function () {
 
     /**
      * Unbind eventHandler from event type
-     * @memberof ToastUIEditor
      * @param {string} type Event type
      */
 
@@ -6219,7 +6626,6 @@ var ToastUIEditor = function () {
 
     /**
      * Add hook to TUIEditor event
-     * @memberof ToastUIEditor
      * @param {string} type Event type
      * @param {function} handler Event handler
      */
@@ -6233,7 +6639,6 @@ var ToastUIEditor = function () {
 
     /**
      * Remove hook from TUIEditor event
-     * @memberof ToastUIEditor
      * @param {string} type Event type
      */
 
@@ -6245,7 +6650,6 @@ var ToastUIEditor = function () {
 
     /**
      * Get CodeMirror instance
-     * @memberof ToastUIEditor
      * @returns {CodeMirror}
      */
 
@@ -6257,7 +6661,6 @@ var ToastUIEditor = function () {
 
     /**
      * Get SquireExt instance
-     * @memberof ToastUIEditor
      * @returns {SquireExt}
      */
 
@@ -6269,7 +6672,6 @@ var ToastUIEditor = function () {
 
     /**
      * Set focus to current Editor
-     * @memberof ToastUIEditor
      */
 
   }, {
@@ -6280,7 +6682,6 @@ var ToastUIEditor = function () {
 
     /**
      * Remove focus of current Editor
-     * @memberof ToastUIEditor
      */
 
   }, {
@@ -6291,7 +6692,6 @@ var ToastUIEditor = function () {
 
     /**
      * Set cursor position to end
-     * @memberof ToastUIEditor
      */
 
   }, {
@@ -6302,7 +6702,6 @@ var ToastUIEditor = function () {
 
     /**
      * Set cursor position to start
-     * @memberof ToastUIEditor
      */
 
   }, {
@@ -6313,7 +6712,6 @@ var ToastUIEditor = function () {
 
     /**
      * Set markdown syntax text.
-     * @memberof ToastUIEditor
      * @param {string} markdown - markdown syntax text.
      * @param {boolean} [cursorToEnd=true] - move cursor to contents end
      */
@@ -6336,7 +6734,6 @@ var ToastUIEditor = function () {
 
     /**
      * Set html value.
-     * @memberof ToastUIEditor
      * @param {string} html - html syntax text
      * @param {boolean} [cursorToEnd=true] - move cursor to contents end
      */
@@ -6358,7 +6755,6 @@ var ToastUIEditor = function () {
 
     /**
      * Set markdown syntax text.
-     * @memberof ToastUIEditor
      * @param {string} value - markdown syntax text
      * @param {boolean} [cursorToEnd=true] - move cursor to contents end
      * @deprecated
@@ -6374,7 +6770,6 @@ var ToastUIEditor = function () {
 
     /**
      * Get markdown syntax text.
-     * @memberof ToastUIEditor
      * @returns {string}
      */
 
@@ -6394,7 +6789,6 @@ var ToastUIEditor = function () {
 
     /**
      * Get html syntax text.
-     * @memberof ToastUIEditor
      * @returns {string}
      */
 
@@ -6410,7 +6804,6 @@ var ToastUIEditor = function () {
 
     /**
      * Get editor value.
-     * @memberof ToastUIEditor
      * @returns {string}
      * @deprecated
      */
@@ -6422,9 +6815,8 @@ var ToastUIEditor = function () {
     }
 
     /**
-     * insert text
+     * Insert text
      * @param {string} text - text string to insert
-     * @memberof ToastUIEditor
      */
 
   }, {
@@ -6439,7 +6831,6 @@ var ToastUIEditor = function () {
 
     /**
      * Add widget to selection
-     * @memberof ToastUIEditor
      * @param {Range} selection Current selection
      * @param {Node} node widget node
      * @param {string} style Adding style "over" or "bottom"
@@ -6454,7 +6845,6 @@ var ToastUIEditor = function () {
 
     /**
      * Set and return edithr height
-     * @memberof ToastUIEditor
      * @param {string} height - editor height
      * @returns {string} editor height
      */
@@ -6484,7 +6874,6 @@ var ToastUIEditor = function () {
     /**
      * Set / Get min content height
      * @param {string} minHeight - min content height in pixel
-     * @memberof ToastUIEditor
      * @returns {string} - min height in pixel
      */
 
@@ -6510,8 +6899,7 @@ var ToastUIEditor = function () {
 
     /**
      * Get current editor mode name
-     * @memberof ToastUIEditor
-     * @returns {Object} mdEditor or wwEditor
+     * @returns {Object} MarkdownEditor or WysiwygEditor
      */
 
   }, {
@@ -6530,7 +6918,6 @@ var ToastUIEditor = function () {
 
     /**
      * Return true if current editor mode is Markdown
-     * @memberof ToastUIEditor
      * @returns {boolean}
      */
 
@@ -6542,7 +6929,6 @@ var ToastUIEditor = function () {
 
     /**
      * Return true if current editor mode is WYSIWYG
-     * @memberof ToastUIEditor
      * @returns {boolean}
      */
 
@@ -6554,7 +6940,6 @@ var ToastUIEditor = function () {
 
     /**
      * Return false
-     * @memberof ToastUIEditor
      * @returns {boolean}
      */
 
@@ -6566,7 +6951,6 @@ var ToastUIEditor = function () {
 
     /**
      * Get current Markdown editor's preview style
-     * @memberof ToastUIEditor
      * @returns {string}
      */
 
@@ -6578,7 +6962,6 @@ var ToastUIEditor = function () {
 
     /**
      * Change editor's mode to given mode string
-     * @memberof ToastUIEditor
      * @param {string} mode - Editor mode name of want to change
      * @param {boolean} [isWithoutFocus] - Change mode without focus
      */
@@ -6615,7 +6998,6 @@ var ToastUIEditor = function () {
 
     /**
      * Remove TUIEditor from document
-     * @memberof ToastUIEditor
      */
 
   }, {
@@ -6647,7 +7029,6 @@ var ToastUIEditor = function () {
 
     /**
      * Hide TUIEditor
-     * @memberof ToastUIEditor
      */
 
   }, {
@@ -6658,7 +7039,6 @@ var ToastUIEditor = function () {
 
     /**
      * Show TUIEditor
-     * @memberof ToastUIEditor
      */
 
   }, {
@@ -6670,7 +7050,6 @@ var ToastUIEditor = function () {
 
     /**
      * Scroll Editor content to Top
-     * @memberof ToastUIEditor
      * @param {number} value Scroll amount
      * @returns {number}
      */
@@ -6683,7 +7062,6 @@ var ToastUIEditor = function () {
 
     /**
      * Set UI to private UI property
-     * @memberof ToastUIEditor
      * @param {UI} UI UI instance
      */
 
@@ -6695,8 +7073,7 @@ var ToastUIEditor = function () {
 
     /**
      * Get _ui property
-     * @memberof ToastUIEditor
-     * @returns {UI}
+     * @returns {DefaultUI|UI}
      */
 
   }, {
@@ -6707,7 +7084,6 @@ var ToastUIEditor = function () {
 
     /**
      * Reset TUIEditor
-     * @memberof ToastUIEditor
      */
 
   }, {
@@ -6719,7 +7095,6 @@ var ToastUIEditor = function () {
 
     /**
      * Get current range
-     * @memberof ToastUIEditor
      * @returns {{start, end}|Range}
      */
 
@@ -6731,9 +7106,8 @@ var ToastUIEditor = function () {
 
     /**
      * Get text object of current range
-     * @memberof ToastUIEditor
      * @param {{start, end}|Range} range Range object of each editor
-     * @returns {object} TextObject class
+     * @returns {MdTextObject|WwTextObject} TextObject class
      */
 
   }, {
@@ -6745,7 +7119,6 @@ var ToastUIEditor = function () {
     /**
      * get selected text
      * @returns {string} - selected text
-     * @memberof ToastUIEditor
      */
 
   }, {
@@ -6771,7 +7144,6 @@ var ToastUIEditor = function () {
 
     /**
      * Get instance of TUIEditor
-     * @memberof ToastUIEditor
      * @returns {Array}
      */
 
@@ -6783,9 +7155,8 @@ var ToastUIEditor = function () {
 
     /**
      * Define extension
-     * @memberof ToastUIEditor
      * @param {string} name Extension name
-     * @param {ExtManager~extension} ext extension
+     * @param {function} ext extension
      */
 
   }, {
@@ -6796,7 +7167,6 @@ var ToastUIEditor = function () {
 
     /**
      * Factory method for Editor
-     * @memberof ToastUIEditor
      * @param {object} options Option for initialize TUIEditor
      * @returns {object} ToastUIEditor or ToastUIEditorViewer
      */
@@ -6836,6 +7206,7 @@ ToastUIEditor.i18n = _i18n2.default;
 /**
  * domUtil instance
  * @type {DomUtil}
+ * @ignore
  */
 ToastUIEditor.domUtils = _domUtils2.default;
 
@@ -6855,24 +7226,28 @@ ToastUIEditor.Button = _button2.default;
 /**
  * WwCodeBlockManager class
  * @type {Class.<WwCodeBlockManager>}
+ * @ignore
  */
 ToastUIEditor.WwCodeBlockManager = _wwCodeBlockManager2.default;
 
 /**
  * WwTableManager class
  * @type {Class.<WwTableManager>}
+ * @ignore
  */
 ToastUIEditor.WwTableManager = _wwTableManager2.default;
 
 /**
  * WwTableManager class
  * @type {Class.<WwTableSelectionManager>}
+ * @ignore
  */
 ToastUIEditor.WwTableSelectionManager = _wwTableSelectionManager2.default;
 
 /**
  * CommandManager class
  * @type {Class.<CommandManager>}
+ * @ignore
  */
 ToastUIEditor.CommandManager = _commandManager3.default;
 
@@ -6891,7 +7266,7 @@ ToastUIEditor.markdownit = _convertor2.default.getMarkdownitRenderer();
 module.exports = ToastUIEditor;
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6919,13 +7294,10 @@ var TOOLTIP_CONTENT = '<div class="tui-tooltip"><div class="arrow"></div><span c
 
 /**
  * Class Tooltip
+ * @ignore
  */
 
 var Tooltip = function () {
-  /**
-   * Creates an instance of Tooltip.
-   * @memberof Tooltip
-   */
   function Tooltip() {
     _classCallCheck(this, Tooltip);
 
@@ -6967,7 +7339,7 @@ var Tooltip = function () {
 exports.default = new Tooltip();
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7011,14 +7383,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * Class CodeMirrorExt
+ * @param {HTMLElement} el - container jquery element
+ * @param {Object} [options={}] - codeMirror options
  */
 var CodeMirrorExt = function () {
-  /**
-   * Creates an instance of CodeMirrorExt.
-   * @param {HTMLElement} el - container jquery element
-   * @param {Object} [options={}] - codeMirror options
-   * @memberof CodeMirrorExt
-   */
   function CodeMirrorExt(el) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
@@ -7027,9 +7395,9 @@ var CodeMirrorExt = function () {
     this.editorContainerEl = el;
 
     /**
-     * @memberof CodeMirrorExt
-     * @protected
-     * @member
+     * CodeMirror instance
+     * @type {CodeMirror.EditorFromTextArea}
+     * @private
      */
     this.cm = null;
 
@@ -7039,7 +7407,6 @@ var CodeMirrorExt = function () {
   /**
    * init
    * @param {Object} options - codeMirror option
-   * @memberof CodeMirrorExt
    * @private
    */
 
@@ -7070,7 +7437,6 @@ var CodeMirrorExt = function () {
 
     /**
      * getCurrentRange
-     * @memberof CodeMirrorExt
      * @returns {Object} - selection range
      */
 
@@ -7089,7 +7455,6 @@ var CodeMirrorExt = function () {
 
     /**
      * Set focus to current Editor
-     * @memberof CodeMirrorExt
      */
 
   }, {
@@ -7100,7 +7465,6 @@ var CodeMirrorExt = function () {
 
     /**
      * blur focus to current Editor
-     * @memberof CodeMirrorExt
      */
 
   }, {
@@ -7111,7 +7475,6 @@ var CodeMirrorExt = function () {
 
     /**
      * Remove Editor from document
-     * @memberof CodeMirrorExt
      */
 
   }, {
@@ -7122,7 +7485,6 @@ var CodeMirrorExt = function () {
 
     /**
      * Set Editor value
-     * @memberof CodeMirrorExt
      * @param {string} markdown - Markdown syntax text
      * @param {boolean} [cursorToEnd=true] - move cursor to contents end
      */
@@ -7136,12 +7498,12 @@ var CodeMirrorExt = function () {
       if (cursorToEnd) {
         this.moveCursorToEnd();
       }
+      this.cm.doc.clearHistory();
       this.cm.refresh();
     }
 
     /**
      * Get editor value
-     * @memberof CodeMirrorExt
      * @returns {string} - codeMirror text value
      */
 
@@ -7153,7 +7515,6 @@ var CodeMirrorExt = function () {
 
     /**
      * Get CodeMirror instance
-     * @memberof CodeMirrorExt
      * @returns {CodeMirror}
      */
 
@@ -7165,7 +7526,6 @@ var CodeMirrorExt = function () {
 
     /**
      * Reset Editor
-     * @memberof CodeMirrorExt
      */
 
   }, {
@@ -7176,7 +7536,6 @@ var CodeMirrorExt = function () {
 
     /**
      * Get current caret position
-     * @memberof CodeMirrorExt
      * @returns {{from: {line: number, ch: number}, to: {line: number, ch: number}}}
      */
 
@@ -7188,7 +7547,6 @@ var CodeMirrorExt = function () {
 
     /**
      * Add widget
-     * @memberof CodeMirrorExt
      * @param {object} selection - Selection object
      * @param {HTMLElement} node - Widget node
      * @param {string} style - Adding style "over" or "bottom"
@@ -7207,7 +7565,6 @@ var CodeMirrorExt = function () {
 
     /**
      * Replace selection with given replacement content
-     * @memberof CodeMirrorExt
      * @param {string} content - Replacement content text
      * @param {object} selection - Selection object
      */
@@ -7225,7 +7582,6 @@ var CodeMirrorExt = function () {
 
     /**
      * Replace selection with replacement content and offset
-     * @memberof CodeMirrorExt
      * @param {string} content - Replacement content text
      * @param {number} offset - Offset
      * @param {number} overwriteLength - Length to overwrite
@@ -7251,7 +7607,6 @@ var CodeMirrorExt = function () {
 
     /**
      * Set Editor height
-     * @memberof CodeMirrorExt
      * @param {number} height - Editor height
      */
 
@@ -7266,7 +7621,6 @@ var CodeMirrorExt = function () {
     /**
      * set min height
      * @param {number} minHeight - min height
-     * @memberof CodeMirrorExt
      */
 
   }, {
@@ -7293,7 +7647,6 @@ var CodeMirrorExt = function () {
     /**
      * get code mirror wrapper element
      * @returns {HTMLElement} - code mirror wrapper element
-     * @memberof CodeMirrorExt
      */
 
   }, {
@@ -7306,7 +7659,6 @@ var CodeMirrorExt = function () {
      * get code mirror cursor
      * @param {string} [start='head'] - which end of the selection. 'from'|'to'|'head'|'anchor'
      * @returns {Cursor} - code mirror cursor
-     * @memberof CodeMirrorExt
      */
 
   }, {
@@ -7317,7 +7669,6 @@ var CodeMirrorExt = function () {
 
     /**
      * Set cursor position to end
-     * @memberof CodeMirrorExt
      */
 
   }, {
@@ -7331,7 +7682,6 @@ var CodeMirrorExt = function () {
 
     /**
      * Set cursor position to start
-     * @memberof CodeMirrorExt
      */
 
   }, {
@@ -7345,7 +7695,6 @@ var CodeMirrorExt = function () {
 
     /**
      * Scroll Editor content to Top
-     * @memberof CodeMirrorExt
      * @param {number} value - Scroll amount
      * @returns {number} - changed scroll top
      */
@@ -7362,7 +7711,6 @@ var CodeMirrorExt = function () {
 
     /**
      * Get start, end position of current selection
-     * @memberof CodeMirrorExt
      * @returns {{start: {line: *, ch: *}, end: {line: *, ch: *}}}
      */
 
@@ -7388,7 +7736,6 @@ var CodeMirrorExt = function () {
      * add codemirror event handler
      * @param {string} type - event type
      * @param {function} func - handler function
-     * @memberof CodeMirrorExt
      */
 
   }, {
@@ -7401,7 +7748,6 @@ var CodeMirrorExt = function () {
      * remove codemirror event handler
      * @param {string} type - event type
      * @param {function} func - handler function
-     * @memberof CodeMirrorExt
      */
 
   }, {
@@ -7417,7 +7763,7 @@ var CodeMirrorExt = function () {
 exports.default = CodeMirrorExt;
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7438,12 +7784,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * Class ComponentManager
+ * @param {MarkdownEditor|WysiwygEditor} editor - Editor instance
+ * @ignore
  */
 var ComponentManager = function () {
-  /**
-   * Constructor
-   * @param {MarkdownEditor|WysiwygEditor} editor - Editor instance
-   */
   function ComponentManager(editor) {
     _classCallCheck(this, ComponentManager);
 
@@ -7459,7 +7803,6 @@ var ComponentManager = function () {
   /**
    * addManager
    * Add manager
-   * @memberof ComponentManager
    * @param {string|function} nameOrConstructor Manager name or constructor
    * @param {function} [ManagerConstructor] Constructor
    */
@@ -7481,7 +7824,6 @@ var ComponentManager = function () {
     /**
      * getManager
      * Get manager by manager name
-     * @memberof ComponentManager
      * @param {string} name Manager name
      * @returns {object} manager
      */
@@ -7520,7 +7862,7 @@ var ComponentManager = function () {
 exports.default = ComponentManager;
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7534,7 +7876,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _preview = __webpack_require__(34);
+var _preview = __webpack_require__(35);
 
 var _preview2 = _interopRequireDefault(_preview);
 
@@ -7552,20 +7894,16 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /**
  * Class Markdown Preview
- * @extends {Preview}
+ * @param {jQuery} $el - base jQuery element
+ * @param {EventManager} eventManager - event manager
+ * @param {Convertor} convertor - convertor
+ * @param {boolean} isViewer - true for view only mode
+ * @param {Number} delayTime - lazyRunner delay time
+ * @ignore
  */
 var MarkdownPreview = function (_Preview) {
   _inherits(MarkdownPreview, _Preview);
 
-  /**
-   * Creates an instance of MarkdownPreview.
-   * @param {jQuery} $el - base jQuery element
-   * @param {EventManager} eventManager - event manager
-   * @param {Convertor} convertor - convertor
-   * @param {boolean} isViewer - true for view only mode
-   * @param {Number} delayTime - lazyRunner delay time
-   * @memberof MarkdownPreview
-   */
   function MarkdownPreview($el, eventManager, convertor, isViewer, delayTime) {
     _classCallCheck(this, MarkdownPreview);
 
@@ -7592,7 +7930,7 @@ var MarkdownPreview = function (_Preview) {
         latestMarkdownValue = markdownEditor.getValue();
 
         if (_this2.isVisible()) {
-          _this2.lazyRunner.run('refresh', latestMarkdownValue.replace(/<br>\n/g, '<br>'));
+          _this2.lazyRunner.run('refresh', latestMarkdownValue);
         }
       });
 
@@ -7611,7 +7949,6 @@ var MarkdownPreview = function (_Preview) {
     /**
      * render
      * @param {string} html - html string to render
-     * @memberof MarkdownPreview
      * @override
      */
 
@@ -7636,7 +7973,7 @@ var MarkdownPreview = function (_Preview) {
 exports.default = MarkdownPreview;
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7666,17 +8003,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * Class Preview
- **/
+ * @param {jQuery} $el Container element for preview
+ * @param {EventManager} eventManager Event manager instance
+ * @param {Convertor} convertor Convertor instance
+ * @param {boolean} isViewer - whether viewer mode or not
+ * @param {Number} delayTime - lazyRunner delay time
+ * @ignore
+ */
 var Preview = function () {
-  /**
-   * Creates an instance of Preview.
-   * @param {jQuery} $el Container element for preview
-   * @param {EventManager} eventManager Event manager instance
-   * @param {Convertor} convertor Convertor instance
-   * @param {boolean} isViewer - whether viewer mode or not
-   * @param {Number} delayTime - lazyRunner delay time
-   * @memberof Preview
-   */
   function Preview($el, eventManager, convertor, isViewer) {
     var delayTime = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 800;
 
@@ -7709,7 +8043,6 @@ var Preview = function () {
 
     /**
      * Refresh rendering
-     * @memberof Preview
      * @param {string} markdown Markdown text
      */
 
@@ -7722,7 +8055,6 @@ var Preview = function () {
     /**
      * get html string
      * @returns {string} - html preview string
-     * @memberof Preview
      */
 
   }, {
@@ -7734,7 +8066,6 @@ var Preview = function () {
     /**
      * set html string
      * @param {string} html - html preview string
-     * @memberof Preview
      */
 
   }, {
@@ -7745,9 +8076,7 @@ var Preview = function () {
 
     /**
      * Render HTML on preview
-     * @memberof Preview
      * @param {string} html HTML string
-     * @protected
      */
 
   }, {
@@ -7763,7 +8092,6 @@ var Preview = function () {
 
     /**
      * Set preview height
-     * @memberof Preview
      * @param {number} height - Height for preview container
      */
 
@@ -7776,7 +8104,6 @@ var Preview = function () {
     /**
      * set min height
      * @param {number} minHeight - min height
-     * @memberof Preview
      */
 
   }, {
@@ -7803,7 +8130,7 @@ var Preview = function () {
 exports.default = Preview;
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7843,14 +8170,11 @@ var TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
 
 /**
  * Class WwTableManager
+ * @param {WysiwygEditor} wwe - WysiwygEditor instance
+ * @ignore
  */
 
 var WwTableManager = function () {
-  /**
-   * Creates an instance of WwTableManager.
-   * @param {WysiwygEditor} wwe - WysiwygEditor instance
-   * @memberof WwTableManager
-   */
   function WwTableManager(wwe) {
     _classCallCheck(this, WwTableManager);
 
@@ -7859,7 +8183,6 @@ var WwTableManager = function () {
 
     /**
      * Name property
-     * @memberof WwTableManager#
      * @type {string}
      */
     this.name = 'table';
@@ -7868,9 +8191,7 @@ var WwTableManager = function () {
   }
 
   /**
-   * _init
    * Initialize
-   * @memberof WwTableManager
    * @private
    */
 
@@ -7884,9 +8205,7 @@ var WwTableManager = function () {
     }
 
     /**
-     * _initEvent
      * Initialize event
-     * @memberof WwTableManager
      * @private
      */
 
@@ -7996,9 +8315,7 @@ var WwTableManager = function () {
     }
 
     /**
-     * _initKeyHandler
      * Initialize key event handler
-     * @memberof WwTableManager
      * @private
      */
 
@@ -8011,7 +8328,7 @@ var WwTableManager = function () {
         'DEFAULT': function DEFAULT(ev, range, keymap) {
           var isRangeInTable = _this3.wwe.isInTable(range);
 
-          if (isRangeInTable && !_this3._isSingleModifierKey(keymap)) {
+          if (isRangeInTable && !_this3._isModifierKey(keymap)) {
             _this3._recordUndoStateIfNeed(range);
             _this3._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
           } else if (!isRangeInTable && _this3._lastCellNode) {
@@ -8250,11 +8567,9 @@ var WwTableManager = function () {
     }
 
     /**
-     * _isBeforeTable
      * Check whether passed range is right before table or not
      * @param {Range} range range
      * @returns {boolean} result
-     * @memberof WwTableManager
      * @private
      */
 
@@ -8265,11 +8580,9 @@ var WwTableManager = function () {
     }
 
     /**
-     * _isAfterTable
      * Check whether passed range is right after table or not
      * @param {Range} range range
      * @returns {boolean} result
-     * @memberof WwTableManager
      * @private
      */
 
@@ -8381,11 +8694,9 @@ var WwTableManager = function () {
     }
 
     /**
-     * _tableHandlerOnBackspace
      * Backspace handler in table
      * @param {Range} range range
      * @param {Event} event event
-     * @memberof WwTableManager
      * @private
      */
 
@@ -8416,6 +8727,7 @@ var WwTableManager = function () {
      * Return whether delete br in the br
      * @param {Range} range Range object
      * @returns {boolean}
+     * @private
      */
 
   }, {
@@ -8518,11 +8830,9 @@ var WwTableManager = function () {
     }
 
     /**
-     * _tableHandlerOnDelete
      * Delete handler in table
      * @param {Range} range range
      * @param {Event} event event
-     * @memberof WwTableManager
      * @private
      */
 
@@ -8549,10 +8859,8 @@ var WwTableManager = function () {
     }
 
     /**
-     * _appendBrIfTdOrThNotHaveAsLastChild
      * Append br if td or th doesn't have br as last child
      * @param {Range} range range
-     * @memberof WwTableManager
      * @private
      */
 
@@ -8577,10 +8885,8 @@ var WwTableManager = function () {
     }
 
     /**
-     * _unwrapBlockInTable
      * Unwrap default block tag in table
      * For Squire default action making abnormal behavior, remove default blocks in Table after setValue() called
-     * @memberof WwTableManager
      * @private
      */
 
@@ -8619,11 +8925,9 @@ var WwTableManager = function () {
     }
 
     /**
-     * _removeTable
      * Remove table
      * @param {Range} range range
      * @param {Node} table table
-     * @memberof WwTableManager
      * @private
      */
 
@@ -8639,10 +8943,8 @@ var WwTableManager = function () {
     }
 
     /**
-     * _recordUndoStateIfNeed
      * record undo state if need
      * @param {Range} range range
-     * @memberof WwTableManager
      * @private
      */
 
@@ -8658,10 +8960,8 @@ var WwTableManager = function () {
     }
 
     /**
-     * _recordUndoStateAndResetCellNode
      * record undo state and reset last cell node
      * @param {Range} range range
-     * @memberof WwTableManager
      * @private
      */
 
@@ -9128,7 +9428,6 @@ var WwTableManager = function () {
 
     /**
      * Reset _lastCellNode to null
-     * @memberof WwTableManager
      */
 
   }, {
@@ -9140,7 +9439,6 @@ var WwTableManager = function () {
     /**
      * Set _lastCellNode to given node
      * @param {HTMLElement} node Table cell
-     * @memberof WwTableManager
      */
 
   }, {
@@ -9157,9 +9455,10 @@ var WwTableManager = function () {
      */
 
   }, {
-    key: '_isSingleModifierKey',
-    value: function _isSingleModifierKey(keymap) {
-      return keymap === 'META' || keymap === 'SHIFT' || keymap === 'ALT' || keymap === 'CONTROL';
+    key: '_isModifierKey',
+    value: function _isModifierKey(keymap) {
+      return (/((META|SHIFT|ALT|CONTROL)\+?)/g.test(keymap)
+      );
     }
 
     /**
@@ -9265,30 +9564,6 @@ var WwTableManager = function () {
     }
 
     /**
-     * Get sibling textNode by given direction
-     * @param {HTMLElement} currentTextNode Current text node
-     * @param {boolean} isNext Boolean value whether direction equals 'next'
-     * @returns {boolean|null}
-     * @private
-     */
-
-  }, {
-    key: '_getSiblingTextNodeByDirection',
-    value: function _getSiblingTextNodeByDirection(currentTextNode, isNext) {
-      var isPreviousLineExist = currentTextNode.previousSibling && currentTextNode.previousSibling.nodeName === 'BR' && currentTextNode.previousSibling.previousSibling && currentTextNode.previousSibling.previousSibling.nodeType === 3;
-      var isNextLineExist = currentTextNode.nextSibling && currentTextNode.nextSibling.nodeName === 'BR' && currentTextNode.nextSibling.nextSibling && currentTextNode.nextSibling.nextSibling.nodeType === 3;
-      var target = void 0;
-
-      if (isNext && isNextLineExist) {
-        target = currentTextNode.nextSibling.nextSibling;
-      } else if (!isNext && isPreviousLineExist) {
-        target = currentTextNode.previousSibling.previousSibling;
-      }
-
-      return target;
-    }
-
-    /**
      * Change selection to sibling cell
      * @param {HTMLElement} currentCell current TD or TH
      * @param {Range} range Range object
@@ -9300,26 +9575,11 @@ var WwTableManager = function () {
   }, {
     key: '_changeSelectionToTargetCell',
     value: function _changeSelectionToTargetCell(currentCell, range, direction, scale) {
-      var startContainer = range.startContainer;
-
       var isNext = direction === 'next';
       var isRow = scale === 'row';
-      var target = void 0,
-          textOffset = void 0;
+      var target = void 0;
 
       if (isRow) {
-        if (_domUtils2.default.isTextNode(startContainer)) {
-          target = this._getSiblingTextNodeByDirection(startContainer, isNext);
-          if (target) {
-            textOffset = target.length < range.startOffset ? target.length : range.startOffset;
-
-            range.setStart(target, textOffset);
-            range.collapse(true);
-
-            return;
-          }
-        }
-
         target = _domUtils2.default.getSiblingRowCellByDirection(currentCell, direction, false);
       } else {
         target = _domUtils2.default.getTableCellByDirection(currentCell, direction);
@@ -9329,7 +9589,11 @@ var WwTableManager = function () {
       }
 
       if (target) {
-        range.setStart(target, 0);
+        if (isRow && !isNext) {
+          this._moveToCursorEndOfCell(target, range);
+        } else {
+          range.setStart(target, 0);
+        }
         range.collapse(true);
       } else {
         target = (0, _jquery2.default)(currentCell).parents('table').get(0);
@@ -9343,6 +9607,26 @@ var WwTableManager = function () {
 
         range.collapse(true);
       }
+    }
+  }, {
+    key: '_moveToCursorEndOfCell',
+    value: function _moveToCursorEndOfCell(cell, range) {
+      var lastListItem = void 0;
+
+      if (_domUtils2.default.isListNode(cell.lastChild)) {
+        lastListItem = _domUtils2.default.getLastNodeBy(cell.lastChild, function (lastNode) {
+          return lastNode.nodeName !== 'LI' || lastNode.nextSibling !== null;
+        });
+      }
+
+      var lastText = _domUtils2.default.getLastNodeBy(lastListItem || cell, function (node) {
+        return !_domUtils2.default.isTextNode(node);
+      });
+
+      var lastNode = lastText || lastListItem || cell;
+      var offset = lastText ? lastText.length : lastNode.childNodes.length - 1;
+
+      range.setStart(lastNode, offset);
     }
 
     /**
@@ -9362,20 +9646,68 @@ var WwTableManager = function () {
       var currentCell = (0, _jquery2.default)(range.startContainer).closest('td,th').get(0);
       var isNeedNext = void 0;
 
-      if (range.collapsed) {
-        if (this.wwe.isInTable(range) && currentCell && !sq.hasFormat('LI')) {
-          if ((direction === 'previous' || interval === 'row') && !_tuiCodeSnippet2.default.isUndefined(ev)) {
-            ev.preventDefault();
-          }
-
-          this._changeSelectionToTargetCell(currentCell, range, direction, interval);
-          sq.setSelection(range);
-
-          isNeedNext = false;
+      if (range.collapsed && this.wwe.isInTable(range) && currentCell) {
+        if (interval === 'row' && !this._isMovedCursorToRow(range, direction)) {
+          return isNeedNext;
         }
+
+        if ((direction === 'previous' || interval === 'row') && !_tuiCodeSnippet2.default.isUndefined(ev)) {
+          ev.preventDefault();
+        }
+
+        this._changeSelectionToTargetCell(currentCell, range, direction, interval);
+        sq.setSelection(range);
+
+        isNeedNext = false;
       }
 
       return isNeedNext;
+    }
+  }, {
+    key: '_isMovedCursorToRow',
+    value: function _isMovedCursorToRow(range, direction) {
+      var startContainer = range.startContainer;
+
+
+      if (this._isInList(startContainer)) {
+        return this._isMovedCursorFromListToRow(startContainer, direction);
+      }
+
+      return this._isMovedCursorFromTextToRow(range, direction);
+    }
+  }, {
+    key: '_isMovedCursorFromListToRow',
+    value: function _isMovedCursorFromListToRow(startContainer, direction) {
+      var directionKey = direction + 'Sibling';
+      var listItem = this._findListItem(startContainer);
+
+      var parentOfListItem = _domUtils2.default.getParentNodeBy(listItem, function (parentNode, currentNode) {
+        var firstOrLastItem = currentNode[directionKey] === null && parentNode[directionKey] === null;
+
+        return !_domUtils2.default.isCellNode(parentNode) && firstOrLastItem;
+      });
+
+      var firstOrLastList = _domUtils2.default.isListNode(parentOfListItem) && parentOfListItem[directionKey] === null;
+
+      return _domUtils2.default.isCellNode(parentOfListItem.parentNode) && firstOrLastList;
+    }
+  }, {
+    key: '_isMovedCursorFromTextToRow',
+    value: function _isMovedCursorFromTextToRow(range, direction) {
+      var startContainer = range.startContainer,
+          startOffset = range.startOffset;
+
+      var text = _domUtils2.default.isCellNode(startContainer) ? startContainer.childNodes[startOffset] : startContainer;
+
+      var parentOfStyledText = _domUtils2.default.getParentNodeBy(text, function (parentNode) {
+        return !_domUtils2.default.isCellNode(parentNode) && !_domUtils2.default.isTextNode(parentNode);
+      });
+
+      var foundSiblingNode = _domUtils2.default.getSiblingNodeBy(parentOfStyledText, direction, function (siblingNode) {
+        return siblingNode !== null && siblingNode.nodeName !== 'BR';
+      });
+
+      return foundSiblingNode && foundSiblingNode[direction + 'Sibling'] === null;
     }
 
     /**
@@ -9416,7 +9748,6 @@ var WwTableManager = function () {
     /**
      * Return new table ID class name string
      * @returns {string}
-     * @memberof WwTableManager
      */
 
   }, {
@@ -9475,7 +9806,7 @@ function tableCellGenerator(amount, tagName) {
 exports.default = WwTableManager;
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9511,14 +9842,11 @@ var TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
 
 /**
  * Class WwTableSelectionManager
+ * @param {WysiwygEditor} wwe - WysiwygEditor instance
+ * @ignore
  */
 
 var WwTableSelectionManager = function () {
-  /**
-     * Creates an instance of WwTableSelectionManager.
-     * @param {WysiwygEditor} wwe - WysiwygEditor instance
-     * @memberof WwTableSelectionManager
-     */
   function WwTableSelectionManager(wwe) {
     _classCallCheck(this, WwTableSelectionManager);
 
@@ -9526,19 +9854,16 @@ var WwTableSelectionManager = function () {
     this.eventManager = wwe.eventManager;
 
     /**
-         * Name property
-         * @memberof WwTableSelectionManager#
-         * @type {string}
-         */
+     * Name property
+     * @type {string}
+     */
     this.name = 'tableSelection';
 
     this._init();
   }
 
   /**
-     * _init
      * Initialize
-     * @memberof WwTableSelectionManager
      * @private
      */
 
@@ -9556,9 +9881,7 @@ var WwTableSelectionManager = function () {
     }
 
     /**
-       * _initEvent
        * Initialize event
-       * @memberof WwTableSelectionManager
        * @private
        */
 
@@ -9572,22 +9895,24 @@ var WwTableSelectionManager = function () {
           validSelectionEnd = void 0;
 
       /**
-           * Start table selection timer
-           * @type {object}
-           * @private
-           */
+       * Start table selection timer
+       * @type {object}
+       * @private
+       */
       this._tableSelectionTimer = null;
+
       /**
-           * Remove selection timer for Firefox table selection
-           * @type {object}
-           * @private
-           */
+       * Remove selection timer for Firefox table selection
+       * @type {object}
+       * @private
+       */
       this._removeSelectionTimer = null;
+
       /**
-           * Boolean value for whether selection started
-           * @type {boolean}
-           * @private
-           */
+       * Boolean value for whether selection started
+       * @type {boolean}
+       * @private
+       */
       this._isSelectionStarted = false;
 
       var onMouseover = function onMouseover(ev) {
@@ -9683,12 +10008,12 @@ var WwTableSelectionManager = function () {
     }
 
     /**
-       * Return whether single cell text selection or not
-       * @param {Range} range Range object
-       * @param {boolean} isSameCell Boolean value for same cell selection
-       * @returns {boolean}
-       * @private
-       */
+     * Return whether single cell text selection or not
+     * @param {Range} range Range object
+     * @param {boolean} isSameCell Boolean value for same cell selection
+     * @returns {boolean}
+     * @private
+     */
 
   }, {
     key: '_isTextSelect',
@@ -9712,9 +10037,9 @@ var WwTableSelectionManager = function () {
     }
 
     /**
-       * Set setTimeout and setInterval timer execution if table selecting situation
-       * @param {HTMLElement} selectionStart Start element
-       */
+     * Set setTimeout and setInterval timer execution if table selecting situation
+     * @param {HTMLElement} selectionStart Start element
+     */
 
   }, {
     key: 'setTableSelectionTimerIfNeed',
@@ -9727,9 +10052,9 @@ var WwTableSelectionManager = function () {
     }
 
     /**
-       * Clear setTimeout and setInterval timer execution
-       * @private
-       */
+     * Clear setTimeout and setInterval timer execution
+     * @private
+     */
 
   }, {
     key: '_clearTableSelectionTimerIfNeed',
@@ -9743,12 +10068,12 @@ var WwTableSelectionManager = function () {
     }
 
     /**
-       * Re arrange selection when table does not include both start and end selection element
-       * @param {HTMLElement} selectionStart Start element of selection
-       * @param {HTMLElement} selectionEnd End element of selection
-       * @returns {{startContainer: HTMLElement, endContainer: HTMLElement}}
-       * @private
-       */
+     * Re arrange selection when table does not include both start and end selection element
+     * @param {HTMLElement} selectionStart Start element of selection
+     * @param {HTMLElement} selectionEnd End element of selection
+     * @returns {{startContainer: HTMLElement, endContainer: HTMLElement}}
+     * @private
+     */
 
   }, {
     key: '_reArrangeSelectionIfneed',
@@ -9771,13 +10096,13 @@ var WwTableSelectionManager = function () {
     }
 
     /**
-       * Apply select direction to editor
-       * @param {{startContainer: HTMLElement, endContainer: HTMLElement}} selectionInformation
-       *     Selection start and end element
-       * @param {Range} range Range object
-       * @returns {Range}
-       * @private
-       */
+     * Apply select direction to editor
+     * @param {{startContainer: HTMLElement, endContainer: HTMLElement}} selectionInformation
+     *     Selection start and end element
+     * @param {Range} range Range object
+     * @returns {Range}
+     * @private
+     */
 
   }, {
     key: '_applySelectionDirection',
@@ -9811,12 +10136,11 @@ var WwTableSelectionManager = function () {
     }
 
     /**
-       * Get selection coordinate by current selection
-       * @param {HTMLElement} selectionStart start element
-       * @param {HTMLElement} selectionEnd end element
-       * @returns {{from: {row: number, cell: number}, to: {row: number, cell: number}}}
-       * @memberof WwTableSelectionManager
-       */
+     * Get selection coordinate by current selection
+     * @param {HTMLElement} selectionStart start element
+     * @param {HTMLElement} selectionEnd end element
+     * @returns {{from: {row: number, cell: number}, to: {row: number, cell: number}}}
+     */
 
   }, {
     key: 'getSelectionRangeFromTable',
@@ -9866,10 +10190,10 @@ var WwTableSelectionManager = function () {
     }
 
     /**
-       * Highlight selected table cells
-       * @param {HTMLElement} selectionStart start element
-       * @param {HTMLElement} selectionEnd end element
-       */
+     * Highlight selected table cells
+     * @param {HTMLElement} selectionStart start element
+     * @param {HTMLElement} selectionEnd end element
+     */
 
   }, {
     key: 'highlightTableCellsBy',
@@ -9897,9 +10221,8 @@ var WwTableSelectionManager = function () {
     }
 
     /**
-       * Remove '.te-cell-selected' class from all of table Cell
-       * @memberof WwTableSelectionManager
-       */
+     * Remove '.te-cell-selected' class from all of table Cell
+     */
 
   }, {
     key: 'removeClassAttrbuteFromAllCellsIfNeed',
@@ -9916,10 +10239,9 @@ var WwTableSelectionManager = function () {
     }
 
     /**
-       * gets selected cells
-       * @returns {jQuery} selected cells
-       * @memberof WwTableSelectionManager
-       */
+     * gets selected cells
+     * @returns {jQuery} selected cells
+     */
 
   }, {
     key: 'getSelectedCells',
@@ -9928,8 +10250,8 @@ var WwTableSelectionManager = function () {
     }
 
     /**
-       * Create selection by selected cells and collapse that selection to end
-       */
+     * Create selection by selected cells and collapse that selection to end
+     */
 
   }, {
     key: 'createRangeBySelectedCells',
@@ -9948,10 +10270,10 @@ var WwTableSelectionManager = function () {
     }
 
     /**
-       * Style to selected cells.
-       * @param {function} onStyle - function for styling
-       * @param {Object} [options] - options to be passed into onStyle
-       */
+     * Style to selected cells.
+     * @param {function} onStyle - function for styling
+     * @param {Object} [options] - options to be passed into onStyle
+     */
 
   }, {
     key: 'styleToSelectedCells',
@@ -9961,8 +10283,8 @@ var WwTableSelectionManager = function () {
     }
 
     /**
-       * Destroy.
-       */
+     * Destroy.
+     */
 
   }, {
     key: 'destroy',
@@ -9981,7 +10303,7 @@ var WwTableSelectionManager = function () {
 exports.default = WwTableSelectionManager;
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10027,14 +10349,11 @@ var CODEBLOCK_ATTR_NAME = 'data-te-codeblock';
 
 /**
  * Class WwCodeBlockManager
+ * @param {WysiwygEditor} wwe - wysiwygEditor instance
+ * @ignore
  */
 
 var WwCodeBlockManager = function () {
-  /**
-   * Creates an instance of WwCodeBlockManager.
-   * @param {WysiwygEditor} wwe - wysiwygEditor instance
-   * @memberof WwCodeBlockManager
-   */
   function WwCodeBlockManager(wwe) {
     _classCallCheck(this, WwCodeBlockManager);
 
@@ -10043,7 +10362,6 @@ var WwCodeBlockManager = function () {
 
     /**
      * Name property
-     * @memberof WwCodeBlockManager#
      * @type {string}
      */
     this.name = 'codeblock';
@@ -10052,9 +10370,7 @@ var WwCodeBlockManager = function () {
   }
 
   /**
-   * _init
    * Initialize
-   * @memberof WwCodeBlockManager
    * @private
    */
 
@@ -10067,9 +10383,7 @@ var WwCodeBlockManager = function () {
     }
 
     /**
-     * _initKeyHandler
      * Initialize key event handler
-     * @memberof WwCodeBlockManager
      * @private
      */
 
@@ -10113,9 +10427,7 @@ var WwCodeBlockManager = function () {
     }
 
     /**
-     * _initEvent
      * Initialize eventmanager event
-     * @memberof WwCodeBlockManager
      * @private
      */
 
@@ -10135,7 +10447,6 @@ var WwCodeBlockManager = function () {
 
     /**
      * Prepare nodes for pasting to code block
-     * @memberof WwCodeBlockManager
      * @param {Array.<Node>} nodes Node array
      * @returns {DocumentFragment}
      */
@@ -10153,7 +10464,6 @@ var WwCodeBlockManager = function () {
 
     /**
      * Convert nodes to text for pasting to code block
-     * @memberof WwCodeBlockManager
      * @param {Array.<Node>} nodes Node array
      * @returns {string} coverted string
      */
@@ -10183,7 +10493,6 @@ var WwCodeBlockManager = function () {
 
     /**
      * Copy content with code block style from code block selection
-     * @memberof WwCodeBlockManager
      * @param {HTMLElement} element Copied element
      * @param {Range} range Range object
      * @returns {HTMLElement}
@@ -10208,7 +10517,6 @@ var WwCodeBlockManager = function () {
 
     /**
      * Change pre tag to pre and code
-     * @memberof WwCodeBlockManager
      * @param {string} html HTML string
      * @returns {string}
      * @private
@@ -10224,9 +10532,7 @@ var WwCodeBlockManager = function () {
 
     /**
      * Modify Code Block for Wysiwyg
-     * @memberof WwCodeBlockManager
      * @param {HTMLElement} node root node to find pre
-     * @private
      */
 
   }, {
@@ -10268,7 +10574,6 @@ var WwCodeBlockManager = function () {
 
     /**
      * Remove codeblock of first line when press backspace in first line
-     * @memberof WwCodeBlockManager
      * @param {Event} ev Event object
      * @param {Range} range Range object
      * @returns {boolean}
@@ -10312,7 +10617,6 @@ var WwCodeBlockManager = function () {
 
     /**
      * Check node is empty line
-     * @memberof WwCodeBlockManager
      * @param {Node} node node
      * @returns {boolean}
      * @private
@@ -10331,7 +10635,6 @@ var WwCodeBlockManager = function () {
 
     /**
      * Check whether node is between same codeblocks
-     * @memberof WwCodeBlockManager
      * @param {Node} node Node
      * @returns {boolean}
      * @private
@@ -10356,7 +10659,6 @@ var WwCodeBlockManager = function () {
 
     /**
      * Check whether range is first line of code block
-     * @memberof WwCodeBlockManager
      * @param {Range} range Range object
      * @returns {boolean}
      * @private
@@ -10370,7 +10672,6 @@ var WwCodeBlockManager = function () {
 
     /**
      * Check whether front block of range is code block
-     * @memberof WwCodeBlockManager
      * @param {Range} range Range object
      * @returns {boolean}
      * @private
@@ -10388,7 +10689,6 @@ var WwCodeBlockManager = function () {
 
     /**
      * Remove codeblock first line of codeblock
-     * @memberof WwCodeBlockManager
      * @param {Node} node Pre Node
      * @private
      */
@@ -10420,7 +10720,6 @@ var WwCodeBlockManager = function () {
 
     /**
      * Return boolean value of whether current range is in the code block
-     * @memberof WwCodeBlockManager
      * @param {Range} range Range object
      * @returns {boolean}
      */
@@ -10440,7 +10739,7 @@ var WwCodeBlockManager = function () {
     }
 
     /**
-     * Destroy.
+     * Destroy
      */
 
   }, {
@@ -10476,7 +10775,7 @@ function sanitizeHtmlCode(code) {
 exports.default = WwCodeBlockManager;
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10489,7 +10788,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10517,13 +10816,10 @@ var eventList = ['previewBeforeHook', 'previewRenderAfter', 'previewNeedsRefresh
 
 /**
  * Class EventManager
+ * @ignore
  */
 
 var EventManager = function () {
-  /**
-   * Creates an instance of EventManager.
-   * @memberof EventManager
-   */
   function EventManager() {
     _classCallCheck(this, EventManager);
 
@@ -10533,7 +10829,6 @@ var EventManager = function () {
 
   /**
    * Listen event and bind event handler
-   * @memberof EventManager
    * @param {string} typeStr Event type string
    * @param {function} handler Event handler
    */
@@ -10560,7 +10855,6 @@ var EventManager = function () {
 
     /**
      * Emit event
-     * @memberof EventManager
      * @param {string} eventName Event name to emit
      * @returns {Array}
      */
@@ -10593,7 +10887,6 @@ var EventManager = function () {
 
     /**
      * Emit given event and return result
-     * @memberof EventManager
      * @param {string} eventName Event name to emit
      * @param {string} sourceText Source text to change
      * @returns {string}
@@ -10624,7 +10917,6 @@ var EventManager = function () {
 
     /**
      * Get event type and namespace
-     * @memberof EventManager
      * @param {string} typeStr Event type name
      * @returns {{type: string, namespace: string}}
      * @private
@@ -10656,7 +10948,6 @@ var EventManager = function () {
 
     /**
      * Add event type when given event not exists
-     * @memberof EventManager
      * @param {string} type Event type name
      */
 
@@ -10672,7 +10963,6 @@ var EventManager = function () {
 
     /**
      * Remove event handler from given event type
-     * @memberof EventManager
      * @param {string} typeStr Event type name
      * @param {function} [handler] - registered event handler
      */
@@ -10704,7 +10994,6 @@ var EventManager = function () {
      * Remove event handler with event handler
      * @param {string} type - event type name
      * @param {function} handler - event handler
-     * @memberof EventManager
      * @private
      */
 
@@ -10720,7 +11009,6 @@ var EventManager = function () {
 
     /**
      * Remove event handler with event type information
-     * @memberof EventManager
      * @param {string} type Event type name
      * @param {string} namespace Event namespace
      * @private
@@ -10754,7 +11042,7 @@ var EventManager = function () {
 exports.default = EventManager;
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10780,12 +11068,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * Class ExtManager
+ * @ignore
  */
 var ExtManager = function () {
-  /**
-   * Creates an instance of ExtManager.
-   * @memberof ExtManager
-   */
   function ExtManager() {
     _classCallCheck(this, ExtManager);
 
@@ -10793,11 +11078,9 @@ var ExtManager = function () {
   }
 
   /**
-   * defineExtension
    * Defined Extension
-   * @memberof ExtManager
    * @param {string} name extension name
-   * @param {ExtManager~extension} ext extension
+   * @param {function} ext extension
    */
 
 
@@ -10809,7 +11092,6 @@ var ExtManager = function () {
 
     /**
      * Apply extensions
-     * @memberof ExtManager
      * @param {object} context Context
      * @param {Array.<string|object>} options - options or names array
      */
@@ -10843,7 +11125,7 @@ var ExtManager = function () {
 exports.default = new ExtManager();
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10871,7 +11153,7 @@ var _markdownIt = __webpack_require__(85);
 
 var _markdownIt2 = _interopRequireDefault(_markdownIt);
 
-var _toMark = __webpack_require__(42);
+var _toMark = __webpack_require__(24);
 
 var _toMark2 = _interopRequireDefault(_toMark);
 
@@ -10909,7 +11191,7 @@ var _markdownitBackticksRenderer2 = _interopRequireDefault(_markdownitBackticksR
 
 var _markdownitInlinePlugin = __webpack_require__(93);
 
-var _codeBlockManager = __webpack_require__(24);
+var _codeBlockManager = __webpack_require__(25);
 
 var _codeBlockManager2 = _interopRequireDefault(_codeBlockManager);
 
@@ -10948,6 +11230,20 @@ markdownitHighlight.inline.ruler.at('backticks', _markdownitBackticksRenderer2.d
 markdownitHighlight.use(_markdownitTaskPlugin2.default);
 markdownitHighlight.use(_markdownitCodeBlockPlugin2.default);
 
+markdownitHighlight.renderer.rules.softbreak = function (tokens, idx, options) {
+  if (!options.breaks) {
+    return '\n';
+  }
+
+  var prevToken = tokens[idx - 1];
+
+  if (prevToken && prevToken.type === 'html_inline' && prevToken.content === '<br>') {
+    return '';
+  }
+
+  return options.xhtmlOut ? '<br />\n' : '<br>\n';
+};
+
 // markdownit
 markdownit.block.ruler.at('code', _markdownitCodeRenderer2.default);
 markdownit.block.ruler.at('table', _markdownitTableRenderer2.default, {
@@ -10963,15 +11259,24 @@ markdownit.inline.ruler.at('backticks', _markdownitBackticksRenderer2.default);
 markdownit.use(_markdownitTaskPlugin2.default);
 markdownit.use(_markdownitCodeBlockPlugin2.default);
 
+// This regular expression refere markdownIt.
+// https://github.com/markdown-it/markdown-it/blob/master/lib/common/html_re.js
+var attrName = '[a-zA-Z_:][a-zA-Z0-9:._-]*';
+var unquoted = '[^"\'=<>`\\x00-\\x20]+';
+var singleQuoted = "'[^']*'";
+var doubleQuoted = '"[^"]*"';
+var attrValue = '(?:' + unquoted + '|' + singleQuoted + '|' + doubleQuoted + ')';
+var attribute = '(?:\\s+' + attrName + '(?:\\s*=\\s*' + attrValue + ')?)*\\s*';
+var openingTag = '(\\\\<|<)([A-Za-z][A-Za-z0-9\\-]*' + attribute + ')(\\/?>)';
+var HTML_TAG_RX = new RegExp(openingTag, 'g');
+
 /**
  * Class Convertor
+ * @param {EventManager} em - EventManager instance
+ * @ignore
  */
 
 var Convertor = function () {
-  /**
-   * Convertor constructor
-   * @param {EventManager} em - EventManager instance
-   */
   function Convertor(em) {
     _classCallCheck(this, Convertor);
 
@@ -10981,22 +11286,17 @@ var Convertor = function () {
   /**
    * _markdownToHtmlWithCodeHighlight
    * Convert markdown to html with Codehighlight
-   * @private
-   * @memberof Convertor
    * @param {string} markdown markdown text
    * @param {object} env environment sandbox for markdownit
    * @returns {string} html text
+   * @private
    */
 
 
   _createClass(Convertor, [{
     key: '_markdownToHtmlWithCodeHighlight',
     value: function _markdownToHtmlWithCodeHighlight(markdown, env) {
-      // eslint-disable-next-line
-      var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
-      while (onerrorStripeRegex.exec(markdown)) {
-        markdown = markdown.replace(onerrorStripeRegex, '$1$3');
-      }
+      markdown = this._replaceImgAttrToDataProp(markdown);
 
       return markdownitHighlight.render(markdown, env);
     }
@@ -11004,25 +11304,41 @@ var Convertor = function () {
     /**
      * _markdownToHtml
      * Convert markdown to html
-     * @private
-     * @memberof Convertor
      * @param {string} markdown markdown text
      * @param {object} env environment sandbox for markdownit
      * @returns {string} html text
+     * @private
      */
 
   }, {
     key: '_markdownToHtml',
     value: function _markdownToHtml(markdown, env) {
-      // should insert data-tomark-pass in the opening tag
-      markdown = markdown.replace(/<(?!\/)([^>]+)([/]?)>/g, '<$1 data-tomark-pass $2>');
-      // eslint-disable-next-line
-      var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
+      markdown = markdown.replace(HTML_TAG_RX, function (match, $1, $2, $3) {
+        return match[0] !== '\\' ? '' + $1 + $2 + ' data-tomark-pass ' + $3 : match;
+      });
+
+      markdown = this._replaceImgAttrToDataProp(markdown);
+
+      return markdownit.render(markdown, env);
+    }
+
+    /**
+     * Replace 'onerror' attribute of img tag to data property string
+     * @param {string} markdown markdown text
+     * @returns {string} replaced markdown text
+     * @private
+     */
+
+  }, {
+    key: '_replaceImgAttrToDataProp',
+    value: function _replaceImgAttrToDataProp(markdown) {
+      var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\\"']?[^\\"']*[\\"']?)(.*)/i;
+
       while (onerrorStripeRegex.exec(markdown)) {
         markdown = markdown.replace(onerrorStripeRegex, '$1$3');
       }
 
-      return markdownit.render(markdown, env);
+      return markdown;
     }
 
     /**
@@ -11041,7 +11357,7 @@ var Convertor = function () {
 
       $wrapperDiv.find('code, pre').each(function (i, codeOrPre) {
         var $code = (0, _jquery2.default)(codeOrPre);
-        $code.html($code.html().replace(/ data-tomark-pass &gt;/g, '&gt;'));
+        $code.html($code.html().replace(/\sdata-tomark-pass\s(\/?)&gt;/g, '$1&gt;'));
       });
 
       renderedHTML = $wrapperDiv.html();
@@ -11053,7 +11369,6 @@ var Convertor = function () {
      * toHTMLWithCodeHightlight
      * Convert markdown to html with Codehighlight
      * emit convertorAfterMarkdownToHtmlConverted
-     * @memberof Convertor
      * @param {string} markdown markdown text
      * @returns {string} html text
      */
@@ -11071,7 +11386,6 @@ var Convertor = function () {
      * toHTML
      * Convert markdown to html
      * emit convertorAfterMarkdownToHtmlConverted
-     * @memberof Convertor
      * @param {string} markdown markdown text
      * @returns {string} html text
      */
@@ -11097,16 +11411,16 @@ var Convertor = function () {
     /**
      * set link attribute to markdownitHighlight, markdownit
      * using linkAttribute of markdownItInlinePlugin
-     * @param {object} attribute markdown text
+     * @param {object} attr markdown text
      */
 
   }, {
     key: 'setLinkAttribute',
-    value: function setLinkAttribute(attribute) {
-      var keys = Object.keys(attribute);
+    value: function setLinkAttribute(attr) {
+      var keys = Object.keys(attr);
       var setAttributeToToken = function setAttributeToToken(tokens, idx) {
         keys.forEach(function (key) {
-          tokens[idx].attrPush([key, attribute[key]]);
+          tokens[idx].attrPush([key, attr[key]]);
         });
       };
 
@@ -11118,7 +11432,6 @@ var Convertor = function () {
      * toMarkdown
      * Convert html to markdown
      * emit convertorAfterHtmlToMarkdownConverted
-     * @memberof Convertor
      * @param {string} html html text
      * @param {object | null} toMarkOptions - toMark library options
      * @returns {string} markdown text
@@ -11130,22 +11443,51 @@ var Convertor = function () {
       var resultArray = [];
 
       html = this.eventManager.emitReduce('convertorBeforeHtmlToMarkdownConverted', html);
+      html = this._appendAttributeForLinkIfNeed(html);
+      html = this._appendAttributeForBrIfNeed(html);
 
-      var markdown = (0, _toMark2.default)(this._appendAttributeForBrIfNeed(html), toMarkOptions);
+      var markdown = (0, _toMark2.default)(html, toMarkOptions);
 
       markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
+      markdown = this._removeNewlinesBeforeAfterAndBlockElement(markdown);
 
       _tuiCodeSnippet2.default.forEach(markdown.split('\n'), function (line, index) {
-        var FIND_TABLE_RX = /^\|[^|]*\|/ig;
+        var FIND_TABLE_RX = /^(<br>)+\||\|[^|]*\|/ig;
         var FIND_CODE_RX = /`[^`]*<br>[^`]*`/ig;
+        var FIND_BRS_BEFORE_TABLE = /^(<br>)+\|/ig;
 
-        if (!FIND_CODE_RX.test(line) && !FIND_TABLE_RX.test(line)) {
+        if (FIND_TABLE_RX.test(line)) {
+          line = line.replace(FIND_BRS_BEFORE_TABLE, function (match) {
+            return match.replace(/<br>/ig, '<br>\n');
+          });
+        } else if (!FIND_CODE_RX.test(line)) {
           line = line.replace(/<br>/ig, '<br>\n');
         }
         resultArray[index] = line;
       });
 
       return resultArray.join('\n');
+    }
+  }, {
+    key: '_removeNewlinesBeforeAfterAndBlockElement',
+    value: function _removeNewlinesBeforeAfterAndBlockElement(markdown) {
+      // Newlines('\n\n') are created on to-mark.
+      var NEWLINES_BEFORE_BLOCK_RX = /<br>\n\n(#{1,6} .*|```|\||(\*+|-+|\d+\.) .*| *>[^\n]+.*)/g;
+      var NEWLINES_AFTER_BLOCK_RX = /(#{1,6} .*|```|\|)\n\n<br>/g;
+
+      markdown = markdown.replace(NEWLINES_BEFORE_BLOCK_RX, '<br>$1');
+      markdown = markdown.replace(NEWLINES_AFTER_BLOCK_RX, '$1\n<br>');
+
+      return markdown;
+    }
+  }, {
+    key: '_appendAttributeForLinkIfNeed',
+    value: function _appendAttributeForLinkIfNeed(html) {
+      var LINK_RX = /!?\[.*\]\(<\s*a[^>]*>(.*?)<\s*\/\s*a>\)/ig;
+
+      return html.replace(LINK_RX, function (match) {
+        return match.replace(/<a /ig, '<a data-tomark-pass="" ');
+      });
     }
   }, {
     key: '_appendAttributeForBrIfNeed',
@@ -11159,11 +11501,16 @@ var Convertor = function () {
       var FIND_ATTRI_WITH_EMTPY_STR_RX = /<br data-tomark-pass="">/ig;
 
       html = html.replace(FIND_BR_RX, '<br />');
+
       html = html.replace(FIND_DOUBLE_BR_RX, '<br data-tomark-pass /><br data-tomark-pass />');
       html = html.replace(FIND_ATTRI_WITH_EMTPY_STR_RX, '<br data-tomark-pass />');
 
       html = html.replace(FIND_PASSING_AND_NORMAL_BR_RX, '<br data-tomark-pass /><br data-tomark-pass />$1');
       html = html.replace(FIND_FIRST_TWO_BRS_RX, '$1<br /><br />');
+
+      // Preserve <br> when there is only one empty line before or after a block element.
+      html = html.replace(/(.)<br \/><br \/>(<h[1-6]>|<pre>|<table>|<ul>|<ol>|<blockquote>)/g, '$1<br /><br data-tomark-pass />$2');
+      html = html.replace(/(<\/h[1-6]>|<\/pre>|<\/table>|<\/ul>|<\/ol>|<\/blockquote>)<br \/>(.)/g, '$1<br data-tomark-pass />$2');
 
       return html;
     }
@@ -11171,7 +11518,6 @@ var Convertor = function () {
     /**
      * get markdownit with code highlight
      * @returns {markdownit} - markdownit instance
-     * @memberof Convertor
      * @static
      */
 
@@ -11184,7 +11530,6 @@ var Convertor = function () {
     /**
      * get markdownit
      * @returns {markdownit} - markdownit instance
-     * @memberof Convertor
      * @static
      */
 
@@ -11199,12 +11544,6 @@ var Convertor = function () {
 }();
 
 exports.default = Convertor;
-
-/***/ }),
-/* 42 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_42__;
 
 /***/ }),
 /* 43 */
@@ -11263,23 +11602,16 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /**
  * Class Toolbar
- * @extends {UIController}
+ * @param {EventManager} eventManager - event manager
+ * @param {ToolbarItem[]} [items=[]] - toolbar items
  */
 var Toolbar = function (_UIController) {
   _inherits(Toolbar, _UIController);
 
   /**
-   * Creates an instance of Toolbar.
-   * @param {EventManager} eventManager - event manager
-   * @param {ToolbarItem[]} [items=[]] - toolbar items
-   * @memberof Toolbar
-   */
-
-  /**
    * items
-   * @memberof Toolbar
-   * @private
    * @type {Array}
+   * @private
    */
   function Toolbar(eventManager) {
     var items = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
@@ -11308,14 +11640,15 @@ var Toolbar = function (_UIController) {
   /**
    * init event
    * @param  {EventManager} eventManager - event manager
+   * @private
+   * @override
    */
 
 
   /**
    * event manager
-   * @memberof Toolbar
-   * @private
    * @type {EventManager}
+   * @private
    */
 
 
@@ -11348,7 +11681,6 @@ var Toolbar = function (_UIController) {
 
     /**
      * disable all toolbar button
-     * @memberof Toolbar
      */
 
   }, {
@@ -11363,7 +11695,6 @@ var Toolbar = function (_UIController) {
 
     /**
      * enable all toolbar button
-     * @memberof Toolbar
      */
 
   }, {
@@ -11379,7 +11710,6 @@ var Toolbar = function (_UIController) {
     /**
      * get toolbar items
      * @returns {ToolbarItem[]} - toolbar items
-     * @memberof Toolbar
      */
 
   }, {
@@ -11403,7 +11733,6 @@ var Toolbar = function (_UIController) {
     /**
      * set toolbar items
      * @param {ToolbarItem[]} items - toolbar items
-     * @memberof Toolbar
      */
 
   }, {
@@ -11416,7 +11745,6 @@ var Toolbar = function (_UIController) {
     /**
      * add toolbar item
      * @param {ToolbarItem|string|object} item - toolbar item
-     * @memberof Toolbar
      */
 
   }, {
@@ -11429,7 +11757,6 @@ var Toolbar = function (_UIController) {
      * insert toolbar item
      * @param  {number} index - index at given item inserted
      * @param  {ToolbarItem|string|object} item - toolbar item
-     * @memberof Toolbar
      */
 
   }, {
@@ -11466,7 +11793,6 @@ var Toolbar = function (_UIController) {
      * get index of given item
      * @param  {ToolbarItem} item - toolbar item
      * @returns {number} - index of given toolbar item
-     * @memberof Toolbar
      */
 
   }, {
@@ -11490,7 +11816,6 @@ var Toolbar = function (_UIController) {
      * @param  {ToolbarItem|number} item - an toolbar item or index of the item to remove
      * @param  {boolean} destroy - destroy item or not
      * @returns {ToolbarItem|undefined} - removed item
-     * @memberof Toolbar
      */
 
   }, {
@@ -11525,7 +11850,6 @@ var Toolbar = function (_UIController) {
 
     /**
      * remove all toolbar items
-     * @memberof Toolbar
      */
 
   }, {
@@ -11538,7 +11862,6 @@ var Toolbar = function (_UIController) {
 
     /**
      * destroy instance
-     * @memberof Toolbar
      * @override
      */
 
@@ -11553,7 +11876,6 @@ var Toolbar = function (_UIController) {
      * add button
      * @param {Button} button - button instance
      * @param {Number} [index] - location the button will be placed
-     * @memberof Toolbar
      * @deprecated
      */
 
@@ -11597,7 +11919,6 @@ var Toolbar = function (_UIController) {
     /**
      * add divider
      * @returns {jQuery} - created divider jquery element
-     * @memberof Toolbar
      * @deprecated
      */
 
@@ -11675,17 +11996,15 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
+/**
+ * Class ToolbarDivider
+ * @ignore
+ */
 var ToolbarDivider = function (_ToolbarItem) {
   _inherits(ToolbarDivider, _ToolbarItem);
 
   /**
-   * toolbar divider constructor
-   * @memberof ToolbarDivider
-   */
-
-  /**
    * item name
-   * @memberof ToolbarDivider
    * @type {String}
    * @static
    */
@@ -11701,7 +12020,6 @@ var ToolbarDivider = function (_ToolbarItem) {
 
   /**
    * item class name
-   * @memberof ToolbarDivider
    * @type {String}
    * @static
    */
@@ -11760,6 +12078,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * Toolbar Item Factory
+ * @ignore
  */
 var ToolbarItemFactory = function () {
   function ToolbarItemFactory() {
@@ -11771,7 +12090,6 @@ var ToolbarItemFactory = function () {
 
     /**
      * create toolbar item instance
-     * @memberof ToolbarItemFactory
      * @param {string} name - toolbar item name
      * @param {object} [options] - options to the constructor
      * @return {ToolbarItem} - created toolbar item instance
@@ -11976,21 +12294,17 @@ var CLASS_TAB_ACTIVE = 'te-tab-active';
 
 /**
  * Class Tab
- * @extends {UIController}
+ * @param {object} options - options
+ *     @param {string} [options.initName] - name of the default activated button
+ *     @param {string[]} options.items - Button names to be created
+ *     @param {DOMElement[]} options.sections - Dom elements for tab
+ *     @param {function} [options.onItemClick] - when button is clicked pass button name to function
+ * @ignore
  */
 
 var Tab = function (_UIController) {
   _inherits(Tab, _UIController);
 
-  /**
-   * Creates an instance of Tab.
-   * @param {object} options - options
-   *  @param {string} [options.initName] - name of the default activated button
-   *  @param {string[]} options.items - Button names to be created
-   *  @param {DOMElement[]} options.sections - Dom elements for tab
-   *  @param {function} [options.onItemClick] - when button is clicked pass button name to function
-   * @memberof Tab
-   */
   function Tab() {
     var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
@@ -12036,7 +12350,6 @@ var Tab = function (_UIController) {
     }
 
     /**
-     * activate
      * Activate Section & Button
      * @param {string} name button name to activate
      */
@@ -12122,15 +12435,15 @@ exports.default = Tab;
 
 module.exports = Stream;
 
-var EE = __webpack_require__(26).EventEmitter;
+var EE = __webpack_require__(27).EventEmitter;
 var inherits = __webpack_require__(13);
 
 inherits(Stream, EE);
-Stream.Readable = __webpack_require__(27);
-Stream.Writable = __webpack_require__(180);
-Stream.Duplex = __webpack_require__(181);
-Stream.Transform = __webpack_require__(182);
-Stream.PassThrough = __webpack_require__(183);
+Stream.Readable = __webpack_require__(28);
+Stream.Writable = __webpack_require__(183);
+Stream.Duplex = __webpack_require__(184);
+Stream.Transform = __webpack_require__(185);
+Stream.PassThrough = __webpack_require__(186);
 
 // Backwards-compat with node 0.4.x
 Stream.Stream = Stream;
@@ -12258,7 +12571,7 @@ Stream.prototype.pipe = function(dest, options) {
 
 /*<replacement>*/
 
-var processNextTick = __webpack_require__(19);
+var pna = __webpack_require__(19);
 /*</replacement>*/
 
 module.exports = Readable;
@@ -12274,7 +12587,7 @@ var Duplex;
 Readable.ReadableState = ReadableState;
 
 /*<replacement>*/
-var EE = __webpack_require__(26).EventEmitter;
+var EE = __webpack_require__(27).EventEmitter;
 
 var EElistenerCount = function (emitter, type) {
   return emitter.listeners(type).length;
@@ -12285,9 +12598,8 @@ var EElistenerCount = function (emitter, type) {
 var Stream = __webpack_require__(50);
 /*</replacement>*/
 
-// TODO(bmeurer): Change this back to const once hole checks are
-// properly optimized away early in Ignition+TurboFan.
 /*<replacement>*/
+
 var Buffer = __webpack_require__(20).Buffer;
 var OurUint8Array = global.Uint8Array || function () {};
 function _uint8ArrayToBuffer(chunk) {
@@ -12296,6 +12608,7 @@ function _uint8ArrayToBuffer(chunk) {
 function _isUint8Array(obj) {
   return Buffer.isBuffer(obj) || obj instanceof OurUint8Array;
 }
+
 /*</replacement>*/
 
 /*<replacement>*/
@@ -12304,7 +12617,7 @@ util.inherits = __webpack_require__(13);
 /*</replacement>*/
 
 /*<replacement>*/
-var debugUtil = __webpack_require__(174);
+var debugUtil = __webpack_require__(176);
 var debug = void 0;
 if (debugUtil && debugUtil.debuglog) {
   debug = debugUtil.debuglog('stream');
@@ -12313,7 +12626,7 @@ if (debugUtil && debugUtil.debuglog) {
 }
 /*</replacement>*/
 
-var BufferList = __webpack_require__(175);
+var BufferList = __webpack_require__(177);
 var destroyImpl = __webpack_require__(52);
 var StringDecoder;
 
@@ -12324,33 +12637,40 @@ var kProxyEvents = ['error', 'close', 'destroy', 'pause', 'resume'];
 function prependListener(emitter, event, fn) {
   // Sadly this is not cacheable as some libraries bundle their own
   // event emitter implementation with them.
-  if (typeof emitter.prependListener === 'function') {
-    return emitter.prependListener(event, fn);
-  } else {
-    // This is a hack to make sure that our error handler is attached before any
-    // userland ones.  NEVER DO THIS. This is here only because this code needs
-    // to continue to work with older versions of Node.js that do not include
-    // the prependListener() method. The goal is to eventually remove this hack.
-    if (!emitter._events || !emitter._events[event]) emitter.on(event, fn);else if (isArray(emitter._events[event])) emitter._events[event].unshift(fn);else emitter._events[event] = [fn, emitter._events[event]];
-  }
+  if (typeof emitter.prependListener === 'function') return emitter.prependListener(event, fn);
+
+  // This is a hack to make sure that our error handler is attached before any
+  // userland ones.  NEVER DO THIS. This is here only because this code needs
+  // to continue to work with older versions of Node.js that do not include
+  // the prependListener() method. The goal is to eventually remove this hack.
+  if (!emitter._events || !emitter._events[event]) emitter.on(event, fn);else if (isArray(emitter._events[event])) emitter._events[event].unshift(fn);else emitter._events[event] = [fn, emitter._events[event]];
 }
 
 function ReadableState(options, stream) {
-  Duplex = Duplex || __webpack_require__(11);
+  Duplex = Duplex || __webpack_require__(12);
 
   options = options || {};
+
+  // Duplex streams are both readable and writable, but share
+  // the same options object.
+  // However, some cases require setting options to different
+  // values for the readable and the writable sides of the duplex stream.
+  // These options can be provided separately as readableXXX and writableXXX.
+  var isDuplex = stream instanceof Duplex;
 
   // object stream flag. Used to make read(n) ignore n and to
   // make all the buffer merging and length checks go away
   this.objectMode = !!options.objectMode;
 
-  if (stream instanceof Duplex) this.objectMode = this.objectMode || !!options.readableObjectMode;
+  if (isDuplex) this.objectMode = this.objectMode || !!options.readableObjectMode;
 
   // the point at which it stops calling _read() to fill the buffer
   // Note: 0 is a valid value, means "don't call _read preemptively ever"
   var hwm = options.highWaterMark;
+  var readableHwm = options.readableHighWaterMark;
   var defaultHwm = this.objectMode ? 16 : 16 * 1024;
-  this.highWaterMark = hwm || hwm === 0 ? hwm : defaultHwm;
+
+  if (hwm || hwm === 0) this.highWaterMark = hwm;else if (isDuplex && (readableHwm || readableHwm === 0)) this.highWaterMark = readableHwm;else this.highWaterMark = defaultHwm;
 
   // cast to ints.
   this.highWaterMark = Math.floor(this.highWaterMark);
@@ -12404,7 +12724,7 @@ function ReadableState(options, stream) {
 }
 
 function Readable(options) {
-  Duplex = Duplex || __webpack_require__(11);
+  Duplex = Duplex || __webpack_require__(12);
 
   if (!(this instanceof Readable)) return new Readable(options);
 
@@ -12723,7 +13043,7 @@ function emitReadable(stream) {
   if (!state.emittedReadable) {
     debug('emitReadable', state.flowing);
     state.emittedReadable = true;
-    if (state.sync) processNextTick(emitReadable_, stream);else emitReadable_(stream);
+    if (state.sync) pna.nextTick(emitReadable_, stream);else emitReadable_(stream);
   }
 }
 
@@ -12742,7 +13062,7 @@ function emitReadable_(stream) {
 function maybeReadMore(stream, state) {
   if (!state.readingMore) {
     state.readingMore = true;
-    processNextTick(maybeReadMore_, stream, state);
+    pna.nextTick(maybeReadMore_, stream, state);
   }
 }
 
@@ -12787,7 +13107,7 @@ Readable.prototype.pipe = function (dest, pipeOpts) {
   var doEnd = (!pipeOpts || pipeOpts.end !== false) && dest !== process.stdout && dest !== process.stderr;
 
   var endFn = doEnd ? onend : unpipe;
-  if (state.endEmitted) processNextTick(endFn);else src.once('end', endFn);
+  if (state.endEmitted) pna.nextTick(endFn);else src.once('end', endFn);
 
   dest.on('unpipe', onunpipe);
   function onunpipe(readable, unpipeInfo) {
@@ -12977,7 +13297,7 @@ Readable.prototype.on = function (ev, fn) {
       state.readableListening = state.needReadable = true;
       state.emittedReadable = false;
       if (!state.reading) {
-        processNextTick(nReadingNextTick, this);
+        pna.nextTick(nReadingNextTick, this);
       } else if (state.length) {
         emitReadable(this);
       }
@@ -13008,7 +13328,7 @@ Readable.prototype.resume = function () {
 function resume(stream, state) {
   if (!state.resumeScheduled) {
     state.resumeScheduled = true;
-    processNextTick(resume_, stream, state);
+    pna.nextTick(resume_, stream, state);
   }
 }
 
@@ -13045,18 +13365,19 @@ function flow(stream) {
 // This is *not* part of the readable stream interface.
 // It is an ugly unfortunate mess of history.
 Readable.prototype.wrap = function (stream) {
+  var _this = this;
+
   var state = this._readableState;
   var paused = false;
 
-  var self = this;
   stream.on('end', function () {
     debug('wrapped end');
     if (state.decoder && !state.ended) {
       var chunk = state.decoder.end();
-      if (chunk && chunk.length) self.push(chunk);
+      if (chunk && chunk.length) _this.push(chunk);
     }
 
-    self.push(null);
+    _this.push(null);
   });
 
   stream.on('data', function (chunk) {
@@ -13066,7 +13387,7 @@ Readable.prototype.wrap = function (stream) {
     // don't skip over falsy values in objectMode
     if (state.objectMode && (chunk === null || chunk === undefined)) return;else if (!state.objectMode && (!chunk || !chunk.length)) return;
 
-    var ret = self.push(chunk);
+    var ret = _this.push(chunk);
     if (!ret) {
       paused = true;
       stream.pause();
@@ -13087,12 +13408,12 @@ Readable.prototype.wrap = function (stream) {
 
   // proxy certain important events.
   for (var n = 0; n < kProxyEvents.length; n++) {
-    stream.on(kProxyEvents[n], self.emit.bind(self, kProxyEvents[n]));
+    stream.on(kProxyEvents[n], this.emit.bind(this, kProxyEvents[n]));
   }
 
   // when we try to consume some more bytes, simply unpause the
   // underlying stream.
-  self._read = function (n) {
+  this._read = function (n) {
     debug('wrapped _read', n);
     if (paused) {
       paused = false;
@@ -13100,8 +13421,18 @@ Readable.prototype.wrap = function (stream) {
     }
   };
 
-  return self;
+  return this;
 };
+
+Object.defineProperty(Readable.prototype, 'readableHighWaterMark', {
+  // making it explicit this property is not enumerable
+  // because otherwise some prototype manipulation in
+  // userland will fail
+  enumerable: false,
+  get: function () {
+    return this._readableState.highWaterMark;
+  }
+});
 
 // exposed for testing purposes only.
 Readable._fromList = fromList;
@@ -13215,7 +13546,7 @@ function endReadable(stream) {
 
   if (!state.endEmitted) {
     state.ended = true;
-    processNextTick(endReadableNT, state, stream);
+    pna.nextTick(endReadableNT, state, stream);
   }
 }
 
@@ -13228,19 +13559,13 @@ function endReadableNT(state, stream) {
   }
 }
 
-function forEach(xs, f) {
-  for (var i = 0, l = xs.length; i < l; i++) {
-    f(xs[i], i);
-  }
-}
-
 function indexOf(xs, x) {
   for (var i = 0, l = xs.length; i < l; i++) {
     if (xs[i] === x) return i;
   }
   return -1;
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12), __webpack_require__(18)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(11), __webpack_require__(18)))
 
 /***/ }),
 /* 49 */
@@ -13257,7 +13582,7 @@ module.exports = Array.isArray || function (arr) {
 /* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(26).EventEmitter;
+module.exports = __webpack_require__(27).EventEmitter;
 
 
 /***/ }),
@@ -13268,15 +13593,15 @@ module.exports = __webpack_require__(26).EventEmitter;
 /* WEBPACK VAR INJECTION */(function(global) {/*!
  * The buffer module from node.js, for the browser.
  *
- * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
+ * @author   Feross Aboukhadijeh <http://feross.org>
  * @license  MIT
  */
 /* eslint-disable no-proto */
 
 
 
-var base64 = __webpack_require__(172)
-var ieee754 = __webpack_require__(173)
+var base64 = __webpack_require__(174)
+var ieee754 = __webpack_require__(175)
 var isArray = __webpack_require__(49)
 
 exports.Buffer = Buffer
@@ -15055,7 +15380,7 @@ function isnan (val) {
   return val !== val // eslint-disable-line no-self-compare
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(11)))
 
 /***/ }),
 /* 52 */
@@ -15066,7 +15391,7 @@ function isnan (val) {
 
 /*<replacement>*/
 
-var processNextTick = __webpack_require__(19);
+var pna = __webpack_require__(19);
 /*</replacement>*/
 
 // undocumented cb() API, needed for core, not for public API
@@ -15080,9 +15405,9 @@ function destroy(err, cb) {
     if (cb) {
       cb(err);
     } else if (err && (!this._writableState || !this._writableState.errorEmitted)) {
-      processNextTick(emitErrorNT, this, err);
+      pna.nextTick(emitErrorNT, this, err);
     }
-    return;
+    return this;
   }
 
   // we set destroyed to true before firing error callbacks in order
@@ -15099,7 +15424,7 @@ function destroy(err, cb) {
 
   this._destroy(err || null, function (err) {
     if (!cb && err) {
-      processNextTick(emitErrorNT, _this, err);
+      pna.nextTick(emitErrorNT, _this, err);
       if (_this._writableState) {
         _this._writableState.errorEmitted = true;
       }
@@ -15107,6 +15432,8 @@ function destroy(err, cb) {
       cb(err);
     }
   });
+
+  return this;
 }
 
 function undestroy() {
@@ -15140,9 +15467,33 @@ module.exports = {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+
+
+/*<replacement>*/
 
 var Buffer = __webpack_require__(20).Buffer;
+/*</replacement>*/
 
 var isEncoding = Buffer.isEncoding || function (encoding) {
   encoding = '' + encoding;
@@ -15254,10 +15605,10 @@ StringDecoder.prototype.fillLast = function (buf) {
 };
 
 // Checks the type of a UTF-8 byte, whether it's ASCII, a leading byte, or a
-// continuation byte.
+// continuation byte. If an invalid byte is detected, -2 is returned.
 function utf8CheckByte(byte) {
   if (byte <= 0x7F) return 0;else if (byte >> 5 === 0x06) return 2;else if (byte >> 4 === 0x0E) return 3;else if (byte >> 3 === 0x1E) return 4;
-  return -1;
+  return byte >> 6 === 0x02 ? -1 : -2;
 }
 
 // Checks at most 3 bytes at the end of a Buffer in order to detect an
@@ -15271,13 +15622,13 @@ function utf8CheckIncomplete(self, buf, i) {
     if (nb > 0) self.lastNeed = nb - 1;
     return nb;
   }
-  if (--j < i) return 0;
+  if (--j < i || nb === -2) return 0;
   nb = utf8CheckByte(buf[j]);
   if (nb >= 0) {
     if (nb > 0) self.lastNeed = nb - 2;
     return nb;
   }
-  if (--j < i) return 0;
+  if (--j < i || nb === -2) return 0;
   nb = utf8CheckByte(buf[j]);
   if (nb >= 0) {
     if (nb > 0) {
@@ -15291,7 +15642,7 @@ function utf8CheckIncomplete(self, buf, i) {
 // Validates as many continuation bytes for a multi-byte UTF-8 character as
 // needed or are available. If we see a non-continuation byte where we expect
 // one, we "replace" the validated continuation bytes we've seen so far with
-// UTF-8 replacement characters ('\ufffd'), to match v8's UTF-8 decoding
+// a single UTF-8 replacement character ('\ufffd'), to match v8's UTF-8 decoding
 // behavior. The continuation byte check is included three times in the case
 // where all of the continuation bytes for a character exist in the same buffer.
 // It is also done this way as a slight performance increase instead of using a
@@ -15299,17 +15650,17 @@ function utf8CheckIncomplete(self, buf, i) {
 function utf8CheckExtraBytes(self, buf, p) {
   if ((buf[0] & 0xC0) !== 0x80) {
     self.lastNeed = 0;
-    return '\ufffd'.repeat(p);
+    return '\ufffd';
   }
   if (self.lastNeed > 1 && buf.length > 1) {
     if ((buf[1] & 0xC0) !== 0x80) {
       self.lastNeed = 1;
-      return '\ufffd'.repeat(p + 1);
+      return '\ufffd';
     }
     if (self.lastNeed > 2 && buf.length > 2) {
       if ((buf[2] & 0xC0) !== 0x80) {
         self.lastNeed = 2;
-        return '\ufffd'.repeat(p + 2);
+        return '\ufffd';
       }
     }
   }
@@ -15340,11 +15691,11 @@ function utf8Text(buf, i) {
   return buf.toString('utf8', i, end);
 }
 
-// For UTF-8, a replacement character for each buffered byte of a (partial)
-// character needs to be added to the output.
+// For UTF-8, a replacement character is added when ending on a partial
+// character.
 function utf8End(buf) {
   var r = buf && buf.length ? this.write(buf) : '';
-  if (this.lastNeed) return r + '\ufffd'.repeat(this.lastTotal - this.lastNeed);
+  if (this.lastNeed) return r + '\ufffd';
   return r;
 }
 
@@ -15485,7 +15836,7 @@ function simpleEnd(buf) {
 
 module.exports = Transform;
 
-var Duplex = __webpack_require__(11);
+var Duplex = __webpack_require__(12);
 
 /*<replacement>*/
 var util = __webpack_require__(16);
@@ -15494,39 +15845,28 @@ util.inherits = __webpack_require__(13);
 
 util.inherits(Transform, Duplex);
 
-function TransformState(stream) {
-  this.afterTransform = function (er, data) {
-    return afterTransform(stream, er, data);
-  };
-
-  this.needTransform = false;
-  this.transforming = false;
-  this.writecb = null;
-  this.writechunk = null;
-  this.writeencoding = null;
-}
-
-function afterTransform(stream, er, data) {
-  var ts = stream._transformState;
+function afterTransform(er, data) {
+  var ts = this._transformState;
   ts.transforming = false;
 
   var cb = ts.writecb;
 
   if (!cb) {
-    return stream.emit('error', new Error('write callback called multiple times'));
+    return this.emit('error', new Error('write callback called multiple times'));
   }
 
   ts.writechunk = null;
   ts.writecb = null;
 
-  if (data !== null && data !== undefined) stream.push(data);
+  if (data != null) // single equals check for both `null` and `undefined`
+    this.push(data);
 
   cb(er);
 
-  var rs = stream._readableState;
+  var rs = this._readableState;
   rs.reading = false;
   if (rs.needReadable || rs.length < rs.highWaterMark) {
-    stream._read(rs.highWaterMark);
+    this._read(rs.highWaterMark);
   }
 }
 
@@ -15535,9 +15875,14 @@ function Transform(options) {
 
   Duplex.call(this, options);
 
-  this._transformState = new TransformState(this);
-
-  var stream = this;
+  this._transformState = {
+    afterTransform: afterTransform.bind(this),
+    needTransform: false,
+    transforming: false,
+    writecb: null,
+    writechunk: null,
+    writeencoding: null
+  };
 
   // start out asking for a readable event once data is transformed.
   this._readableState.needReadable = true;
@@ -15554,11 +15899,19 @@ function Transform(options) {
   }
 
   // When the writable side finishes, then flush out anything remaining.
-  this.once('prefinish', function () {
-    if (typeof this._flush === 'function') this._flush(function (er, data) {
-      done(stream, er, data);
-    });else done(stream);
-  });
+  this.on('prefinish', prefinish);
+}
+
+function prefinish() {
+  var _this = this;
+
+  if (typeof this._flush === 'function') {
+    this._flush(function (er, data) {
+      done(_this, er, data);
+    });
+  } else {
+    done(this, null, null);
+  }
 }
 
 Transform.prototype.push = function (chunk, encoding) {
@@ -15608,27 +15961,25 @@ Transform.prototype._read = function (n) {
 };
 
 Transform.prototype._destroy = function (err, cb) {
-  var _this = this;
+  var _this2 = this;
 
   Duplex.prototype._destroy.call(this, err, function (err2) {
     cb(err2);
-    _this.emit('close');
+    _this2.emit('close');
   });
 };
 
 function done(stream, er, data) {
   if (er) return stream.emit('error', er);
 
-  if (data !== null && data !== undefined) stream.push(data);
+  if (data != null) // single equals check for both `null` and `undefined`
+    stream.push(data);
 
   // if there's nothing in the write buffer, then that means
   // that nothing more will ever be provided
-  var ws = stream._writableState;
-  var ts = stream._transformState;
+  if (stream._writableState.length) throw new Error('Calling transform done when ws.length != 0');
 
-  if (ws.length) throw new Error('Calling transform done when ws.length != 0');
-
-  if (ts.transforming) throw new Error('Calling transform done when still transforming');
+  if (stream._transformState.transforming) throw new Error('Calling transform done when still transforming');
 
   return stream.push(null);
 }
@@ -15642,19 +15993,19 @@ function done(stream, er, data) {
 
 __webpack_require__(56);
 
-__webpack_require__(185);
-
 __webpack_require__(188);
 
-__webpack_require__(203);
+__webpack_require__(191);
 
-__webpack_require__(205);
+__webpack_require__(206);
+
+__webpack_require__(208);
 
 /**
  * @fileoverview entry point for editor with all extension included
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-var Editor = __webpack_require__(207);
+var Editor = __webpack_require__(210);
 
 module.exports = Editor;
 
@@ -15682,15 +16033,15 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _tuiChart = __webpack_require__(57);
+var _tuiChartPolyfill = __webpack_require__(57);
 
-var _tuiChart2 = _interopRequireDefault(_tuiChart);
+var _tuiChartPolyfill2 = _interopRequireDefault(_tuiChartPolyfill);
 
 var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
-var _csv = __webpack_require__(171);
+var _csv = __webpack_require__(173);
 
 var _csv2 = _interopRequireDefault(_csv);
 
@@ -16122,7 +16473,7 @@ function chartReplacer(codeBlockChartDataAndOptions, extensionOptions) {
         } else if (CATEGORY_CHART_TYPES.indexOf(chartType) > -1 && data.categories.length !== data.series[0].data.length) {
           chartContainer.innerHTML = 'invalid chart data';
         } else {
-          _tuiChart2.default[chartType](chartContainer, data, chartOptions);
+          _tuiChartPolyfill2.default[chartType](chartContainer, data, chartOptions);
         }
       });
     } catch (e) {
@@ -16180,9 +16531,10 @@ function _setWwCodeBlockManagerForChart(editor) {
 
       /**
        * Convert table nodes into code block as TSV
-       * @memberof WwCodeBlockManager
        * @param {Array.<Node>} nodes Node array
        * @returns {HTMLElement} Code block element
+       * @override
+       * @ignore
        */
       value: function convertNodesToText(nodes) {
         if (nodes.length !== 1 || nodes[0].tagName !== 'TABLE') {
@@ -16311,7 +16663,7 @@ exports.setDefaultOptions = setDefaultOptions;
 /* 57 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_57__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__57__;
 
 /***/ }),
 /* 58 */
@@ -16332,7 +16684,7 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _codeMirrorExt = __webpack_require__(31);
+var _codeMirrorExt = __webpack_require__(32);
 
 var _codeMirrorExt2 = _interopRequireDefault(_codeMirrorExt);
 
@@ -16344,7 +16696,7 @@ var _mdListManager = __webpack_require__(66);
 
 var _mdListManager2 = _interopRequireDefault(_mdListManager);
 
-var _componentManager = __webpack_require__(32);
+var _componentManager = __webpack_require__(33);
 
 var _componentManager2 = _interopRequireDefault(_componentManager);
 
@@ -16368,18 +16720,14 @@ var keyMapper = _keyMapper2.default.getSharedInstance();
 
 /**
  * Class MarkdownEditor
+ * @param {jQuery} $el - container jquery element
+ * @param {EventManager} eventManager - event manager
+ * @param {Object} options - options of editor
  */
 
 var MarkdownEditor = function (_CodeMirrorExt) {
   _inherits(MarkdownEditor, _CodeMirrorExt);
 
-  /**
-   * Creates an instance of MarkdownEditor.
-   * @param {jQuery} $el - container jquery element
-   * @param {EventManager} eventManager - event manager
-   * @param {Object} options - options of editor
-   * @memberof MarkdownEditor
-   */
   function MarkdownEditor($el, eventManager, options) {
     _classCallCheck(this, MarkdownEditor);
 
@@ -16413,7 +16761,6 @@ var MarkdownEditor = function (_CodeMirrorExt) {
   /**
    * _initEvent
    * Initialize EventManager event handler
-   * @memberof MarkdownEditor
    * @private
    */
 
@@ -16537,10 +16884,9 @@ var MarkdownEditor = function (_CodeMirrorExt) {
 
     /**
      * Set Editor value
-     * @memberof MarkdownEditor
-     * @override
      * @param {string} markdown - Markdown syntax text
      * @param {boolean} [cursorToEnd=true] - move cursor to contents end
+     * @override
      */
 
   }, {
@@ -16552,7 +16898,6 @@ var MarkdownEditor = function (_CodeMirrorExt) {
 
     /**
      * Get text object of current range
-     * @memberof MarkdownEditor
      * @param {{start, end}} range Range object of each editor
      * @returns {MdTextObject}
      */
@@ -16565,7 +16910,6 @@ var MarkdownEditor = function (_CodeMirrorExt) {
 
     /**
      * Emit contentChangedFromMarkdown event
-     * @memberof MarkdownEditor
      * @private
      */
 
@@ -16577,7 +16921,6 @@ var MarkdownEditor = function (_CodeMirrorExt) {
 
     /**
      * Emit changeEvent
-     * @memberof MarkdownEditor
      * @param {event} e - Event object
      * @private
      */
@@ -16597,7 +16940,6 @@ var MarkdownEditor = function (_CodeMirrorExt) {
 
     /**
      * Return whether state changed or not
-     * @memberof MarkdownEditor
      * @param {object} previousState - Previous state
      * @param {object} currentState - Current state
      * @returns {boolean} - changed state
@@ -16620,7 +16962,6 @@ var MarkdownEditor = function (_CodeMirrorExt) {
 
     /**
      * latestState reset
-     * @memberof MarkdownEditor
      */
 
   }, {
@@ -16631,11 +16972,11 @@ var MarkdownEditor = function (_CodeMirrorExt) {
 
     /**
      * MarkdownEditor factory method
-     * @memberof MarkdownEditor
      * @param {jQuery} $el - Container element for editor
      * @param {EventManager} eventManager - EventManager instance
      * @param {Object} options - options of editor
      * @returns {MarkdownEditor} - MarkdownEditor
+     * @ignore
      */
 
   }], [{
@@ -17964,7 +18305,17 @@ _codemirror2.default.commands.newlineAndIndentContinueMarkdownList = function (c
       replacements = [];
   for (var i = 0; i < ranges.length; i++) {
     var pos = ranges[i].head;
+
+    // If we're not in Markdown mode, fall back to normal newlineAndIndent
     var eolState = cm.getStateAfter(pos.line);
+    var inner = _codemirror2.default.innerMode(cm.getMode(), eolState);
+    if (inner.mode.name !== "markdown") {
+      cm.execCommand("newlineAndIndent");
+      return;
+    } else {
+      eolState = inner.state;
+    }
+
     var inList = eolState.list !== false;
     var inQuote = eolState.quote !== 0;
 
@@ -18297,14 +18648,11 @@ var FIND_BLOCK_RX = /^ {0,3}(```|\||>)/;
 
 /**
  * Class MdListManager
+ * @param {MarkdownEditor} mde - MarkdownEditor instance
+ * @ignore
  */
 
 var MdListManager = function () {
-  /**
-   * Creates an instance of MdListManager.
-   * @param {MarkdownEditor} mde - MarkdownEditor instance
-   * @memberof MdListManager
-   */
   function MdListManager(mde) {
     _classCallCheck(this, MdListManager);
 
@@ -18313,7 +18661,6 @@ var MdListManager = function () {
 
     /**
      * Name property
-     * @memberof MdListManager#
      * @type {string}
      */
     this.name = 'list';
@@ -18676,16 +19023,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * Class Markdown textObject
+ * @param {MarkdownEditor} mde - MarkdownEditor instance
+ * @param {object} range - range
  */
-var mdTextObject = function () {
-  /**
-   * Creates an instance of mdTextObject.
-   * @param {MarkdownEditor} mde - MarkdownEditor instance
-   * @param {object} range - range
-   * @memberof mdTextObject
-   */
-  function mdTextObject(mde, range) {
-    _classCallCheck(this, mdTextObject);
+var MdTextObject = function () {
+  function MdTextObject(mde, range) {
+    _classCallCheck(this, MdTextObject);
 
     this._mde = mde;
 
@@ -18694,13 +19037,12 @@ var mdTextObject = function () {
 
   /**
    * Set start
-   * @memberof mdTextObject
    * @param {object} rangeStart Start of range
    * @private
    */
 
 
-  _createClass(mdTextObject, [{
+  _createClass(MdTextObject, [{
     key: '_setStart',
     value: function _setStart(rangeStart) {
       this._start = rangeStart;
@@ -18708,8 +19050,6 @@ var mdTextObject = function () {
 
     /**
      * Set end
-     * @private
-     * @memberof mdTextObject
      * @param {object} rangeEnd End of range
      * @private
      */
@@ -18722,8 +19062,6 @@ var mdTextObject = function () {
 
     /**
      * Set range to given range
-     * @private
-     * @memberof mdTextObject
      * @param {object} range Range object
      */
 
@@ -18736,8 +19074,6 @@ var mdTextObject = function () {
 
     /**
      * Set start to end
-     * @private
-     * @memberof mdTextObject
      * @param {object} range Range object
      */
 
@@ -18749,8 +19085,6 @@ var mdTextObject = function () {
 
     /**
      * Expand startOffset by 1
-     * @private
-     * @memberof mdTextObject
      */
 
   }, {
@@ -18765,8 +19099,6 @@ var mdTextObject = function () {
 
     /**
      * Expand endOffset by 1
-     * @private
-     * @memberof mdTextObject
      */
 
   }, {
@@ -18781,8 +19113,6 @@ var mdTextObject = function () {
 
     /**
      * Get current selection's text content
-     * @private
-     * @memberof mdTextObject
      * @returns {{start: {line: number, ch: number}, end: {line: number, ch: number}}}
      */
 
@@ -18794,8 +19124,6 @@ var mdTextObject = function () {
 
     /**
      * Replace current selection's content with given text content
-     * @private
-     * @memberof mdTextObject
      * @param {string} content Replacement content
      */
 
@@ -18807,8 +19135,6 @@ var mdTextObject = function () {
 
     /**
      * Delete current selection's content
-     * @private
-     * @memberof mdTextObject
      */
 
   }, {
@@ -18819,8 +19145,6 @@ var mdTextObject = function () {
 
     /**
      * peek StartBeforeOffset
-     * @private
-     * @memberof mdTextObject
      * @param {number} offset Offset
      * @returns {{start: {line: number, ch: number}, end: {line: number, ch: number}}}
      */
@@ -18837,10 +19161,10 @@ var mdTextObject = function () {
     }
   }]);
 
-  return mdTextObject;
+  return MdTextObject;
 }();
 
-exports.default = mdTextObject;
+exports.default = MdTextObject;
 
 /***/ }),
 /* 68 */
@@ -18869,12 +19193,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * Class LazyRunner
+ * @ignore
  */
 var LazyRunner = function () {
-  /**
-   * Creates an instance of LazyRunner.
-   * @memberof LazyRunner
-   */
   function LazyRunner() {
     _classCallCheck(this, LazyRunner);
 
@@ -18990,11 +19311,11 @@ var _wwTaskManager = __webpack_require__(74);
 
 var _wwTaskManager2 = _interopRequireDefault(_wwTaskManager);
 
-var _wwTableManager = __webpack_require__(35);
+var _wwTableManager = __webpack_require__(36);
 
 var _wwTableManager2 = _interopRequireDefault(_wwTableManager);
 
-var _wwTableSelectionManager = __webpack_require__(36);
+var _wwTableSelectionManager = __webpack_require__(37);
 
 var _wwTableSelectionManager2 = _interopRequireDefault(_wwTableSelectionManager);
 
@@ -19010,7 +19331,7 @@ var _wwHeadingManager = __webpack_require__(77);
 
 var _wwHeadingManager2 = _interopRequireDefault(_wwHeadingManager);
 
-var _wwCodeBlockManager = __webpack_require__(37);
+var _wwCodeBlockManager = __webpack_require__(38);
 
 var _wwCodeBlockManager2 = _interopRequireDefault(_wwCodeBlockManager);
 
@@ -19026,7 +19347,7 @@ var _wwTextObject = __webpack_require__(80);
 
 var _wwTextObject2 = _interopRequireDefault(_wwTextObject);
 
-var _componentManager = __webpack_require__(32);
+var _componentManager = __webpack_require__(33);
 
 var _componentManager2 = _interopRequireDefault(_componentManager);
 
@@ -19040,9 +19361,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var keyMapper = _keyMapper2.default.getSharedInstance();
 
-var FIND_EMPTY_LINE = /<([a-z]+|h\d)>(<br>|<br \/>)<\/\1>/gi,
-    FIND_UNNECESSARY_BR = /(?:<br>|<br \/>)<\/(.+?)>/gi,
-    FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD|PRE)\b/;
+var FIND_EMPTY_LINE = /<([a-z]+|h\d)>(<br>|<br \/>)<\/\1>/gi;
+var FIND_UNNECESSARY_BR = /(?:<br>|<br \/>)<\/(.+?)>/gi;
+var FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD|PRE)\b/;
+var FIND_OPENING_SPAN_WITH_SPACE = /<span([^>]*)>[\u0020]/g;
+var FIND_CLOSING_SPAN_WITH_SPACE = /[\u0020]<\/span>/g;
 var FIND_TABLE_AND_HEADING_RX = /^(TABLE|H[1-6])$/;
 
 var EDITOR_CONTENT_CSS_CLASSNAME = 'tui-editor-contents';
@@ -19052,15 +19375,11 @@ var canObserveMutations = typeof MutationObserver !== 'undefined';
 
 /**
  * Class WysiwygEditor
+ * @param {jQuery} $el element to insert editor
+ * @param {EventManager} eventManager EventManager instance
  */
 
 var WysiwygEditor = function () {
-  /**
-   * Creates an instance of WysiwygEditor.
-   * @param {jQuery} $el element to insert editor
-   * @param {EventManager} eventManager EventManager instance
-   * @memberof WysiwygEditor
-   */
   function WysiwygEditor($el, eventManager) {
     var _this = this;
 
@@ -19088,13 +19407,13 @@ var WysiwygEditor = function () {
 
   /**
    * init
-   * @memberof WysiwygEditor
+   * @param {boolean} useDefaultHTMLSanitizer - whether to use default html sanitizer
    */
 
 
   _createClass(WysiwygEditor, [{
     key: 'init',
-    value: function init() {
+    value: function init(useDefaultHTMLSanitizer) {
       var $editorBody = (0, _jquery2.default)('<div />');
 
       this.$editorContainerEl.append($editorBody);
@@ -19103,7 +19422,8 @@ var WysiwygEditor = function () {
         blockTag: 'DIV',
         leafNodeNames: {
           'HR': false
-        }
+        },
+        allowedBlocks: useDefaultHTMLSanitizer ? [] : ['details', 'summary']
       });
       this.editor.blockCommandShortcuts();
 
@@ -19123,24 +19443,7 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * _preprocessForInlineElement
-     * Seperate anchor tags with \u200B and replace blank space between <br> and <img to <br>$1
-     * @param {string} html Inner html of content editable
-     * @returns {string}
-     * @memberof WysiwygEditor
-     * @private
-     */
-
-  }, {
-    key: '_preprocessForInlineElement',
-    value: function _preprocessForInlineElement(html) {
-      return html.replace(/<br>( *)<img/g, '<br><br>$1<img');
-    }
-
-    /**
-     * _initEvent
      * Initialize EventManager event handler
-     * @memberof WysiwygEditor
      * @private
      */
 
@@ -19149,9 +19452,6 @@ var WysiwygEditor = function () {
     value: function _initEvent() {
       var _this2 = this;
 
-      this.eventManager.listen('wysiwygSetValueBefore', function (html) {
-        return _this2._preprocessForInlineElement(html);
-      });
       this.eventManager.listen('wysiwygKeyEvent', function (ev) {
         return _this2._runKeyEventHandlers(ev.data, ev.keyMap);
       });
@@ -19164,9 +19464,7 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * addKeyEventHandler
      * Add key event handler
-     * @memberof WysiwygEditor
      * @param {string|Array.<string>} keyMap - keyMap string or array of string
      * @param {function} handler handler
      */
@@ -19194,7 +19492,7 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * REmove key event handler.
+     * Remove key event handler.
      * @param {string} keyMap keyMap string
      * @param {function} handler handler
      */
@@ -19217,7 +19515,6 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * _runKeyEventHandlers
      * Run key event handler
      * @param {Event} event event object
      * @param {string} keyMap keyMapString
@@ -19251,7 +19548,6 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * _initSquireEvent
      * Initialize squire event
      * @private
      */
@@ -19567,7 +19863,6 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * _initDefaultKeyEventHandler
      * Initialize default event handler
      * @private
      */
@@ -19667,7 +19962,6 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * _isInOrphanText
      * check if range is orphan text
      * @param {Range} range range
      * @returns {boolean} result
@@ -19681,7 +19975,6 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * _wrapDefaultBlockTo
      * Wrap default block to passed range
      * @param {Range} range range
      * @private
@@ -19724,7 +20017,6 @@ var WysiwygEditor = function () {
 
     /**
      * findTextNodeFilter
-     * @this Node
      * @returns {boolean} true or not
      */
 
@@ -19735,7 +20027,6 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * _joinSplitedTextNodes
      * Join spliated text nodes
      * @private
      */
@@ -19763,9 +20054,7 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * saveSelection
      * Save current selection before modification
-     * @memberof WysiwygEditor
      * @param {Range} range Range object
      */
 
@@ -19786,7 +20075,6 @@ var WysiwygEditor = function () {
      * @param {HTMLNode} endContainer - end container
      * @param {Number} endOffset - end offset
      * @returns {Range} - range instance
-     * @memberof WysiwygEditor
      */
 
   }, {
@@ -19802,9 +20090,7 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * restoreSavedSelection
      * Restore saved selection
-     * @memberof WysiwygEditor
      */
 
   }, {
@@ -19814,9 +20100,7 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * reset
      * Reset wysiwyg editor
-     * @memberof WysiwygEditor
      */
 
   }, {
@@ -19826,9 +20110,7 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * changeBlockFormatTo
      * Change current range block format to passed tag
-     * @memberof WysiwygEditor
      * @param {string} targetTagName Target element tag name
      */
 
@@ -19840,9 +20122,7 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * makeEmptyBlockCurrentSelection
      * Make empty block to current selection
-     * @memberof WysiwygEditor
      */
 
   }, {
@@ -19860,9 +20140,7 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * focus
      * Focus to editor
-     * @memberof WysiwygEditor
      */
 
   }, {
@@ -19880,9 +20158,7 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * blur
      * Remove focus of editor
-     * @memberof WysiwygEditor
      */
 
   }, {
@@ -19892,9 +20168,7 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * remove
      * Remove wysiwyg editor
-     * @memberof WysiwygEditor
      */
 
   }, {
@@ -19908,9 +20182,7 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * setHeight
      * Set editor height
-     * @memberof WysiwygEditor
      * @param {number|string} height pixel of height or "auto"
      */
 
@@ -19929,9 +20201,8 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * set min height
+     * Set min height
      * @param {number} minHeight - min height in px
-     * @memberof WysiwygEditor
      */
 
   }, {
@@ -19977,9 +20248,7 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * setValue
      * Set value to wysiwyg editor
-     * @memberof WysiwygEditor
      * @param {string} html - HTML text
      * @param {boolean} [cursorToEnd=true] - move cursor to contents end
      */
@@ -20007,9 +20276,8 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * insert given text to cursor position or selected area
+     * Insert given text to cursor position or selected area
      * @param {string} text - text string to insert
-     * @memberof WysiwygEditor
      */
 
   }, {
@@ -20019,9 +20287,7 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * getValue
      * Get value of wysiwyg editor
-     * @memberof WysiwygEditor
      * @returns {string} html
      */
 
@@ -20049,6 +20315,10 @@ var WysiwygEditor = function () {
         return result;
       });
 
+      // replace a space of the first and end in sapn tag to &nbsp;.
+      html = html.replace(FIND_OPENING_SPAN_WITH_SPACE, '<span$1>&nbsp;');
+      html = html.replace(FIND_CLOSING_SPAN_WITH_SPACE, '&nbsp;</span>');
+
       // remove unnecessary brs
       html = html.replace(FIND_UNNECESSARY_BR, '</$1>');
 
@@ -20062,9 +20332,7 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * _prepareGetHTML
      * Prepare before get html
-     * @memberof WysiwygEditor
      * @private
      */
 
@@ -20081,7 +20349,6 @@ var WysiwygEditor = function () {
 
     /**
      * postProcessForChange
-     * @memberof WysiwygEditor
      */
 
   }, {
@@ -20099,9 +20366,7 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * readySilentChange
      * Ready to silent change
-     * @memberof WysiwygEditor
      */
 
   }, {
@@ -20113,9 +20378,7 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * getEditor
      * Get squire
-     * @memberof WysiwygEditor
      * @returns {SquireExt} squire
      */
 
@@ -20126,9 +20389,7 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * replaceSelection
      * Replace text of passed range
-     * @memberof WysiwygEditor
      * @param {string} content Content for change current selection
      * @param {Range} range range
      */
@@ -20140,9 +20401,7 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * replaceRelativeOffset
      * Replace content by relative offset
-     * @memberof WysiwygEditor
      * @param {string} content Content for change current selection
      * @param {number} offset Offset of current range
      * @param {number} overwriteLength Length to overwrite content
@@ -20155,9 +20414,7 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * addWidget
      * Add widget to selection
-     * @memberof WysiwygEditor
      * @param {Range} range Range object
      * @param {Node} node Widget node
      * @param {string} style Adding style "over" or "bottom"
@@ -20180,9 +20437,7 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * get$Body
      * Get jQuery wrapped body container of Squire
-     * @memberof WysiwygEditor
      * @returns {JQuery} jquery body
      */
 
@@ -20193,9 +20448,7 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * hasFormatWithRx
      * Check with given regexp whether current path has some format or not
-     * @memberof WysiwygEditor
      * @param {RegExp} rx Regexp
      * @returns {boolean} Match result
      */
@@ -20207,9 +20460,7 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * breakToNewDefaultBlock
      * Break line to new default block from passed range
-     * @memberof WysiwygEditor
      * @param {Range} range Range object
      * @param {string} [where] "before" or not
      */
@@ -20233,9 +20484,7 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * replaceContentText
      * Replace textContet of node
-     * @memberof WysiwygEditor
      * @param {Node} container Container node
      * @param {string} from Target text to change
      * @param {string} to Replacement text
@@ -20249,9 +20498,7 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * unwrapBlockTag
      * Unwrap Block tag of current range
-     * @memberof WysiwygEditor
      * @param {function} [condition] iterate with tagName
      */
 
@@ -20273,7 +20520,6 @@ var WysiwygEditor = function () {
      * scrollIntoView browser function may cause scrolling on document.
      * this function aims to replace scrollIntoView function to prevent that.
      * it will move the scroll of squire only.
-     * @memberof SquireExt
      */
 
   }, {
@@ -20301,7 +20547,6 @@ var WysiwygEditor = function () {
 
     /**
      * Set cursor position to end
-     * @memberof WysiwygEditor
      */
 
   }, {
@@ -20314,7 +20559,6 @@ var WysiwygEditor = function () {
 
     /**
      * Set cursor position to start
-     * @memberof WysiwygEditor
      */
 
   }, {
@@ -20326,7 +20570,6 @@ var WysiwygEditor = function () {
 
     /**
      * Set cursor position to start
-     * @memberof WysiwygEditor
      * @param {number} value Scroll amount
      * @returns {boolean}
      */
@@ -20342,9 +20585,7 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * _correctRangeAfterMoveCursor
      * For arrange Range after moveCursorToEnd api invocation. Squire has bug in Firefox, IE.
-     * @memberof WysiwygEditor
      * @param {string} direction Direction of cursor move
      * @private
      */
@@ -20379,7 +20620,6 @@ var WysiwygEditor = function () {
 
     /**
      * Get current Range object
-     * @memberof WysiwygEditor
      * @returns {Range}
      */
 
@@ -20393,7 +20633,6 @@ var WysiwygEditor = function () {
      * get IME range
      * cjk composition causes wrong caret position.
      * it returns fixed IME composition range
-     * @memberof WysiwygEditor
      * @returns {Range}
      */
 
@@ -20414,7 +20653,6 @@ var WysiwygEditor = function () {
      * get IME range
      * cjk composition causes wrong caret position.
      * it sets fixed IME composition range
-     * @memberof WysiwygEditor
      */
 
   }, {
@@ -20431,7 +20669,6 @@ var WysiwygEditor = function () {
     /**
      * set range
      * @param {Range} range - range to set
-     * @memberof WysiwygEditor
      */
 
   }, {
@@ -20456,7 +20693,6 @@ var WysiwygEditor = function () {
 
     /**
      * Get text object of current range
-     * @memberof WysiwygEditor
      * @param {Range} range Range object
      * @returns {WwTextObject}
      */
@@ -20492,12 +20728,12 @@ var WysiwygEditor = function () {
 
     /**
      * WysiwygEditor factory method
-     * @memberof WysiwygEditor
      * @param {jQuery} $el Container element for editor
      * @param {EventManager} eventManager EventManager instance
      * @param {object} [options={}] - option object
-     *  @param {boolean} [options.useCommandShortcut=true] - whether to use squire command shortcuts
+     *     @param {boolean} [options.useDefaultHTMLSanitizer=true] - whether to use default html sanitizer
      * @returns {WysiwygEditor} wysiwygEditor
+     * @ignore
      */
 
   }], [{
@@ -20505,7 +20741,7 @@ var WysiwygEditor = function () {
     value: function factory($el, eventManager, options) {
       var wwe = new WysiwygEditor($el, eventManager, options);
 
-      wwe.init();
+      wwe.init(options.useDefaultHTMLSanitizer);
 
       wwe.componentManager.addManager(_wwListManager2.default);
       wwe.componentManager.addManager(_wwTaskManager2.default);
@@ -20571,14 +20807,11 @@ var PASTE_TABLE_CELL_BOOKMARK = 'tui-paste-table-cell-bookmark';
 
 /**
  * Class WwClipboardManager
+ * @param {WysiwygEditor} wwe - WysiwygEditor instance
+ * @ignore
  */
 
 var WwClipboardManager = function () {
-  /**
-   * Creates an instance of WwClipboardManager.
-   * @param {WysiwygEditor} wwe - WysiwygEditor instance
-   * @memberof WwClipboardManager
-   */
   function WwClipboardManager(wwe) {
     _classCallCheck(this, WwClipboardManager);
 
@@ -20590,9 +20823,7 @@ var WwClipboardManager = function () {
   }
 
   /**
-   * init
    * initialize
-   * @memberof WwClipboardManager
    */
 
 
@@ -20639,7 +20870,6 @@ var WwClipboardManager = function () {
       if (!tableManager.mergedTableSelectionManager) {
         // set selection range to all contents in selected cells, then squire
         tableManager.createRangeBySelectedCells();
-        tableManager.removeClassAttrbuteFromAllCellsIfNeed();
 
         return;
       }
@@ -20711,6 +20941,17 @@ var WwClipboardManager = function () {
     key: '_getCell',
     value: function _getCell(node) {
       return node.nodeName === 'TD' ? node : _domUtils2.default.getParentUntil(node, 'TR');
+    }
+  }, {
+    key: '_replaceNewLineToBr',
+    value: function _replaceNewLineToBr(node) {
+      var textNodes = _domUtils2.default.getAllTextNode(node);
+
+      textNodes.forEach(function (textNode) {
+        if (/\n/.test(textNode.nodeValue)) {
+          textNode.parentNode.innerHTML = textNode.nodeValue.replace(/\n/g, '<br>');
+        }
+      });
     }
   }, {
     key: '_onWillPaste',
@@ -20847,12 +21088,6 @@ var WwClipboardManager = function () {
   }, {
     key: '_preparePaste',
     value: function _preparePaste($clipboardContainer) {
-      var html = $clipboardContainer.html();
-
-      $clipboardContainer.html(html.replace(/>([^<]*\s[^<]*)</g, function (match, text) {
-        return '>' + text.replace(/\s/g, '&nbsp;') + '<';
-      }));
-
       // When pasting text, the empty line processing differ our viewer and MS Office.
       // In our viewer case, <p>aaa</p><p>bbb<p> have empty line becuase P tags have margin.
       // In MS Office case, <p>aaa</p><p>bbb<p> do not have empty line becuase P tags means just one line.
@@ -20860,6 +21095,7 @@ var WwClipboardManager = function () {
         this._preProcessPtag($clipboardContainer.get(0));
       }
 
+      this._replaceNewLineToBr($clipboardContainer.get(0));
       this._removeEmptyFontElement($clipboardContainer);
 
       this._pch.preparePaste($clipboardContainer);
@@ -20873,7 +21109,6 @@ var WwClipboardManager = function () {
     /**
      * set table bookmark which will gain focus after document modification ends.
      * @param {jQuery} $clipboardContainer - clipboard container
-     * @memberof WwClipboardManager
      * @private
      */
 
@@ -20917,9 +21152,7 @@ var WwClipboardManager = function () {
     }
 
     /**
-     * _extendRange
      * extend range if need
-     * @memberof WwClipboardManager
      * @param {Range} range to extend
      * @private
      */
@@ -20949,7 +21182,6 @@ var WwClipboardManager = function () {
 
     /**
      * Extends current range's startContainer
-     * @memberof WwClipboardManager
      * @param {Range} range Range object
      * @returns {Range}
      * @private
@@ -20973,7 +21205,6 @@ var WwClipboardManager = function () {
 
     /**
      * Extends current range's endContainer
-     * @memberof WwClipboardManager
      * @param {Range} range Range object
      * @returns {Range}
      * @private
@@ -20998,9 +21229,7 @@ var WwClipboardManager = function () {
     }
 
     /**
-     * _isWholeCommonAncestorContainerSelected
      * Check whether whole commonAncestorContainter textContent selected or not
-     * @memberof WwClipboardManager
      * @param {Range} range Range object
      * @returns {boolean} result
      * @private
@@ -21057,13 +21286,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * Class WwPasteContentHelper
+ * @param {WysiwygEditor} wwe - wysiwygEditor instance
+ * @ignore
  */
 var WwPasteContentHelper = function () {
-  /**
-   * Creates an instance of WwPasteContentHelper.
-   * @param {WysiwygEditor} wwe - wysiwygEditor instance
-   * @memberof WwPasteContentHelper
-   */
   function WwPasteContentHelper(wwe) {
     _classCallCheck(this, WwPasteContentHelper);
 
@@ -21072,7 +21298,6 @@ var WwPasteContentHelper = function () {
 
   /**
    * Process paste data before paste
-   * @memberof WwPasteContentHelper
    * @param {jQuery} $container - clipboard container
    */
 
@@ -21114,7 +21339,6 @@ var WwPasteContentHelper = function () {
     /**
      * Wrap orphan node(inline, text) with div element
      * @param {jQuery} $container - clipboard container
-     * @memberof WwPasteContentHelper
      * @returns {DocumentFragment}
      * @private
      */
@@ -21160,7 +21384,6 @@ var WwPasteContentHelper = function () {
     /**
      * Processing paste data after paste
      * @param {jQuery} $container - clipboard container
-     * @memberof WwPasteContentHelper
      * @private
      */
 
@@ -21192,9 +21415,8 @@ var WwPasteContentHelper = function () {
 
     /**
      * PRE tag formatting
-     * @memberof WwPasteContentHelper
-     * @private
      * @param {jQuery} $container - clipboard container
+     * @private
      */
 
   }, {
@@ -21207,7 +21429,6 @@ var WwPasteContentHelper = function () {
     /**
      * Unwrap span children of document fragment with div element
      * @param {jQuery} $container - clipboard container
-     * @memberof WwPasteContentHelper
      * @private
      */
 
@@ -21235,7 +21456,7 @@ var WwPasteContentHelper = function () {
   }, {
     key: '_unwrapNestedBlocks',
     value: function _unwrapNestedBlocks($container, blockTags) {
-      var $leafElements = $container.find(':not(:has(*))').not('b,s,i,em,code,span');
+      var $leafElements = $container.find(':not(:has(*))').not('b,s,i,em,code,span,hr');
 
       $leafElements.each(function (i, node) {
         var leafElement = node.nodeName === 'BR' ? (0, _jquery2.default)(node.parentNode) : (0, _jquery2.default)(node);
@@ -21256,7 +21477,6 @@ var WwPasteContentHelper = function () {
      * Remove unnecessary block element in pasting data
      * @param {jQuery} $container - clipboard container
      * @param {string} blockTags - Tag names of block tag
-     * @memberof WwPasteContentHelper
      * @private
      */
 
@@ -21287,7 +21507,6 @@ var WwPasteContentHelper = function () {
     /**
      * Remove inline style
      * @param {Node} node Node for remove style attribute
-     * @memberof WwPasteContentHelper
      * @private
      */
 
@@ -21321,7 +21540,6 @@ var WwPasteContentHelper = function () {
      * @param {object} rangeInfo Range information
      * @param {boolean} firstBlockIsTaken Whether first block element taken or not
      * @returns {DocumentFragment}
-     * @memberof WwPasteContentHelper
      * @private
      */
 
@@ -21379,10 +21597,9 @@ var WwPasteContentHelper = function () {
 
     /**
      * Unwrap fragment first child for pasting node inline
-     * @memberof WwPasteContentHelper
-     * @private
      * @param {Node} node Pasting DocumentFragment
      * @returns {NodeList}
+     * @private
      */
 
   }, {
@@ -21439,7 +21656,6 @@ var WwPasteContentHelper = function () {
      * @param {HTMLElement} pathInfo HTMLElement to make
      * @param {HTMLElement} content Nodes to append
      * @returns {HTMLElement} node
-     * @memberof WwPasteContentHelper
      * @private
      */
 
@@ -21464,7 +21680,6 @@ var WwPasteContentHelper = function () {
     /**
      * Pasting table element pre-process
      * @param {jQuery} $container - clipboard container
-     * @memberof WwPasteContentHelper
      * @private
      */
 
@@ -21479,7 +21694,6 @@ var WwPasteContentHelper = function () {
     /**
      * Remove colgroup tag
      * @param {jQuery} $container - clipboard container
-     * @memberof WwPasteContentHelper
      * @private
      **/
 
@@ -21581,13 +21795,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * Class WwTablePasteHelper
+ * @param {WysiwygEditor} wwe - WysiwygEditor instance
+ * @ignore
  */
 var WwTablePasteHelper = function () {
-  /**
-   * Creates an instance of WwTablePasteHelper.
-   * @param {WysiwygEditor} wwe - WysiwygEditor instance
-   * @memberof WwTablePasteHelper
-   */
   function WwTablePasteHelper(wwe) {
     _classCallCheck(this, WwTablePasteHelper);
 
@@ -21597,7 +21808,6 @@ var WwTablePasteHelper = function () {
   /**
    * Prossse paste clipboardEvent
    * @param {ClipboardEvent} ev - ClipboardEvent
-   * @memberof WwTablePasteHelper
    */
 
 
@@ -21767,7 +21977,6 @@ var WwTablePasteHelper = function () {
 
     /**
      * Prepare clipboard for paste to table
-     * @memberof WwTablePasteHelper
      * @param {DocumentFragment} clipboardContainer - clipboard
      * @returns {DocumentFragment} processed result
      * @private
@@ -21791,7 +22000,6 @@ var WwTablePasteHelper = function () {
 
     /**
      * unwrap block node
-     * @memberof WwTablePasteHelper
      * @param {Node} node - target node
      * @returns {DocumentFragment} processed result
      * @private
@@ -21836,7 +22044,6 @@ var WwTablePasteHelper = function () {
 
     /**
      * paste fragment to offset of range.startContainer
-     * @memberof WwTablePasteHelper
      * @param {Range} range - selection range
      * @param {DocumentFragment} fragment - paste data
      * @private
@@ -21878,7 +22085,6 @@ var WwTablePasteHelper = function () {
 
     /**
      * paste fragment to offset of text node
-     * @memberof WwTablePasteHelper
      * @param {Range} range - selection range
      * @param {DocumentFragment} fragment - paste data
      * @private
@@ -21938,7 +22144,6 @@ var WwTablePasteHelper = function () {
 
     /**
      * delete contents of range that is not collapse
-     * @memberof WwTablePasteHelper
      * @param {Range} range - range is not collapse
      * @private
      */
@@ -22046,7 +22251,6 @@ var WwTablePasteHelper = function () {
      * Find parent block node of startContainer and endContainer
      * If startContainer or endContainer is same commonAncestor,
      * find node at offset of startContainer and endContainer.
-     * @memberof WwTablePasteHelper
      * @param {Node} node - startContainer or endContainer
      * @param {Node} parent - commonAncestor
      * @param {Number} offset - startOffset or endOffset-1
@@ -22062,7 +22266,6 @@ var WwTablePasteHelper = function () {
 
     /**
      * delete contents from start offset to end offset
-     * @memberof WwTablePasteHelper
      * @param {Node} container - container
      * @param {Number} startOffset - start offset
      * @param {Number} endOffset - end offset
@@ -22131,19 +22334,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var FIND_LI_ELEMENT = /<li/i;
 var DIV_OR_LI = 'DIV,LI';
 var UL_OR_OL = 'OL,UL';
-var FIND_TD_ELEMNT = /(<td[^>]*>)(.*?)(<\/td>)/g;
-var FIND_UL_OR_OL_ELEMNT = /<(ul|ol)([^>]*)>(.*?)(<\/\1>)/g;
+var FIND_CELL_TAG_RX = /(<(?:th|td)[^>]*>)(.*?)(<\/(?:th|td)>)/g;
+var FIND_LIST_OR_LIST_ITEM_TAG_RX = /<(ul|ol|li)([^>]*)>/g;
 
 /**
  * Class WwListManager
+ * @param {WysiwygEditor} wwe - WysiwygEditor instance
+ * @ignore
  */
 
 var WwListManager = function () {
-  /**
-   * Creates an instance of WwListManager.
-   * @param {WysiwygEditor} wwe - WysiwygEditor instance
-   * @memberof WwListManager
-   */
   function WwListManager(wwe) {
     _classCallCheck(this, WwListManager);
 
@@ -22152,7 +22352,6 @@ var WwListManager = function () {
 
     /**
      * Name property
-     * @memberof WwListManager#
      * @type {string}
      */
     this.name = 'list';
@@ -22161,9 +22360,7 @@ var WwListManager = function () {
   }
 
   /**
-   * _init
    * Initialize
-   * @memberof WwListManager
    * @private
    */
 
@@ -22176,9 +22373,7 @@ var WwListManager = function () {
     }
 
     /**
-     * _initEvent
      * Initialize event
-     * @memberof WwListManager
      * @private
      */
 
@@ -22201,7 +22396,6 @@ var WwListManager = function () {
       });
 
       this.eventManager.listen('wysiwygProcessHTMLText', function (html) {
-        html = _this._insertBlankToBetweenSameList(html);
         html = _this._convertFromArbitraryNestingList(html);
 
         return html;
@@ -22209,10 +22403,6 @@ var WwListManager = function () {
 
       this.eventManager.listen('convertorBeforeHtmlToMarkdownConverted', function (html) {
         return _this._insertDataToMarkPassForListInTable(html);
-      });
-
-      this.eventManager.listen('convertorAfterHtmlToMarkdownConverted', function (markdown) {
-        return markdown.replace(/:BLANK_LINE:\n/g, '');
       });
     }
   }, {
@@ -22277,7 +22467,6 @@ var WwListManager = function () {
 
     /**
      * Find empty list for whole container and remove it.
-     * @memberof WwListManager
      * @private
      */
 
@@ -22293,9 +22482,8 @@ var WwListManager = function () {
 
     /**
      * Remove branch lists all from body
-     * @memberof WwListManager
-     * @private
      * @param {jQuery|HTMLElement} $root root to remove branch list
+     * @private
      */
 
   }, {
@@ -22315,7 +22503,6 @@ var WwListManager = function () {
 
     /**
      * Remove branch list of passed list(ul, ol)
-     * @memberof WwListManager
      * @param {HTMLElement} list list
      * @private
      */
@@ -22335,11 +22522,6 @@ var WwListManager = function () {
       $branchRoot.prepend($list.children().unwrap());
 
       $firstLi.remove();
-    }
-  }, {
-    key: '_insertBlankToBetweenSameList',
-    value: function _insertBlankToBetweenSameList(html) {
-      return html.replace(/<\/(ul|ol)>(<br \/>|<br>){0,}<\1>/g, '</$1>:BLANK_LINE:<$1>');
     }
 
     /**
@@ -22424,8 +22606,8 @@ var WwListManager = function () {
   }, {
     key: '_insertDataToMarkPassForListInTable',
     value: function _insertDataToMarkPassForListInTable(html) {
-      var replacedHtml = html.replace(FIND_TD_ELEMNT, function (match, tdStart, tdContent, tdEnd) {
-        var content = tdContent.replace(FIND_UL_OR_OL_ELEMNT, '<$1 data-tomark-pass="" $2>$3$4');
+      var replacedHtml = html.replace(FIND_CELL_TAG_RX, function (match, tdStart, tdContent, tdEnd) {
+        var content = tdContent.replace(FIND_LIST_OR_LIST_ITEM_TAG_RX, '<$1 data-tomark-pass="" $2>');
 
         return '' + tdStart + content + tdEnd;
       });
@@ -22509,7 +22691,6 @@ var WwListManager = function () {
      * merge to previous list
      * consider remove this function when https://github.com/neilj/Squire/issues/294 resolved
      * @param {HTMLLIElement} currentLine - current li element
-     * @ignore
      */
 
   }, {
@@ -22537,7 +22718,7 @@ var WwListManager = function () {
      * merge list to targetList
      * @param {HTMLOListElement|HTMLUListElement} list - list to merge
      * @param {HTMLOListElement|HTMLUListElement} targetList - target list
-     * @ignore
+     * @private
      */
 
   }, {
@@ -22576,7 +22757,7 @@ var WwListManager = function () {
      * @param {Node} node - startContainer or endContainer of range
      * @param {Number} offset - offset
      * @returns {Node} - parent node before TD
-     * @ignore
+     * @private
      */
 
   }, {
@@ -22602,7 +22783,7 @@ var WwListManager = function () {
      * @param {Node} targetNode - startContainer or endContainer of range
      * @param {Number} offset - offset
      * @returns {Node} - LI node or null
-     * @ignore
+     * @private
      */
 
   }, {
@@ -22634,7 +22815,7 @@ var WwListManager = function () {
      * @param {Node} targetNode - startContainer
      * @param {Number} offset - startOffset
      * @returns {Node} - first node where range start
-     * @ignore
+     * @private
      */
 
   }, {
@@ -22662,7 +22843,7 @@ var WwListManager = function () {
      * @param {Node} targetNode - endContainer
      * @param {Number} offset - endOffset
      * @returns {Node} - last node where range end
-     * @ignore
+     * @private
      */
 
   }, {
@@ -22690,7 +22871,7 @@ var WwListManager = function () {
      * If the node is li or br, the node is last node in the line of table.
      * @param {node} node - node
      * @returns {boolean} - whether node is last node in line of table
-     * @ignore
+     * @private
      */
 
   }, {
@@ -22708,7 +22889,7 @@ var WwListManager = function () {
      * If nextSibiling of node is a list node (UL or OL), next node is first child of the list node.
      * @param {node} node - node
      * @returns {node} - next node
-     * @ignore
+     * @private
      */
 
   }, {
@@ -22740,7 +22921,7 @@ var WwListManager = function () {
      * get nodes in each lines of table
      * @param {range} range - range
      * @returns {array} - each nodes in line
-     * @ignore
+     * @private
      */
 
   }, {
@@ -22782,7 +22963,7 @@ var WwListManager = function () {
      * create OL or UL element
      * @param {string} listType - OL, UL or TASK
      * @returns {Node} - OL or UL element
-     * @ignore
+     * @private
      */
 
   }, {
@@ -22796,7 +22977,7 @@ var WwListManager = function () {
      * @param {array} oneLineNodes - node array
      * @param {string} listType - OL, UL or TASK
      * @returns {Node} - li element
-     * @ignore
+     * @private
      */
 
   }, {
@@ -22972,14 +23153,11 @@ var TASK_CHECKED_CLASS_NAME = 'checked';
 
 /**
  * Class WwTaskManager
+ * @param {WysiwygEditor} wwe - WysiwygEditor instance
+ * @ignore
  */
 
 var WwTaskManager = function () {
-  /**
-   * Creates an instance of WwTaskManager.
-   * @param {WysiwygEditor} wwe - WysiwygEditor instance
-   * @memberof WwTaskManager
-   */
   function WwTaskManager(wwe) {
     _classCallCheck(this, WwTaskManager);
 
@@ -22988,7 +23166,6 @@ var WwTaskManager = function () {
 
     /**
      * Name property
-     * @memberof WwTaskManager#
      * @type {string}
      */
     this.name = 'task';
@@ -22997,9 +23174,7 @@ var WwTaskManager = function () {
   }
 
   /**
-   * _init
    * Init
-   * @memberof WwTaskManager
    * @private
    */
 
@@ -23022,9 +23197,7 @@ var WwTaskManager = function () {
     }
 
     /**
-     * _initEvent
      * Initialize event
-     * @memberof WwTaskManager
      * @private
      */
 
@@ -23039,9 +23212,7 @@ var WwTaskManager = function () {
     }
 
     /**
-     * _initKeyHandler
      * Initialize key event handler
-     * @memberof WwTaskManager
      * @private
      */
 
@@ -23062,11 +23233,9 @@ var WwTaskManager = function () {
     }
 
     /**
-     * isInTaskList
      * Check whether passed range is in task list or not
      * @param {Range} range range
      * @returns {boolean} result
-     * @memberof WwTaskManager
      */
 
   }, {
@@ -23088,10 +23257,8 @@ var WwTaskManager = function () {
     }
 
     /**
-     * unformatTask
      * Unforamt task
      * @param {Node} node target
-     * @memberof WwTaskManager
      */
 
   }, {
@@ -23110,10 +23277,8 @@ var WwTaskManager = function () {
     }
 
     /**
-     * formatTask
      * Format task
      * @param {Node} node target
-     * @memberof WwTaskManager
      */
 
   }, {
@@ -23127,9 +23292,7 @@ var WwTaskManager = function () {
     }
 
     /**
-     * _formatTaskIfNeed
      * Format task if current range has task class name
-     * @memberof WwTaskManager
      * @private
      */
 
@@ -23144,9 +23307,7 @@ var WwTaskManager = function () {
     }
 
     /**
-     * _removeTaskListClass
      * Remove tasklist class
-     * @memberof WwTaskManager
      * @private
      */
 
@@ -23186,19 +23347,20 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
+var _domUtils = __webpack_require__(4);
+
+var _domUtils2 = _interopRequireDefault(_domUtils);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
  * Class WwHrManager
+ * @param {WysiwygEditor} wwe - WysiwygEditor instance
+ * @ignore
  */
 var WwHrManager = function () {
-  /**
-   * Creates an instance of WwHrManager.
-   * @param {WysiwygEditor} wwe - WysiwygEditor instance
-   * @memberof WwHrManager
-   */
   function WwHrManager(wwe) {
     _classCallCheck(this, WwHrManager);
 
@@ -23207,7 +23369,6 @@ var WwHrManager = function () {
 
     /**
      * Name property
-     * @memberof WwHrManager#
      * @type {string}
      */
     this.name = 'hr';
@@ -23216,9 +23377,7 @@ var WwHrManager = function () {
   }
 
   /**
-   * _init
    * Initialize
-   * @memberof WwHrManager
    * @private
    */
 
@@ -23230,9 +23389,7 @@ var WwHrManager = function () {
     }
 
     /**
-     * _initEvent
      * Initialize eventmanager event
-     * @memberof WwHrManager
      * @private
      */
 
@@ -23242,39 +23399,48 @@ var WwHrManager = function () {
       var _this = this;
 
       this.eventManager.listen('wysiwygSetValueAfter', function () {
-        _this._unwrapDivOnHr();
+        _this._insertEmptyLineIfNeed();
+        _this._changeHRForWysiwyg();
       });
     }
 
     /**
-     * _unwrapDivOnHr
-     * Unwrap default block on hr
-     * @memberof WwHrManager
+     * If <hr> is frist or last child of root, insert empty line before or after HR
      * @private
      */
 
   }, {
-    key: '_unwrapDivOnHr',
-    value: function _unwrapDivOnHr() {
+    key: '_insertEmptyLineIfNeed',
+    value: function _insertEmptyLineIfNeed() {
+      var editorContentBody = this.wwe.get$Body()[0];
+      var firstChild = editorContentBody.firstChild,
+          lastChild = editorContentBody.lastChild;
+
+
+      if (firstChild && firstChild.nodeName === 'HR') {
+        editorContentBody.insertBefore(_domUtils2.default.createEmptyLine(), firstChild);
+      } else if (lastChild && lastChild.nodeName === 'HR') {
+        editorContentBody.appendChild(_domUtils2.default.createEmptyLine());
+      }
+    }
+
+    /**
+     * <hr> is set contenteditable to false with wrapping div like below.
+     * <div contenteditable="false"><hr contenteditable="false"><div>
+     * @private
+     */
+
+  }, {
+    key: '_changeHRForWysiwyg',
+    value: function _changeHRForWysiwyg() {
       var editorContentBody = this.wwe.get$Body()[0];
       var hrNodes = editorContentBody.querySelectorAll('hr');
+
       _tuiCodeSnippet2.default.forEachArray(hrNodes, function (hrNode) {
         var parentNode = hrNode.parentNode;
 
 
-        if (parentNode !== editorContentBody) {
-          var parentOfparent = parentNode.parentNode;
-
-
-          parentOfparent.removeChild(parentNode);
-          parentOfparent.appendChild(hrNode);
-        }
-
-        while (hrNode.firstChild) {
-          hrNode.removeChild(hrNode.firstChild);
-        }
-
-        hrNode.setAttribute('contenteditable', false);
+        parentNode.replaceChild(_domUtils2.default.createHorizontalRule(), hrNode);
       });
     }
   }]);
@@ -23311,13 +23477,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * Class WwPManager
+ * @param {WysiwygEditor} wwe - wysiwygEditor instance
+ * @ignore
  */
 var WwPManager = function () {
-  /**
-   * Creates an instance of WwPManager.
-   * @param {WysiwygEditor} wwe - wysiwygEditor instance
-   * @memberof WwPManager
-   */
   function WwPManager(wwe) {
     _classCallCheck(this, WwPManager);
 
@@ -23326,7 +23489,6 @@ var WwPManager = function () {
 
     /**
      * Name property
-     * @memberof WwPManager#
      * @type {string}
      */
     this.name = 'p';
@@ -23335,9 +23497,7 @@ var WwPManager = function () {
   }
 
   /**
-   * _initEvent
    * Initialize event
-   * @memberof WwPManager
    * @private
    */
 
@@ -23407,9 +23567,7 @@ var WwPManager = function () {
     }
 
     /**
-     * _ensurePtagContentWrappedWithDiv
      * Wrap new line inside P tag to DIV, and additional empty line added within too
-     * @memberof WwPManager
      * @private
      */
 
@@ -23428,9 +23586,7 @@ var WwPManager = function () {
     }
 
     /**
-     * _unwrapPtags
      * Unwrap P tag
-     * @memberof WwPManager
      * @private
      */
 
@@ -23483,14 +23639,11 @@ var FIND_HEADING_RX = /h[\d]/i;
 
 /**
  * Class WwHeadingManager
+ * @param {WysiwygEditor} wwe - WysiwygEditor instance
+ * @ignore
  */
 
 var WwHeadingManager = function () {
-  /**
-   * Creates an instance of WwHeadingManager.
-   * @param {WysiwygEditor} wwe - WysiwygEditor instance
-   * @memberof WwHeadingManager
-   */
   function WwHeadingManager(wwe) {
     _classCallCheck(this, WwHeadingManager);
 
@@ -23499,7 +23652,6 @@ var WwHeadingManager = function () {
 
     /**
      * Name property
-     * @memberof WwHeadingManager#
      * @type {string}
      */
     this.name = 'heading';
@@ -23508,9 +23660,7 @@ var WwHeadingManager = function () {
   }
 
   /**
-   * _init
    * Initialize
-   * @memberof WwHeadingManager
    * @private
    */
 
@@ -23532,9 +23682,7 @@ var WwHeadingManager = function () {
     }
 
     /**
-     * _initKeyHandler
      * Initialize key event handler
-     * @memberof WwHeadingManager
      * @private
      */
 
@@ -23565,7 +23713,6 @@ var WwHeadingManager = function () {
     }
 
     /**
-     * _wrapDefaultBlockToHeadingInner
      * Wrap default block to heading inner contents
      * @private
      */
@@ -23581,9 +23728,7 @@ var WwHeadingManager = function () {
     }
 
     /**
-     * _unwrapHeading
      * Unwrap heading
-     * @memberof WwHeadingManager
      * @private
      */
 
@@ -23596,9 +23741,7 @@ var WwHeadingManager = function () {
     }
 
     /**
-     * _onEnter
      * Enter key handler
-     * @memberof WwHeadingManager
      * @param {Event} event event object
      * @param {Range} range range
      * @private
@@ -23622,9 +23765,7 @@ var WwHeadingManager = function () {
     }
 
     /**
-     * _insertEmptyBlockToPrevious
      * Insert empty block to previous of passed range
-     * @memberof WwHeadingManager
      * @param {Range} range range
      * @private
      */
@@ -23637,9 +23778,7 @@ var WwHeadingManager = function () {
     }
 
     /**
-     * _removePrevTopNodeIfNeed
      * Remove previous top node if need
-     * @memberof WwHeadingManager
      * @param {Event} event event object
      * @param {Range} range range
      * @returns {Boolean} whether needed or not
@@ -23747,7 +23886,7 @@ var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _util = __webpack_require__(38);
+var _util = __webpack_require__(39);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -23766,17 +23905,12 @@ var isIElt11 = /Trident\/[456]\./.test(navigator.userAgent);
 
 /**
  * Class SquireExt
- * @extends {Squire}
+ * @params {Squire} ...args
  */
 
 var SquireExt = function (_Squire) {
   _inherits(SquireExt, _Squire);
 
-  /**
-   * Creates an instance of SquireExt.
-   * @augments Squire
-   * @memberof SquireExt
-   */
   function SquireExt() {
     var _ref;
 
@@ -23801,7 +23935,6 @@ var SquireExt = function (_Squire) {
   }
 
   /**
-   * _decorateHandlerToCancelable
    * Decorate squire handler to cancelable cuz sometimes, we dont need squire handler process
    * event.preventDefault() will cancel squire and browser default behavior
    * event.squirePrevented = true will cancel squire but allow browser default behavior
@@ -24144,7 +24277,7 @@ exports.default = SquireExt;
 /* 79 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_79__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__79__;
 
 /***/ }),
 /* 80 */
@@ -24177,19 +24310,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var isIE11 = _tuiCodeSnippet2.default.browser.msie && _tuiCodeSnippet2.default.browser.version === 11;
 var isWindowChrome = navigator.appVersion.indexOf('Win') !== -1 && _tuiCodeSnippet2.default.browser.chrome;
-var isNeedOffsetFix = isIE11 || isWindowChrome;
+var isWindows10 = /Windows (NT )?10/g.test(navigator.appVersion);
+var isNeedOffsetFix = isIE11 || isWindowChrome && !isWindows10;
 
 /**
  * Class WwTextObject
+ * @param {WysiwygEditor} wwe - wysiwygEditor
+ * @param {Range} range - Range object
  */
 
 var WwTextObject = function () {
-  /**
-   * Creates an instance of WwTextObject.
-   * @param {WysiwygEditor} wwe - wysiwygEditor
-   * @param {Range} range - Range object
-   * @memberof WwTextObject
-   */
   function WwTextObject(wwe, range) {
     _classCallCheck(this, WwTextObject);
 
@@ -24207,7 +24337,6 @@ var WwTextObject = function () {
 
   /**
    * Initialize composition event
-   * @memberof WwTextObject
    * @private
    */
 
@@ -24229,7 +24358,6 @@ var WwTextObject = function () {
     /**
      * Set _range object to given range object
      * @param {Range} range Range object
-     * @memberof WwTextObject
      */
 
   }, {
@@ -24244,7 +24372,6 @@ var WwTextObject = function () {
 
     /**
      * Expand start offset by one
-     * @memberof WwTextObject
      */
 
   }, {
@@ -24259,7 +24386,6 @@ var WwTextObject = function () {
 
     /**
      * Expand end offset by one
-     * @memberof WwTextObject
      */
 
   }, {
@@ -24275,7 +24401,6 @@ var WwTextObject = function () {
     /**
      * setEnd range on start
      * @param {Range} range Range object
-     * @memberof WwTextObject
      */
 
   }, {
@@ -24293,7 +24418,6 @@ var WwTextObject = function () {
     /**
      * Get text content
      * @returns {string}
-     * @memberof WwTextObject
      */
 
   }, {
@@ -24305,7 +24429,6 @@ var WwTextObject = function () {
     /**
      * Replace current selection content to given text
      * @param {string} content Text content
-     * @memberof WwTextObject
      */
 
   }, {
@@ -24326,7 +24449,6 @@ var WwTextObject = function () {
 
     /**
      * Delete current selection content
-     * @memberof WwTextObject
      */
 
   }, {
@@ -24341,7 +24463,6 @@ var WwTextObject = function () {
      * Peek previous element's content
      * @param {number} offset Offset to peek
      * @returns {string}
-     * @memberof WwTextObject
      */
 
   }, {
@@ -24402,20 +24523,16 @@ var GADGET_HEIGHT = 30;
 
 /**
  * Class CodeBlockGadget
- * @extends {BlockOverlay}
+ * @param {Object} options - options
+ *     @param {EventManager} options.eventManager - event manager instance
+ *     @param {HTMLElement} options.container - container element
+ *     @param {WysiwygEditor} options.wysiwygEditor - wysiwyg editor instance
+ * @ignore
  */
 
 var CodeBlockGadget = function (_BlockOverlay) {
   _inherits(CodeBlockGadget, _BlockOverlay);
 
-  /**
-   * Creates an instance of CodeBlockGadget.
-   * @param {Object} options - options
-   * @param {EventManager} options.eventManager - event manager instance
-   * @param {HTMLElement} options.container - container element
-   * @param {WysiwygEditor} options.wysiwygEditor - wysiwyg editor instance
-   * @memberof CodeBlockGadget
-   */
   function CodeBlockGadget(_ref) {
     var eventManager = _ref.eventManager,
         container = _ref.container,
@@ -24477,7 +24594,6 @@ var CodeBlockGadget = function (_BlockOverlay) {
 
     /**
      * update gadget position
-     * @memberof CodeBlockGadget
      * @protected
      * @override
      */
@@ -24497,7 +24613,6 @@ var CodeBlockGadget = function (_BlockOverlay) {
 
     /**
      * on show
-     * @memberof CodeBlockGadget
      * @protected
      * @override
      */
@@ -24519,7 +24634,6 @@ var CodeBlockGadget = function (_BlockOverlay) {
 
     /**
      * on hide
-     * @memberof CodeBlockGadget
      * @protected
      * @override
      */
@@ -24565,16 +24679,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * Class BlockOverlay
+ * @param {Object} options - options
+ *     @param {EventManager} options.eventManager - event manager instance
+ *     @param {HTMLElement} options.container - container element
+ *     @param {string} options.attachedSelector - selector string to find attached element
+ * @ignore
  */
 var BlockOverlay = function () {
-  /**
-   * Creates an instance of BlockOverlay.
-   * @param {Object} options - options
-   *  @param {EventManager} options.eventManager - event manager instance
-   *  @param {HTMLElement} options.container - container element
-   *  @param {string} options.attachedSelector - selector string to find attached element
-   * @memberof BlockOverlay
-   */
   function BlockOverlay(_ref) {
     var eventManager = _ref.eventManager,
         container = _ref.container,
@@ -24591,6 +24702,7 @@ var BlockOverlay = function () {
      * is activated.
      * if this blockOverlay is active, It always be visible unconditionally.
      * @type {boolean}
+     * @private
      */
     this.active = false;
 
@@ -24652,7 +24764,6 @@ var BlockOverlay = function () {
     /**
      * update blockOverlay position & size update to attached element
      * you may want to override this to adjust position & size
-     * @memberof BlockOverlay
      * @protected
      */
 
@@ -24668,7 +24779,6 @@ var BlockOverlay = function () {
      * attached element
      * @protected
      * @returns {HTMLElement} - attached element
-     * @memberof BlockOverlay
      */
 
   }, {
@@ -24681,7 +24791,6 @@ var BlockOverlay = function () {
      * visibility
      * @protected
      * @returns {boolean} visibility
-     * @memberof BlockOverlay
      */
 
   }, {
@@ -24694,7 +24803,6 @@ var BlockOverlay = function () {
      * visibility
      * @param {boolean} visibility - is visible
      * @protected
-     * @memberof BlockOverlay
      */
 
   }, {
@@ -24716,7 +24824,6 @@ var BlockOverlay = function () {
 
     /**
      * called on show. you may want to override to get the event
-     * @memberof BlockOverlay
      * @protected
      * @abstract
      */
@@ -24727,7 +24834,6 @@ var BlockOverlay = function () {
 
     /**
      * called on hide. you may want to override to get the event
-     * @memberof BlockOverlay
      * @protected
      */
 
@@ -24778,15 +24884,12 @@ var containerTmpl = ['<div class="tui-editor">', '<div class="te-md-container">'
 
 /**
  * Class Layout
+ * @param {object} options - Option object
+ * @param {EventManager} eventManager - Event manager instance
+ * @ignore
  */
 
 var Layout = function () {
-  /**
-   * Creates an instance of Layout.
-   * @param {object} options - Option object
-   * @param {EventManager} eventManager - Event manager instance
-   * @memberof Layout
-   */
   function Layout(options, eventManager) {
     _classCallCheck(this, Layout);
 
@@ -24801,7 +24904,7 @@ var Layout = function () {
 
   /**
    * Initializer
-   * @memberof Layout
+   * @protected
    */
 
 
@@ -24816,7 +24919,6 @@ var Layout = function () {
 
     /**
      * Initialize show and hide event
-     * @memberof Layout
      * @private
      */
 
@@ -24829,7 +24931,6 @@ var Layout = function () {
 
     /**
      * Create editor container with template
-     * @memberof Layout
      * @private
      */
 
@@ -24842,7 +24943,6 @@ var Layout = function () {
 
     /**
      * Switch editor mode to WYSIWYG
-     * @memberof Layout
      */
 
   }, {
@@ -24854,7 +24954,6 @@ var Layout = function () {
 
     /**
      * Switch editor mode to Markdown
-     * @memberof Layout
      */
 
   }, {
@@ -24866,7 +24965,6 @@ var Layout = function () {
 
     /**
      * Initialize editor to Markdown and set preview section
-     * @memberof Layout
      * @private
      */
 
@@ -24879,7 +24977,6 @@ var Layout = function () {
 
     /**
      * Initialize editor to WYSIWYG
-     * @memberof Layout
      * @private
      */
 
@@ -24891,7 +24988,6 @@ var Layout = function () {
 
     /**
      * Set preview to vertical split style
-     * @memberof Layout
      * @private
      */
 
@@ -24904,7 +25000,6 @@ var Layout = function () {
 
     /**
      * Set tab style preview mode
-     * @memberof Layout
      * @private
      */
 
@@ -24917,7 +25012,6 @@ var Layout = function () {
 
     /**
      * Toggle preview style between tab and vertical split
-     * @memberof Layout
      * @param {string} style Preview style ('tab' or 'vertical')
      */
 
@@ -24933,7 +25027,6 @@ var Layout = function () {
 
     /**
      * Hide Editor
-     * @memberof Layout
      */
 
   }, {
@@ -24944,7 +25037,6 @@ var Layout = function () {
 
     /**
      * Show Editor
-     * @memberof Layout
      */
 
   }, {
@@ -24955,7 +25047,6 @@ var Layout = function () {
 
     /**
      * Remove Editor
-     * @memberof Layout
      */
 
   }, {
@@ -24966,7 +25057,6 @@ var Layout = function () {
 
     /**
      * Get jQuery wrapped editor container element
-     * @memberof Layout
      * @returns {jQuery}
      */
 
@@ -24978,7 +25068,6 @@ var Layout = function () {
 
     /**
      * Get jQuery wrapped preview element
-     * @memberof Layout
      * @returns {jQuery}
      */
 
@@ -24990,7 +25079,6 @@ var Layout = function () {
 
     /**
      * Get jQuery wrapped Markdown editor element
-     * @memberof Layout
      * @returns {jQuery}
      */
 
@@ -25002,7 +25090,6 @@ var Layout = function () {
 
     /**
      * Get jQuery wrapped WYSIWYG editor element
-     * @memberof Layout
      * @returns {jQuery}
      */
 
@@ -25045,13 +25132,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * Class Command
+ * @param {string} name Command name
+ * @param {number} type Command type (Command.TYPE)
+ * @param {Array.<string>} [keyMap] keyMap
+ * @ignore
  */
 var Command = function () {
-  /**
-   * @param {string} name Command name
-   * @param {number} type Command type (Command.TYPE)
-   * @param {Array.<string>} [keyMap] keyMap
-   */
   function Command(name, type, keyMap) {
     _classCallCheck(this, Command);
 
@@ -25064,9 +25150,7 @@ var Command = function () {
   }
 
   /**
-   * getName
    * returns Name of command
-   * @memberof Command
    * @returns {string} Command Name
    */
 
@@ -25078,9 +25162,7 @@ var Command = function () {
     }
 
     /**
-     * getType
      * returns Type of command
-     * @memberof Command
      * @returns {number} Command Command type number
      */
 
@@ -25091,9 +25173,7 @@ var Command = function () {
     }
 
     /**
-     * isMDType
      * returns whether Command Type is Markdown or not
-     * @memberof Command
      * @returns {boolean} result
      */
 
@@ -25104,9 +25184,7 @@ var Command = function () {
     }
 
     /**
-     * isWWType
      * returns whether Command Type is Wysiwyg or not
-     * @memberof Command
      * @returns {boolean} result
      */
 
@@ -25117,9 +25195,7 @@ var Command = function () {
     }
 
     /**
-     * isGlobalType
      * returns whether Command Type is Global or not
-     * @memberof Command
      * @returns {boolean} result
      */
 
@@ -25130,9 +25206,7 @@ var Command = function () {
     }
 
     /**
-     * setKeyMap
      * Set keymap value for each os
-     * @memberof Command
      * @param {string} win Windows Key(and etc)
      * @param {string} mac Mac osx key
      */
@@ -25149,12 +25223,12 @@ var Command = function () {
 
 /**
  * Command factory method
- * @memberof Command
  * @param {string} typeStr Editor type name
  * @param {object} props Property
  *     @param {string} props.name Command name
  *     @param {number} props.type Command type number
  * @returns {Command}
+ * @static
  */
 
 
@@ -25181,8 +25255,8 @@ Command.factory = function (typeStr, props) {
  * markdown : 0
  * wysiwyg : 1
  * global : 2
- * @memberof Command
  * @type {object}
+ * @private
  */
 Command.TYPE = {
   MD: 0,
@@ -25196,7 +25270,7 @@ exports.default = Command;
 /* 85 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_85__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__85__;
 
 /***/ }),
 /* 86 */
@@ -26225,7 +26299,7 @@ var linkAttribute = exports.linkAttribute = function linkAttribute(markdownit, i
 /* 94 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_94__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__94__;
 
 /***/ }),
 /* 95 */
@@ -26248,11 +26322,11 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _mdPreview = __webpack_require__(33);
+var _mdPreview = __webpack_require__(34);
 
 var _mdPreview2 = _interopRequireDefault(_mdPreview);
 
-var _eventManager = __webpack_require__(39);
+var _eventManager = __webpack_require__(40);
 
 var _eventManager2 = _interopRequireDefault(_eventManager);
 
@@ -26260,11 +26334,11 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _extManager = __webpack_require__(40);
+var _extManager = __webpack_require__(41);
 
 var _extManager2 = _interopRequireDefault(_extManager);
 
-var _convertor = __webpack_require__(41);
+var _convertor = __webpack_require__(42);
 
 var _convertor2 = _interopRequireDefault(_convertor);
 
@@ -26272,7 +26346,7 @@ var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _codeBlockManager = __webpack_require__(24);
+var _codeBlockManager = __webpack_require__(25);
 
 var _codeBlockManager2 = _interopRequireDefault(_codeBlockManager);
 
@@ -26285,24 +26359,21 @@ var TASK_CHECKED_CLASS_NAME = 'checked';
 
 /**
  * Class ToastUIEditorViewer
+ * @param {object} options Option object
+ *     @param {HTMLElement} options.el - container element
+ *     @param {string} options.initialValue Editor's initial value
+ *     @param {object} options.events eventlist Event list
+ *         @param {function} options.events.load It would be emitted when editor fully load
+ *         @param {function} options.events.change It would be emitted when content changed
+ *         @param {function} options.events.stateChange It would be emitted when format change by cursor position
+ *         @param {function} options.events.focus It would be emitted when editor get focus
+ *         @param {function} options.events.blur It would be emitted when editor loose focus
+ *     @param {object} options.hooks Hook list
+ *     @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
+ *     @param {string[]} [options.exts] - extensions
  */
 
 var ToastUIEditorViewer = function () {
-  /**
-   * Viewer
-   * @param {object} options Option object
-    * @param {HTMLElement} options.el - container element
-    * @param {string} options.initialValue Editor's initial value
-    * @param {object} options.events eventlist Event list
-      * @param {function} options.events.load It would be emitted when editor fully load
-      * @param {function} options.events.change It would be emitted when content changed
-      * @param {function} options.events.stateChange It would be emitted when format change by cursor position
-      * @param {function} options.events.focus It would be emitted when editor get focus
-      * @param {function} options.events.blur It would be emitted when editor loose focus
-    * @param {object} options.hooks Hook list
-      * @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
-    * @param {string[]} [options.exts] - extensions
-    */
   function ToastUIEditorViewer(options) {
     var _this = this;
 
@@ -26322,7 +26393,6 @@ var ToastUIEditorViewer = function () {
     } else {
       this.convertor = new _convertor2.default(this.eventManager);
     }
-    this.toMarkOptions = null;
 
     if (this.options.useDefaultHTMLSanitizer) {
       this.convertor.initHtmlSanitizer();
@@ -26340,13 +26410,24 @@ var ToastUIEditorViewer = function () {
       });
     }
 
-    this.preview = new _mdPreview2.default((0, _jquery2.default)(this.options.el), this.eventManager, this.convertor, true);
+    var _options = this.options,
+        el = _options.el,
+        initialValue = _options.initialValue;
+
+    var existingHTML = el.innerHTML;
+    el.innerHTML = '';
+
+    this.preview = new _mdPreview2.default((0, _jquery2.default)(el), this.eventManager, this.convertor, true);
 
     this.preview.$el.on('mousedown', _jquery2.default.proxy(this._toggleTask, this));
 
     _extManager2.default.applyExtension(this, this.options.exts);
 
-    this.setValue(this.options.initialValue);
+    if (initialValue) {
+      this.setValue(initialValue);
+    } else if (existingHTML) {
+      this.preview.setHTML(existingHTML);
+    }
 
     this.eventManager.emit('load', this);
   }
@@ -26374,7 +26455,6 @@ var ToastUIEditorViewer = function () {
 
     /**
      * Set content for preview
-     * @memberof ToastUIEditorViewer
      * @param {string} markdown Markdown text
      */
 
@@ -26389,7 +26469,6 @@ var ToastUIEditorViewer = function () {
 
     /**
      * Set content for preview
-     * @memberof ToastUIEditorViewer
      * @param {string} markdown Markdown text
      * @deprecated
      */
@@ -26402,7 +26481,6 @@ var ToastUIEditorViewer = function () {
 
     /**
      * Bind eventHandler to event type
-     * @memberof ToastUIEditorViewer
      * @param {string} type Event type
      * @param {function} handler Event handler
      */
@@ -26415,7 +26493,6 @@ var ToastUIEditorViewer = function () {
 
     /**
      * Unbind eventHandler from event type
-     * @memberof ToastUIEditorViewer
      * @param {string} type Event type
      */
 
@@ -26427,7 +26504,6 @@ var ToastUIEditorViewer = function () {
 
     /**
      * Remove Viewer preview from document
-     * @memberof ToastUIEditorViewer
      */
 
   }, {
@@ -26445,7 +26521,6 @@ var ToastUIEditorViewer = function () {
 
     /**
      * Add hook to Viewer preview's event
-     * @memberof ToastUIEditorViewer
      * @param {string} type Event type
      * @param {function} handler Event handler
      */
@@ -26459,7 +26534,6 @@ var ToastUIEditorViewer = function () {
 
     /**
      * Return true
-     * @memberof ToastUIEditorViewer
      * @returns {boolean}
      */
 
@@ -26471,7 +26545,6 @@ var ToastUIEditorViewer = function () {
 
     /**
      * Return false
-     * @memberof ToastUIEditorViewer
      * @returns {boolean}
      */
 
@@ -26483,7 +26556,6 @@ var ToastUIEditorViewer = function () {
 
     /**
      * Return false
-     * @memberof ToastUIEditorViewer
      * @returns {boolean}
      */
 
@@ -26495,7 +26567,6 @@ var ToastUIEditorViewer = function () {
 
     /**
      * Define extension
-     * @memberof ToastUIEditorViewer
      * @param {string} name Extension name
      * @param {ExtManager~extension} ext extension
      */
@@ -26521,6 +26592,7 @@ ToastUIEditorViewer.isViewer = true;
 /**
  * domUtil instance
  * @type {DomUtil}
+ * @ignore
  */
 ToastUIEditorViewer.domUtils = _domUtils2.default;
 
@@ -26638,7 +26710,7 @@ var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
-var _tooltip = __webpack_require__(30);
+var _tooltip = __webpack_require__(31);
 
 var _tooltip2 = _interopRequireDefault(_tooltip);
 
@@ -26653,22 +26725,14 @@ var CLASS_MODE_SWITCH = 'te-mode-switch-section';
 var CONTAINER_TEMPLATE = '\n    <div class="tui-editor-defaultUI">\n        <div class="' + CLASS_TOOLBAR + '"><div class="' + CLASS_MARKDOWN_TAB + '"></div></div>\n        <div class="' + CLASS_EDITOR + '"></div>\n        <div class="' + CLASS_MODE_SWITCH + '"></div>\n    </div>\n';
 
 /**
- * Class Default UI
- * initialize ui instances. toolbar, popups
+ * Class DefaultUI
+ * @param {ToastUIEditor} editor - editor instance
  */
 
 var DefaultUI = function () {
 
   /**
-   * Creates an instance of DefaultUI.
-   * @param {ToastUIEditor} editor - editor instance
-   * @memberof DefaultUI
-   */
-
-
-  /**
    * mode switch instance
-   * @memberof DefaultUI
    * @private
    * @type {ModeSwitch}
    */
@@ -26676,7 +26740,6 @@ var DefaultUI = function () {
 
   /**
    * markdown tab section jQuery element
-   * @memberof DefaultUI
    * @private
    * @type {HTMLElement}
    */
@@ -26684,14 +26747,12 @@ var DefaultUI = function () {
 
   /**
    * editor type ww/md
-   * @memberof DefaultUI
    * @private
    * @type {string}
    */
 
 
   /**
-   * @memberof DefaultUI
    * @type {HTMLElement}
    * @private
    */
@@ -26699,7 +26760,6 @@ var DefaultUI = function () {
 
   /**
    * DefaultToolbar wrapper element
-   * @memberof DefaultUI
    * @type {jQuery}
    */
   function DefaultUI(editor) {
@@ -26725,7 +26785,6 @@ var DefaultUI = function () {
 
   /**
    * popup instances
-   * @memberof DefaultUI
    * @private
    * @type {Array}
    */
@@ -26733,7 +26792,6 @@ var DefaultUI = function () {
 
   /**
    * markdown tab
-   * @memberof DefaultUI
    * @private
    * @type {Tab}
    */
@@ -26741,7 +26799,6 @@ var DefaultUI = function () {
 
   /**
    * editor instance
-   * @memberof DefaultUI
    * @private
    * @type {ToastUIEditor}
    */
@@ -26749,7 +26806,6 @@ var DefaultUI = function () {
 
   /**
    * editor section element
-   * @memberof DefaultUI
    * @private
    * @type {HTMLElement}
    */
@@ -26757,14 +26813,12 @@ var DefaultUI = function () {
 
   /**
    * DefaultToolbar instance
-   * @memberof DefaultUI
    * @type {DefaultToolbar}
    * @private
    */
 
   /**
    * UI name
-   * @memberof DefaultUI
    * @type {string}
    */
 
@@ -26941,7 +26995,6 @@ var DefaultUI = function () {
     /**
      * get toolbar instance
      * @returns {Toolbar} - toolbar instance
-     * @memberof DefaultUI
      */
 
   }, {
@@ -26953,7 +27006,6 @@ var DefaultUI = function () {
     /**
      * set toolbar instance
      * @param {Toolbar} toolbar - toolbar
-     * @memberof DefaultUI
      */
 
   }, {
@@ -26965,7 +27017,6 @@ var DefaultUI = function () {
 
     /**
      * get mode switch instance
-     * @memberof DefaultUI
      * @returns {ModeSwitch} - mode switch instance
      */
 
@@ -26978,7 +27029,6 @@ var DefaultUI = function () {
     /**
      * get editor section height
      * @returns {Number} - height of editor section
-     * @memberof DefaultUI
      */
 
   }, {
@@ -26992,7 +27042,6 @@ var DefaultUI = function () {
     /**
      * get editor height
      * @returns {Number} - height of editor
-     * @memberof DefaultUI
      */
 
   }, {
@@ -27006,7 +27055,6 @@ var DefaultUI = function () {
     /**
      * get Table Popup
      * @returns {PopupTableUtils} - PopupTableUtils
-     * @memberof DefaultUI
      */
 
   }, {
@@ -27024,7 +27072,6 @@ var DefaultUI = function () {
 
     /**
      * hide
-     * @memberof DefaultUI
      */
 
   }, {
@@ -27035,7 +27082,6 @@ var DefaultUI = function () {
 
     /**
      * show
-     * @memberof DefaultUI
      */
 
   }, {
@@ -27046,7 +27092,6 @@ var DefaultUI = function () {
 
     /**
      * remove
-     * @memberof DefaultUI
      */
 
   }, {
@@ -27067,7 +27112,6 @@ var DefaultUI = function () {
      * creates popup
      * @param {LayerPopupOption} options - layerPopup options
      * @returns {LayerPopup} - crated layerPopup
-     * @memberof DefaultUI
      */
 
   }, {
@@ -27132,8 +27176,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var MORE_BUTTON_NAME = 'more';
 
 /**
- * default toolbar
- * @extends Toolbar
+ * Class DefaultToolbar
  */
 
 var DefaultToolbar = function (_Toolbar) {
@@ -27141,9 +27184,8 @@ var DefaultToolbar = function (_Toolbar) {
 
   /**
    * popup dropdown toolbar
-   * @memberof DefaultToolbar
-   * @private
    * @type {PopupDropdownToolbar}
+   * @private
    */
   function DefaultToolbar(eventManager, options) {
     _classCallCheck(this, DefaultToolbar);
@@ -27159,22 +27201,20 @@ var DefaultToolbar = function (_Toolbar) {
    * insert toolbar item
    * @param  {number} index - index at given item inserted
    * @param  {ToolbarItem|string|object} item - toolbar item
-   * @memberof Toolbar
+   * @override
    */
 
 
   /**
    * resize observer
-   * @memberof DefaultToolbar
-   * @private
    * @type {ResizeObserver}
+   * @private
    */
 
   /**
    * more button
-   * @memberof DefaultToolbar
-   * @private
    * @type {ToolbarButton}
+   * @private
    */
 
 
@@ -27284,7 +27324,7 @@ exports.default = DefaultToolbar;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+__webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/**
  * A collection of shims that provide minimal functionality of the ES6 collections.
  *
@@ -27296,7 +27336,6 @@ var MapShim = (function () {
     if (typeof Map !== 'undefined') {
         return Map;
     }
-
     /**
      * Returns index in provided array that matches the specified key.
      *
@@ -27306,107 +27345,89 @@ var MapShim = (function () {
      */
     function getIndex(arr, key) {
         var result = -1;
-
         arr.some(function (entry, index) {
             if (entry[0] === key) {
                 result = index;
-
                 return true;
             }
-
             return false;
         });
-
         return result;
     }
-
-    return (function () {
-        function anonymous() {
+    return /** @class */ (function () {
+        function class_1() {
             this.__entries__ = [];
         }
-
-        var prototypeAccessors = { size: { configurable: true } };
-
-        /**
-         * @returns {boolean}
-         */
-        prototypeAccessors.size.get = function () {
-            return this.__entries__.length;
-        };
-
+        Object.defineProperty(class_1.prototype, "size", {
+            /**
+             * @returns {boolean}
+             */
+            get: function () {
+                return this.__entries__.length;
+            },
+            enumerable: true,
+            configurable: true
+        });
         /**
          * @param {*} key
          * @returns {*}
          */
-        anonymous.prototype.get = function (key) {
+        class_1.prototype.get = function (key) {
             var index = getIndex(this.__entries__, key);
             var entry = this.__entries__[index];
-
             return entry && entry[1];
         };
-
         /**
          * @param {*} key
          * @param {*} value
          * @returns {void}
          */
-        anonymous.prototype.set = function (key, value) {
+        class_1.prototype.set = function (key, value) {
             var index = getIndex(this.__entries__, key);
-
             if (~index) {
                 this.__entries__[index][1] = value;
-            } else {
+            }
+            else {
                 this.__entries__.push([key, value]);
             }
         };
-
         /**
          * @param {*} key
          * @returns {void}
          */
-        anonymous.prototype.delete = function (key) {
+        class_1.prototype.delete = function (key) {
             var entries = this.__entries__;
             var index = getIndex(entries, key);
-
             if (~index) {
                 entries.splice(index, 1);
             }
         };
-
         /**
          * @param {*} key
          * @returns {void}
          */
-        anonymous.prototype.has = function (key) {
+        class_1.prototype.has = function (key) {
             return !!~getIndex(this.__entries__, key);
         };
-
         /**
          * @returns {void}
          */
-        anonymous.prototype.clear = function () {
+        class_1.prototype.clear = function () {
             this.__entries__.splice(0);
         };
-
         /**
          * @param {Function} callback
          * @param {*} [ctx=null]
          * @returns {void}
          */
-        anonymous.prototype.forEach = function (callback, ctx) {
-            var this$1 = this;
-            if ( ctx === void 0 ) ctx = null;
-
-            for (var i = 0, list = this$1.__entries__; i < list.length; i += 1) {
-                var entry = list[i];
-
+        class_1.prototype.forEach = function (callback, ctx) {
+            if (ctx === void 0) { ctx = null; }
+            for (var _i = 0, _a = this.__entries__; _i < _a.length; _i++) {
+                var entry = _a[_i];
                 callback.call(ctx, entry[1], entry[0]);
             }
         };
-
-        Object.defineProperties( anonymous.prototype, prototypeAccessors );
-
-        return anonymous;
+        return class_1;
     }());
 })();
 
@@ -27420,15 +27441,12 @@ var global$1 = (function () {
     if (typeof global !== 'undefined' && global.Math === Math) {
         return global;
     }
-
     if (typeof self !== 'undefined' && self.Math === Math) {
         return self;
     }
-
     if (typeof window !== 'undefined' && window.Math === Math) {
         return window;
     }
-
     // eslint-disable-next-line no-new-func
     return Function('return this')();
 })();
@@ -27446,13 +27464,11 @@ var requestAnimationFrame$1 = (function () {
         // object on the left hand side.
         return requestAnimationFrame.bind(global$1);
     }
-
     return function (callback) { return setTimeout(function () { return callback(Date.now()); }, 1000 / 60); };
 })();
 
 // Defines minimum timeout before adding a trailing call.
 var trailingTimeout = 2;
-
 /**
  * Creates a wrapper function which ensures that provided callback will be
  * invoked only once during the specified delay period.
@@ -27461,11 +27477,8 @@ var trailingTimeout = 2;
  * @param {number} delay - Delay after which to invoke callback.
  * @returns {Function}
  */
-var throttle = function (callback, delay) {
-    var leadingCall = false,
-        trailingCall = false,
-        lastCallTime = 0;
-
+function throttle (callback, delay) {
+    var leadingCall = false, trailingCall = false, lastCallTime = 0;
     /**
      * Invokes the original callback function and schedules new invocation if
      * the "proxy" was called during current request.
@@ -27475,15 +27488,12 @@ var throttle = function (callback, delay) {
     function resolvePending() {
         if (leadingCall) {
             leadingCall = false;
-
             callback();
         }
-
         if (trailingCall) {
             proxy();
         }
     }
-
     /**
      * Callback invoked after the specified delay. It will further postpone
      * invocation of the original function delegating it to the
@@ -27494,7 +27504,6 @@ var throttle = function (callback, delay) {
     function timeoutCallback() {
         requestAnimationFrame$1(resolvePending);
     }
-
     /**
      * Schedules invocation of the original function.
      *
@@ -27502,253 +27511,231 @@ var throttle = function (callback, delay) {
      */
     function proxy() {
         var timeStamp = Date.now();
-
         if (leadingCall) {
             // Reject immediately following calls.
             if (timeStamp - lastCallTime < trailingTimeout) {
                 return;
             }
-
             // Schedule new call to be in invoked when the pending one is resolved.
             // This is important for "transitions" which never actually start
             // immediately so there is a chance that we might miss one if change
             // happens amids the pending invocation.
             trailingCall = true;
-        } else {
+        }
+        else {
             leadingCall = true;
             trailingCall = false;
-
             setTimeout(timeoutCallback, delay);
         }
-
         lastCallTime = timeStamp;
     }
-
     return proxy;
-};
+}
 
 // Minimum delay before invoking the update of observers.
 var REFRESH_DELAY = 20;
-
 // A list of substrings of CSS properties used to find transition events that
 // might affect dimensions of observed elements.
 var transitionKeys = ['top', 'right', 'bottom', 'left', 'width', 'height', 'size', 'weight'];
-
 // Check if MutationObserver is available.
 var mutationObserverSupported = typeof MutationObserver !== 'undefined';
-
 /**
  * Singleton controller class which handles updates of ResizeObserver instances.
  */
-var ResizeObserverController = function() {
-    this.connected_ = false;
-    this.mutationEventsAdded_ = false;
-    this.mutationsObserver_ = null;
-    this.observers_ = [];
-
-    this.onTransitionEnd_ = this.onTransitionEnd_.bind(this);
-    this.refresh = throttle(this.refresh.bind(this), REFRESH_DELAY);
-};
-
-/**
- * Adds observer to observers list.
- *
- * @param {ResizeObserverSPI} observer - Observer to be added.
- * @returns {void}
- */
-
-
-/**
- * Holds reference to the controller's instance.
- *
- * @private {ResizeObserverController}
- */
-
-
-/**
- * Keeps reference to the instance of MutationObserver.
- *
- * @private {MutationObserver}
- */
-
-/**
- * Indicates whether DOM listeners have been added.
- *
- * @private {boolean}
- */
-ResizeObserverController.prototype.addObserver = function (observer) {
-    if (!~this.observers_.indexOf(observer)) {
-        this.observers_.push(observer);
+var ResizeObserverController = /** @class */ (function () {
+    /**
+     * Creates a new instance of ResizeObserverController.
+     *
+     * @private
+     */
+    function ResizeObserverController() {
+        /**
+         * Indicates whether DOM listeners have been added.
+         *
+         * @private {boolean}
+         */
+        this.connected_ = false;
+        /**
+         * Tells that controller has subscribed for Mutation Events.
+         *
+         * @private {boolean}
+         */
+        this.mutationEventsAdded_ = false;
+        /**
+         * Keeps reference to the instance of MutationObserver.
+         *
+         * @private {MutationObserver}
+         */
+        this.mutationsObserver_ = null;
+        /**
+         * A list of connected observers.
+         *
+         * @private {Array<ResizeObserverSPI>}
+         */
+        this.observers_ = [];
+        this.onTransitionEnd_ = this.onTransitionEnd_.bind(this);
+        this.refresh = throttle(this.refresh.bind(this), REFRESH_DELAY);
     }
-
-    // Add listeners if they haven't been added yet.
-    if (!this.connected_) {
-        this.connect_();
-    }
-};
-
-/**
- * Removes observer from observers list.
- *
- * @param {ResizeObserverSPI} observer - Observer to be removed.
- * @returns {void}
- */
-ResizeObserverController.prototype.removeObserver = function (observer) {
-    var observers = this.observers_;
-    var index = observers.indexOf(observer);
-
-    // Remove observer if it's present in registry.
-    if (~index) {
-        observers.splice(index, 1);
-    }
-
-    // Remove listeners if controller has no connected observers.
-    if (!observers.length && this.connected_) {
-        this.disconnect_();
-    }
-};
-
-/**
- * Invokes the update of observers. It will continue running updates insofar
- * it detects changes.
- *
- * @returns {void}
- */
-ResizeObserverController.prototype.refresh = function () {
-    var changesDetected = this.updateObservers_();
-
-    // Continue running updates if changes have been detected as there might
-    // be future ones caused by CSS transitions.
-    if (changesDetected) {
-        this.refresh();
-    }
-};
-
-/**
- * Updates every observer from observers list and notifies them of queued
- * entries.
- *
- * @private
- * @returns {boolean} Returns "true" if any observer has detected changes in
- *  dimensions of it's elements.
- */
-ResizeObserverController.prototype.updateObservers_ = function () {
-    // Collect observers that have active observations.
-    var activeObservers = this.observers_.filter(function (observer) {
-        return observer.gatherActive(), observer.hasActive();
-    });
-
-    // Deliver notifications in a separate cycle in order to avoid any
-    // collisions between observers, e.g. when multiple instances of
-    // ResizeObserver are tracking the same element and the callback of one
-    // of them changes content dimensions of the observed target. Sometimes
-    // this may result in notifications being blocked for the rest of observers.
-    activeObservers.forEach(function (observer) { return observer.broadcastActive(); });
-
-    return activeObservers.length > 0;
-};
-
-/**
- * Initializes DOM listeners.
- *
- * @private
- * @returns {void}
- */
-ResizeObserverController.prototype.connect_ = function () {
-    // Do nothing if running in a non-browser environment or if listeners
-    // have been already added.
-    if (!isBrowser || this.connected_) {
-        return;
-    }
-
-    // Subscription to the "Transitionend" event is used as a workaround for
-    // delayed transitions. This way it's possible to capture at least the
-    // final state of an element.
-    document.addEventListener('transitionend', this.onTransitionEnd_);
-
-    window.addEventListener('resize', this.refresh);
-
-    if (mutationObserverSupported) {
-        this.mutationsObserver_ = new MutationObserver(this.refresh);
-
-        this.mutationsObserver_.observe(document, {
-            attributes: true,
-            childList: true,
-            characterData: true,
-            subtree: true
+    /**
+     * Adds observer to observers list.
+     *
+     * @param {ResizeObserverSPI} observer - Observer to be added.
+     * @returns {void}
+     */
+    ResizeObserverController.prototype.addObserver = function (observer) {
+        if (!~this.observers_.indexOf(observer)) {
+            this.observers_.push(observer);
+        }
+        // Add listeners if they haven't been added yet.
+        if (!this.connected_) {
+            this.connect_();
+        }
+    };
+    /**
+     * Removes observer from observers list.
+     *
+     * @param {ResizeObserverSPI} observer - Observer to be removed.
+     * @returns {void}
+     */
+    ResizeObserverController.prototype.removeObserver = function (observer) {
+        var observers = this.observers_;
+        var index = observers.indexOf(observer);
+        // Remove observer if it's present in registry.
+        if (~index) {
+            observers.splice(index, 1);
+        }
+        // Remove listeners if controller has no connected observers.
+        if (!observers.length && this.connected_) {
+            this.disconnect_();
+        }
+    };
+    /**
+     * Invokes the update of observers. It will continue running updates insofar
+     * it detects changes.
+     *
+     * @returns {void}
+     */
+    ResizeObserverController.prototype.refresh = function () {
+        var changesDetected = this.updateObservers_();
+        // Continue running updates if changes have been detected as there might
+        // be future ones caused by CSS transitions.
+        if (changesDetected) {
+            this.refresh();
+        }
+    };
+    /**
+     * Updates every observer from observers list and notifies them of queued
+     * entries.
+     *
+     * @private
+     * @returns {boolean} Returns "true" if any observer has detected changes in
+     *      dimensions of it's elements.
+     */
+    ResizeObserverController.prototype.updateObservers_ = function () {
+        // Collect observers that have active observations.
+        var activeObservers = this.observers_.filter(function (observer) {
+            return observer.gatherActive(), observer.hasActive();
         });
-    } else {
-        document.addEventListener('DOMSubtreeModified', this.refresh);
-
-        this.mutationEventsAdded_ = true;
-    }
-
-    this.connected_ = true;
-};
-
-/**
- * Removes DOM listeners.
- *
- * @private
- * @returns {void}
- */
-ResizeObserverController.prototype.disconnect_ = function () {
-    // Do nothing if running in a non-browser environment or if listeners
-    // have been already removed.
-    if (!isBrowser || !this.connected_) {
-        return;
-    }
-
-    document.removeEventListener('transitionend', this.onTransitionEnd_);
-    window.removeEventListener('resize', this.refresh);
-
-    if (this.mutationsObserver_) {
-        this.mutationsObserver_.disconnect();
-    }
-
-    if (this.mutationEventsAdded_) {
-        document.removeEventListener('DOMSubtreeModified', this.refresh);
-    }
-
-    this.mutationsObserver_ = null;
-    this.mutationEventsAdded_ = false;
-    this.connected_ = false;
-};
-
-/**
- * "Transitionend" event handler.
- *
- * @private
- * @param {TransitionEvent} event
- * @returns {void}
- */
-ResizeObserverController.prototype.onTransitionEnd_ = function (ref) {
-        var propertyName = ref.propertyName; if ( propertyName === void 0 ) propertyName = '';
-
-    // Detect whether transition may affect dimensions of an element.
-    var isReflowProperty = transitionKeys.some(function (key) {
-        return !!~propertyName.indexOf(key);
-    });
-
-    if (isReflowProperty) {
-        this.refresh();
-    }
-};
-
-/**
- * Returns instance of the ResizeObserverController.
- *
- * @returns {ResizeObserverController}
- */
-ResizeObserverController.getInstance = function () {
-    if (!this.instance_) {
-        this.instance_ = new ResizeObserverController();
-    }
-
-    return this.instance_;
-};
-
-ResizeObserverController.instance_ = null;
+        // Deliver notifications in a separate cycle in order to avoid any
+        // collisions between observers, e.g. when multiple instances of
+        // ResizeObserver are tracking the same element and the callback of one
+        // of them changes content dimensions of the observed target. Sometimes
+        // this may result in notifications being blocked for the rest of observers.
+        activeObservers.forEach(function (observer) { return observer.broadcastActive(); });
+        return activeObservers.length > 0;
+    };
+    /**
+     * Initializes DOM listeners.
+     *
+     * @private
+     * @returns {void}
+     */
+    ResizeObserverController.prototype.connect_ = function () {
+        // Do nothing if running in a non-browser environment or if listeners
+        // have been already added.
+        if (!isBrowser || this.connected_) {
+            return;
+        }
+        // Subscription to the "Transitionend" event is used as a workaround for
+        // delayed transitions. This way it's possible to capture at least the
+        // final state of an element.
+        document.addEventListener('transitionend', this.onTransitionEnd_);
+        window.addEventListener('resize', this.refresh);
+        if (mutationObserverSupported) {
+            this.mutationsObserver_ = new MutationObserver(this.refresh);
+            this.mutationsObserver_.observe(document, {
+                attributes: true,
+                childList: true,
+                characterData: true,
+                subtree: true
+            });
+        }
+        else {
+            document.addEventListener('DOMSubtreeModified', this.refresh);
+            this.mutationEventsAdded_ = true;
+        }
+        this.connected_ = true;
+    };
+    /**
+     * Removes DOM listeners.
+     *
+     * @private
+     * @returns {void}
+     */
+    ResizeObserverController.prototype.disconnect_ = function () {
+        // Do nothing if running in a non-browser environment or if listeners
+        // have been already removed.
+        if (!isBrowser || !this.connected_) {
+            return;
+        }
+        document.removeEventListener('transitionend', this.onTransitionEnd_);
+        window.removeEventListener('resize', this.refresh);
+        if (this.mutationsObserver_) {
+            this.mutationsObserver_.disconnect();
+        }
+        if (this.mutationEventsAdded_) {
+            document.removeEventListener('DOMSubtreeModified', this.refresh);
+        }
+        this.mutationsObserver_ = null;
+        this.mutationEventsAdded_ = false;
+        this.connected_ = false;
+    };
+    /**
+     * "Transitionend" event handler.
+     *
+     * @private
+     * @param {TransitionEvent} event
+     * @returns {void}
+     */
+    ResizeObserverController.prototype.onTransitionEnd_ = function (_a) {
+        var _b = _a.propertyName, propertyName = _b === void 0 ? '' : _b;
+        // Detect whether transition may affect dimensions of an element.
+        var isReflowProperty = transitionKeys.some(function (key) {
+            return !!~propertyName.indexOf(key);
+        });
+        if (isReflowProperty) {
+            this.refresh();
+        }
+    };
+    /**
+     * Returns instance of the ResizeObserverController.
+     *
+     * @returns {ResizeObserverController}
+     */
+    ResizeObserverController.getInstance = function () {
+        if (!this.instance_) {
+            this.instance_ = new ResizeObserverController();
+        }
+        return this.instance_;
+    };
+    /**
+     * Holds reference to the controller's instance.
+     *
+     * @private {ResizeObserverController}
+     */
+    ResizeObserverController.instance_ = null;
+    return ResizeObserverController;
+}());
 
 /**
  * Defines non-writable/enumerable properties of the provided target object.
@@ -27758,9 +27745,8 @@ ResizeObserverController.instance_ = null;
  * @returns {Object} Target object.
  */
 var defineConfigurable = (function (target, props) {
-    for (var i = 0, list = Object.keys(props); i < list.length; i += 1) {
-        var key = list[i];
-
+    for (var _i = 0, _a = Object.keys(props); _i < _a.length; _i++) {
+        var key = _a[_i];
         Object.defineProperty(target, key, {
             value: props[key],
             enumerable: false,
@@ -27768,7 +27754,6 @@ var defineConfigurable = (function (target, props) {
             configurable: true
         });
     }
-
     return target;
 });
 
@@ -27783,7 +27768,6 @@ var getWindowOf = (function (target) {
     // has the "ownerDocument" property from which we can retrieve a
     // corresponding global object.
     var ownerGlobal = target && target.ownerDocument && target.ownerDocument.defaultView;
-
     // Return the local global object if it's not possible extract one from
     // provided element.
     return ownerGlobal || global$1;
@@ -27791,7 +27775,6 @@ var getWindowOf = (function (target) {
 
 // Placeholder of an empty content rectangle.
 var emptyRect = createRectInit(0, 0, 0, 0);
-
 /**
  * Converts provided string to a number.
  *
@@ -27801,7 +27784,6 @@ var emptyRect = createRectInit(0, 0, 0, 0);
 function toFloat(value) {
     return parseFloat(value) || 0;
 }
-
 /**
  * Extracts borders size from provided styles.
  *
@@ -27810,16 +27792,15 @@ function toFloat(value) {
  * @returns {number}
  */
 function getBordersSize(styles) {
-    var positions = [], len = arguments.length - 1;
-    while ( len-- > 0 ) positions[ len ] = arguments[ len + 1 ];
-
+    var positions = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        positions[_i - 1] = arguments[_i];
+    }
     return positions.reduce(function (size, position) {
         var value = styles['border-' + position + '-width'];
-
         return size + toFloat(value);
     }, 0);
 }
-
 /**
  * Extracts paddings sizes from provided styles.
  *
@@ -27829,18 +27810,13 @@ function getBordersSize(styles) {
 function getPaddings(styles) {
     var positions = ['top', 'right', 'bottom', 'left'];
     var paddings = {};
-
-    for (var i = 0, list = positions; i < list.length; i += 1) {
-        var position = list[i];
-
+    for (var _i = 0, positions_1 = positions; _i < positions_1.length; _i++) {
+        var position = positions_1[_i];
         var value = styles['padding-' + position];
-
         paddings[position] = toFloat(value);
     }
-
     return paddings;
 }
-
 /**
  * Calculates content rectangle of provided SVG element.
  *
@@ -27850,10 +27826,8 @@ function getPaddings(styles) {
  */
 function getSVGContentRect(target) {
     var bbox = target.getBBox();
-
     return createRectInit(0, 0, bbox.width, bbox.height);
 }
-
 /**
  * Calculates content rectangle of provided HTMLElement.
  *
@@ -27863,9 +27837,7 @@ function getSVGContentRect(target) {
 function getHTMLElementContentRect(target) {
     // Client width & height properties can't be
     // used exclusively as they provide rounded values.
-    var clientWidth = target.clientWidth;
-    var clientHeight = target.clientHeight;
-
+    var clientWidth = target.clientWidth, clientHeight = target.clientHeight;
     // By this condition we can catch all non-replaced inline, hidden and
     // detached elements. Though elements with width & height properties less
     // than 0.5 will be discarded as well.
@@ -27877,19 +27849,15 @@ function getHTMLElementContentRect(target) {
     if (!clientWidth && !clientHeight) {
         return emptyRect;
     }
-
     var styles = getWindowOf(target).getComputedStyle(target);
     var paddings = getPaddings(styles);
     var horizPad = paddings.left + paddings.right;
     var vertPad = paddings.top + paddings.bottom;
-
     // Computed styles of width & height are being used because they are the
     // only dimensions available to JS that contain non-rounded values. It could
     // be possible to utilize the getBoundingClientRect if only it's data wasn't
     // affected by CSS transformations let alone paddings, borders and scroll bars.
-    var width = toFloat(styles.width),
-        height = toFloat(styles.height);
-
+    var width = toFloat(styles.width), height = toFloat(styles.height);
     // Width & height include paddings and borders when the 'border-box' box
     // model is applied (except for IE).
     if (styles.boxSizing === 'border-box') {
@@ -27902,12 +27870,10 @@ function getHTMLElementContentRect(target) {
         if (Math.round(width + horizPad) !== clientWidth) {
             width -= getBordersSize(styles, 'left', 'right') + horizPad;
         }
-
         if (Math.round(height + vertPad) !== clientHeight) {
             height -= getBordersSize(styles, 'top', 'bottom') + vertPad;
         }
     }
-
     // Following steps can't be applied to the document's root element as its
     // client[Width/Height] properties represent viewport area of the window.
     // Besides, it's as well not necessary as the <html> itself neither has
@@ -27919,7 +27885,6 @@ function getHTMLElementContentRect(target) {
         // and "client" properties, though that is not always true in Chrome.
         var vertScrollbar = Math.round(width + horizPad) - clientWidth;
         var horizScrollbar = Math.round(height + vertPad) - clientHeight;
-
         // Chrome has a rather weird rounding of "client" properties.
         // E.g. for an element with content width of 314.2px it sometimes gives
         // the client width of 315px and for the width of 314.7px it may give
@@ -27928,15 +27893,12 @@ function getHTMLElementContentRect(target) {
         if (Math.abs(vertScrollbar) !== 1) {
             width -= vertScrollbar;
         }
-
         if (Math.abs(horizScrollbar) !== 1) {
             height -= horizScrollbar;
         }
     }
-
     return createRectInit(paddings.left, paddings.top, width, height);
 }
-
 /**
  * Checks whether provided element is an instance of the SVGGraphicsElement.
  *
@@ -27949,13 +27911,12 @@ var isSVGGraphicsElement = (function () {
     if (typeof SVGGraphicsElement !== 'undefined') {
         return function (target) { return target instanceof getWindowOf(target).SVGGraphicsElement; };
     }
-
     // If it's so, then check that element is at least an instance of the
     // SVGElement and that it has the "getBBox" method.
     // eslint-disable-next-line no-extra-parens
-    return function (target) { return target instanceof getWindowOf(target).SVGElement && typeof target.getBBox === 'function'; };
+    return function (target) { return (target instanceof getWindowOf(target).SVGElement &&
+        typeof target.getBBox === 'function'); };
 })();
-
 /**
  * Checks whether provided element is a document element (<html>).
  *
@@ -27965,7 +27926,6 @@ var isSVGGraphicsElement = (function () {
 function isDocumentElement(target) {
     return target === getWindowOf(target).document.documentElement;
 }
-
 /**
  * Calculates an appropriate content rectangle for provided html or svg element.
  *
@@ -27976,14 +27936,11 @@ function getContentRect(target) {
     if (!isBrowser) {
         return emptyRect;
     }
-
     if (isSVGGraphicsElement(target)) {
         return getSVGContentRect(target);
     }
-
     return getHTMLElementContentRect(target);
 }
-
 /**
  * Creates rectangle with an interface of the DOMRectReadOnly.
  * Spec: https://drafts.fxtf.org/geometry/#domrectreadonly
@@ -27991,16 +27948,11 @@ function getContentRect(target) {
  * @param {DOMRectInit} rectInit - Object with rectangle's x/y coordinates and dimensions.
  * @returns {DOMRectReadOnly}
  */
-function createReadOnlyRect(ref) {
-    var x = ref.x;
-    var y = ref.y;
-    var width = ref.width;
-    var height = ref.height;
-
+function createReadOnlyRect(_a) {
+    var x = _a.x, y = _a.y, width = _a.width, height = _a.height;
     // If DOMRectReadOnly is available use it as a prototype for the rectangle.
     var Constr = typeof DOMRectReadOnly !== 'undefined' ? DOMRectReadOnly : Object;
     var rect = Object.create(Constr.prototype);
-
     // Rectangle's properties are not writable and non-enumerable.
     defineConfigurable(rect, {
         x: x, y: y, width: width, height: height,
@@ -28009,10 +27961,8 @@ function createReadOnlyRect(ref) {
         bottom: height + y,
         left: x
     });
-
     return rect;
 }
-
 /**
  * Creates DOMRectInit object based on the provided dimensions and the x/y coordinates.
  * Spec: https://drafts.fxtf.org/geometry/#dictdef-domrectinit
@@ -28031,271 +27981,266 @@ function createRectInit(x, y, width, height) {
  * Class that is responsible for computations of the content rectangle of
  * provided DOM element and for keeping track of it's changes.
  */
-var ResizeObservation = function(target) {
-    this.broadcastWidth = 0;
-    this.broadcastHeight = 0;
-    this.contentRect_ = createRectInit(0, 0, 0, 0);
-
-    this.target = target;
-};
-
-/**
- * Updates content rectangle and tells whether it's width or height properties
- * have changed since the last broadcast.
- *
- * @returns {boolean}
- */
-
-
-/**
- * Reference to the last observed content rectangle.
- *
- * @private {DOMRectInit}
- */
-
-
-/**
- * Broadcasted width of content rectangle.
- *
- * @type {number}
- */
-ResizeObservation.prototype.isActive = function () {
-    var rect = getContentRect(this.target);
-
-    this.contentRect_ = rect;
-
-    return rect.width !== this.broadcastWidth || rect.height !== this.broadcastHeight;
-};
-
-/**
- * Updates 'broadcastWidth' and 'broadcastHeight' properties with a data
- * from the corresponding properties of the last observed content rectangle.
- *
- * @returns {DOMRectInit} Last observed content rectangle.
- */
-ResizeObservation.prototype.broadcastRect = function () {
-    var rect = this.contentRect_;
-
-    this.broadcastWidth = rect.width;
-    this.broadcastHeight = rect.height;
-
-    return rect;
-};
-
-var ResizeObserverEntry = function(target, rectInit) {
-    var contentRect = createReadOnlyRect(rectInit);
-
-    // According to the specification following properties are not writable
-    // and are also not enumerable in the native implementation.
-    //
-    // Property accessors are not being used as they'd require to define a
-    // private WeakMap storage which may cause memory leaks in browsers that
-    // don't support this type of collections.
-    defineConfigurable(this, { target: target, contentRect: contentRect });
-};
-
-var ResizeObserverSPI = function(callback, controller, callbackCtx) {
-    this.activeObservations_ = [];
-    this.observations_ = new MapShim();
-
-    if (typeof callback !== 'function') {
-        throw new TypeError('The callback provided as parameter 1 is not a function.');
+var ResizeObservation = /** @class */ (function () {
+    /**
+     * Creates an instance of ResizeObservation.
+     *
+     * @param {Element} target - Element to be observed.
+     */
+    function ResizeObservation(target) {
+        /**
+         * Broadcasted width of content rectangle.
+         *
+         * @type {number}
+         */
+        this.broadcastWidth = 0;
+        /**
+         * Broadcasted height of content rectangle.
+         *
+         * @type {number}
+         */
+        this.broadcastHeight = 0;
+        /**
+         * Reference to the last observed content rectangle.
+         *
+         * @private {DOMRectInit}
+         */
+        this.contentRect_ = createRectInit(0, 0, 0, 0);
+        this.target = target;
     }
+    /**
+     * Updates content rectangle and tells whether it's width or height properties
+     * have changed since the last broadcast.
+     *
+     * @returns {boolean}
+     */
+    ResizeObservation.prototype.isActive = function () {
+        var rect = getContentRect(this.target);
+        this.contentRect_ = rect;
+        return (rect.width !== this.broadcastWidth ||
+            rect.height !== this.broadcastHeight);
+    };
+    /**
+     * Updates 'broadcastWidth' and 'broadcastHeight' properties with a data
+     * from the corresponding properties of the last observed content rectangle.
+     *
+     * @returns {DOMRectInit} Last observed content rectangle.
+     */
+    ResizeObservation.prototype.broadcastRect = function () {
+        var rect = this.contentRect_;
+        this.broadcastWidth = rect.width;
+        this.broadcastHeight = rect.height;
+        return rect;
+    };
+    return ResizeObservation;
+}());
 
-    this.callback_ = callback;
-    this.controller_ = controller;
-    this.callbackCtx_ = callbackCtx;
-};
-
-/**
- * Starts observing provided element.
- *
- * @param {Element} target - Element to be observed.
- * @returns {void}
- */
-
-
-/**
- * Registry of the ResizeObservation instances.
- *
- * @private {Map<Element, ResizeObservation>}
- */
-
-
-/**
- * Public ResizeObserver instance which will be passed to the callback
- * function and used as a value of it's "this" binding.
- *
- * @private {ResizeObserver}
- */
-
-/**
- * Collection of resize observations that have detected changes in dimensions
- * of elements.
- *
- * @private {Array<ResizeObservation>}
- */
-ResizeObserverSPI.prototype.observe = function (target) {
-    if (!arguments.length) {
-        throw new TypeError('1 argument required, but only 0 present.');
+var ResizeObserverEntry = /** @class */ (function () {
+    /**
+     * Creates an instance of ResizeObserverEntry.
+     *
+     * @param {Element} target - Element that is being observed.
+     * @param {DOMRectInit} rectInit - Data of the element's content rectangle.
+     */
+    function ResizeObserverEntry(target, rectInit) {
+        var contentRect = createReadOnlyRect(rectInit);
+        // According to the specification following properties are not writable
+        // and are also not enumerable in the native implementation.
+        //
+        // Property accessors are not being used as they'd require to define a
+        // private WeakMap storage which may cause memory leaks in browsers that
+        // don't support this type of collections.
+        defineConfigurable(this, { target: target, contentRect: contentRect });
     }
+    return ResizeObserverEntry;
+}());
 
-    // Do nothing if current environment doesn't have the Element interface.
-    if (typeof Element === 'undefined' || !(Element instanceof Object)) {
-        return;
-    }
-
-    if (!(target instanceof getWindowOf(target).Element)) {
-        throw new TypeError('parameter 1 is not of type "Element".');
-    }
-
-    var observations = this.observations_;
-
-    // Do nothing if element is already being observed.
-    if (observations.has(target)) {
-        return;
-    }
-
-    observations.set(target, new ResizeObservation(target));
-
-    this.controller_.addObserver(this);
-
-    // Force the update of observations.
-    this.controller_.refresh();
-};
-
-/**
- * Stops observing provided element.
- *
- * @param {Element} target - Element to stop observing.
- * @returns {void}
- */
-ResizeObserverSPI.prototype.unobserve = function (target) {
-    if (!arguments.length) {
-        throw new TypeError('1 argument required, but only 0 present.');
-    }
-
-    // Do nothing if current environment doesn't have the Element interface.
-    if (typeof Element === 'undefined' || !(Element instanceof Object)) {
-        return;
-    }
-
-    if (!(target instanceof getWindowOf(target).Element)) {
-        throw new TypeError('parameter 1 is not of type "Element".');
-    }
-
-    var observations = this.observations_;
-
-    // Do nothing if element is not being observed.
-    if (!observations.has(target)) {
-        return;
-    }
-
-    observations.delete(target);
-
-    if (!observations.size) {
-        this.controller_.removeObserver(this);
-    }
-};
-
-/**
- * Stops observing all elements.
- *
- * @returns {void}
- */
-ResizeObserverSPI.prototype.disconnect = function () {
-    this.clearActive();
-    this.observations_.clear();
-    this.controller_.removeObserver(this);
-};
-
-/**
- * Collects observation instances the associated element of which has changed
- * it's content rectangle.
- *
- * @returns {void}
- */
-ResizeObserverSPI.prototype.gatherActive = function () {
-        var this$1 = this;
-
-    this.clearActive();
-
-    this.observations_.forEach(function (observation) {
-        if (observation.isActive()) {
-            this$1.activeObservations_.push(observation);
+var ResizeObserverSPI = /** @class */ (function () {
+    /**
+     * Creates a new instance of ResizeObserver.
+     *
+     * @param {ResizeObserverCallback} callback - Callback function that is invoked
+     *      when one of the observed elements changes it's content dimensions.
+     * @param {ResizeObserverController} controller - Controller instance which
+     *      is responsible for the updates of observer.
+     * @param {ResizeObserver} callbackCtx - Reference to the public
+     *      ResizeObserver instance which will be passed to callback function.
+     */
+    function ResizeObserverSPI(callback, controller, callbackCtx) {
+        /**
+         * Collection of resize observations that have detected changes in dimensions
+         * of elements.
+         *
+         * @private {Array<ResizeObservation>}
+         */
+        this.activeObservations_ = [];
+        /**
+         * Registry of the ResizeObservation instances.
+         *
+         * @private {Map<Element, ResizeObservation>}
+         */
+        this.observations_ = new MapShim();
+        if (typeof callback !== 'function') {
+            throw new TypeError('The callback provided as parameter 1 is not a function.');
         }
-    });
-};
-
-/**
- * Invokes initial callback function with a list of ResizeObserverEntry
- * instances collected from active resize observations.
- *
- * @returns {void}
- */
-ResizeObserverSPI.prototype.broadcastActive = function () {
-    // Do nothing if observer doesn't have active observations.
-    if (!this.hasActive()) {
-        return;
+        this.callback_ = callback;
+        this.controller_ = controller;
+        this.callbackCtx_ = callbackCtx;
     }
-
-    var ctx = this.callbackCtx_;
-
-    // Create ResizeObserverEntry instance for every active observation.
-    var entries = this.activeObservations_.map(function (observation) {
-        return new ResizeObserverEntry(observation.target, observation.broadcastRect());
-    });
-
-    this.callback_.call(ctx, entries, ctx);
-    this.clearActive();
-};
-
-/**
- * Clears the collection of active observations.
- *
- * @returns {void}
- */
-ResizeObserverSPI.prototype.clearActive = function () {
-    this.activeObservations_.splice(0);
-};
-
-/**
- * Tells whether observer has active observations.
- *
- * @returns {boolean}
- */
-ResizeObserverSPI.prototype.hasActive = function () {
-    return this.activeObservations_.length > 0;
-};
+    /**
+     * Starts observing provided element.
+     *
+     * @param {Element} target - Element to be observed.
+     * @returns {void}
+     */
+    ResizeObserverSPI.prototype.observe = function (target) {
+        if (!arguments.length) {
+            throw new TypeError('1 argument required, but only 0 present.');
+        }
+        // Do nothing if current environment doesn't have the Element interface.
+        if (typeof Element === 'undefined' || !(Element instanceof Object)) {
+            return;
+        }
+        if (!(target instanceof getWindowOf(target).Element)) {
+            throw new TypeError('parameter 1 is not of type "Element".');
+        }
+        var observations = this.observations_;
+        // Do nothing if element is already being observed.
+        if (observations.has(target)) {
+            return;
+        }
+        observations.set(target, new ResizeObservation(target));
+        this.controller_.addObserver(this);
+        // Force the update of observations.
+        this.controller_.refresh();
+    };
+    /**
+     * Stops observing provided element.
+     *
+     * @param {Element} target - Element to stop observing.
+     * @returns {void}
+     */
+    ResizeObserverSPI.prototype.unobserve = function (target) {
+        if (!arguments.length) {
+            throw new TypeError('1 argument required, but only 0 present.');
+        }
+        // Do nothing if current environment doesn't have the Element interface.
+        if (typeof Element === 'undefined' || !(Element instanceof Object)) {
+            return;
+        }
+        if (!(target instanceof getWindowOf(target).Element)) {
+            throw new TypeError('parameter 1 is not of type "Element".');
+        }
+        var observations = this.observations_;
+        // Do nothing if element is not being observed.
+        if (!observations.has(target)) {
+            return;
+        }
+        observations.delete(target);
+        if (!observations.size) {
+            this.controller_.removeObserver(this);
+        }
+    };
+    /**
+     * Stops observing all elements.
+     *
+     * @returns {void}
+     */
+    ResizeObserverSPI.prototype.disconnect = function () {
+        this.clearActive();
+        this.observations_.clear();
+        this.controller_.removeObserver(this);
+    };
+    /**
+     * Collects observation instances the associated element of which has changed
+     * it's content rectangle.
+     *
+     * @returns {void}
+     */
+    ResizeObserverSPI.prototype.gatherActive = function () {
+        var _this = this;
+        this.clearActive();
+        this.observations_.forEach(function (observation) {
+            if (observation.isActive()) {
+                _this.activeObservations_.push(observation);
+            }
+        });
+    };
+    /**
+     * Invokes initial callback function with a list of ResizeObserverEntry
+     * instances collected from active resize observations.
+     *
+     * @returns {void}
+     */
+    ResizeObserverSPI.prototype.broadcastActive = function () {
+        // Do nothing if observer doesn't have active observations.
+        if (!this.hasActive()) {
+            return;
+        }
+        var ctx = this.callbackCtx_;
+        // Create ResizeObserverEntry instance for every active observation.
+        var entries = this.activeObservations_.map(function (observation) {
+            return new ResizeObserverEntry(observation.target, observation.broadcastRect());
+        });
+        this.callback_.call(ctx, entries, ctx);
+        this.clearActive();
+    };
+    /**
+     * Clears the collection of active observations.
+     *
+     * @returns {void}
+     */
+    ResizeObserverSPI.prototype.clearActive = function () {
+        this.activeObservations_.splice(0);
+    };
+    /**
+     * Tells whether observer has active observations.
+     *
+     * @returns {boolean}
+     */
+    ResizeObserverSPI.prototype.hasActive = function () {
+        return this.activeObservations_.length > 0;
+    };
+    return ResizeObserverSPI;
+}());
 
 // Registry of internal observers. If WeakMap is not available use current shim
 // for the Map collection as it has all required methods and because WeakMap
 // can't be fully polyfilled anyway.
 var observers = typeof WeakMap !== 'undefined' ? new WeakMap() : new MapShim();
-
 /**
  * ResizeObserver API. Encapsulates the ResizeObserver SPI implementation
  * exposing only those methods and properties that are defined in the spec.
  */
-var ResizeObserver = function(callback) {
-    if (!(this instanceof ResizeObserver)) {
-        throw new TypeError('Cannot call a class as a function.');
+var ResizeObserver = /** @class */ (function () {
+    /**
+     * Creates a new instance of ResizeObserver.
+     *
+     * @param {ResizeObserverCallback} callback - Callback that is invoked when
+     *      dimensions of the observed elements change.
+     */
+    function ResizeObserver(callback) {
+        if (!(this instanceof ResizeObserver)) {
+            throw new TypeError('Cannot call a class as a function.');
+        }
+        if (!arguments.length) {
+            throw new TypeError('1 argument required, but only 0 present.');
+        }
+        var controller = ResizeObserverController.getInstance();
+        var observer = new ResizeObserverSPI(callback, controller, this);
+        observers.set(this, observer);
     }
-    if (!arguments.length) {
-        throw new TypeError('1 argument required, but only 0 present.');
-    }
-
-    var controller = ResizeObserverController.getInstance();
-    var observer = new ResizeObserverSPI(callback, controller, this);
-
-    observers.set(this, observer);
-};
-
+    return ResizeObserver;
+}());
 // Expose public methods of ResizeObserver.
-['observe', 'unobserve', 'disconnect'].forEach(function (method) {
+[
+    'observe',
+    'unobserve',
+    'disconnect'
+].forEach(function (method) {
     ResizeObserver.prototype[method] = function () {
-        return (ref = observers.get(this))[method].apply(ref, arguments);
-        var ref;
+        var _a;
+        return (_a = observers.get(this))[method].apply(_a, arguments);
     };
 });
 
@@ -28304,13 +28249,12 @@ var index = (function () {
     if (typeof global$1.ResizeObserver !== 'undefined') {
         return global$1.ResizeObserver;
     }
-
     return ResizeObserver;
 })();
 
 /* harmony default export */ __webpack_exports__["default"] = (index);
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(12)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(11)))
 
 /***/ }),
 /* 99 */
@@ -28341,7 +28285,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /**
  * Toolbar Button UI
- * @extends {ToolbarItem}
+ * @ignore
  */
 var ToolbarButton = function (_Button) {
   _inherits(ToolbarButton, _Button);
@@ -28396,13 +28340,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
+/**
+ * Class PopupDropdownToolbar
+ * @param {LayerPopupOption} options - layer popup option
+ * @ignore
+ */
 var PopupDropdownToolbar = function (_LayerPopup) {
   _inherits(PopupDropdownToolbar, _LayerPopup);
 
-  /**
-   * constructor
-   * @param {object} options - popup options
-   */
   function PopupDropdownToolbar(options) {
     _classCallCheck(this, PopupDropdownToolbar);
 
@@ -28420,9 +28365,7 @@ var PopupDropdownToolbar = function (_LayerPopup) {
 
   /**
    * open event string
-   * @memberof PopupDropdownToolbar
-   * @static
-   * @type {ToolbarButton}
+   * @type {string}
    */
 
 
@@ -28435,7 +28378,6 @@ var PopupDropdownToolbar = function (_LayerPopup) {
     /**
      * get toolbar items
      * @returns {ToolbarItem[]} - toolbar items
-     * @memberof PopupDropdownToolbar
      */
 
   }, {
@@ -28448,7 +28390,6 @@ var PopupDropdownToolbar = function (_LayerPopup) {
      * get toolbar item at given index
      * @param  {number} index - item index
      * @returns {ToolbarItem} - toolbar item at the index
-     * @memberof PopupDropdownToolbar
      */
 
   }, {
@@ -28460,7 +28401,6 @@ var PopupDropdownToolbar = function (_LayerPopup) {
     /**
      * set toolbar items
      * @param {ToolbarItem[]} items - toolbar items
-     * @memberof PopupDropdownToolbar
      */
 
   }, {
@@ -28472,7 +28412,6 @@ var PopupDropdownToolbar = function (_LayerPopup) {
     /**
      * add toolbar item
      * @param {ToolbarItem|string|object} item - toolbar item
-     * @memberof PopupDropdownToolbar
      */
 
   }, {
@@ -28485,7 +28424,6 @@ var PopupDropdownToolbar = function (_LayerPopup) {
      * insert toolbar item
      * @param  {number} index - index at given item inserted
      * @param  {ToolbarItem|string|object} item - toolbar item
-     * @memberof PopupDropdownToolbar
      */
 
   }, {
@@ -28498,7 +28436,6 @@ var PopupDropdownToolbar = function (_LayerPopup) {
      * get index of given item
      * @param  {ToolbarItem} item - toolbar item
      * @returns {number} - index of given toolbar item
-     * @memberof PopupDropdownToolbar
      */
 
   }, {
@@ -28512,7 +28449,6 @@ var PopupDropdownToolbar = function (_LayerPopup) {
      * @param  {number} index - item index to remove
      * @param  {boolean} destroy - destroy item or not
      * @returns {ToolbarItem} - removed item
-     * @memberof PopupDropdownToolbar
      */
 
   }, {
@@ -28523,7 +28459,6 @@ var PopupDropdownToolbar = function (_LayerPopup) {
 
     /**
      * remove all toolbar items
-     * @memberof PopupDropdownToolbar
      */
 
   }, {
@@ -28536,8 +28471,7 @@ var PopupDropdownToolbar = function (_LayerPopup) {
      * init instance.
      * store properties & prepare before initialize DOM
      * @param {LayerPopupOption} options - layer popup options
-     * @memberof PopupDropdownToolbar
-     * @protected
+     * @private
      * @override
      */
 
@@ -28557,8 +28491,8 @@ var PopupDropdownToolbar = function (_LayerPopup) {
 
     /**
      * initialize DOM, render popup
-     * @memberof PopupDropdownToolbar
-     * @protected
+     * @private
+     * @override
      */
 
   }, {
@@ -28571,8 +28505,8 @@ var PopupDropdownToolbar = function (_LayerPopup) {
 
     /**
      * bind editor events
-     * @memberof PopupDropdownToolbar
-     * @protected
+     * @private
+     * @override
      */
 
   }, {
@@ -28671,33 +28605,25 @@ var WYSIWYG = 'wysiwyg';
 /**
  * Class ModeSwitch
  * UI Control for switch between Markdown and WYSIWYG
- * @extends {UIController}
+ * @param {jQuery} $rootElement - root jquery element
+ * @param {string} initialType - initial type of editor
  */
 
 var ModeSwitch = function (_UIController) {
   _inherits(ModeSwitch, _UIController);
 
   /**
-   * Creates an instance of ModeSwitch.
-   * @param {jQuery} $rootElement - root jquery element
-   * @param {string} initialType - initial type of editor
-   * @memberof ModeSwitch
-   */
-
-
-  /**
    * current mode
-   * @memberof ModeSwitch
    * @type {String}
    * @private
    */
 
   /**
    * mode switch type
-   * @memberof ModeSwitch
    * @property {string} MARKDOWN - Markdown
    * @property {string} WYSIWYG - WYSIWYG
    * @static
+   * @ignore
    */
   function ModeSwitch($rootElement, initialType) {
     _classCallCheck(this, ModeSwitch);
@@ -28728,12 +28654,12 @@ var ModeSwitch = function (_UIController) {
   /**
    * root element
    * @type {jQuery}
+   * @private
    */
 
 
   /**
    * mode switch buttons
-   * @memberof ModeSwitch
    * @type {Object}
    * @private
    */
@@ -28747,7 +28673,6 @@ var ModeSwitch = function (_UIController) {
 
     /**
      * show switch tab bar
-     * @memberof ModeSwitch
      */
 
   }, {
@@ -28758,7 +28683,6 @@ var ModeSwitch = function (_UIController) {
 
     /**
      * hide switch tab bar
-     * @memberof ModeSwitch
      */
 
   }, {
@@ -28875,21 +28799,17 @@ var URL_REGEX = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/([^\s]*))?$/;
 /**
  * Class PopupAddLink
  * It implements a link Add Popup
- * @extends {LayerPopup}
+ * @param {LayerPopupOption} options - layer popup options
+ * @ignore
  */
 
 var PopupAddLink = function (_LayerPopup) {
   _inherits(PopupAddLink, _LayerPopup);
 
-  /**
-   * Creates an instance of PopupAddLink.
-   * @param {LayerPopupOption} options - layer popup options
-   * @memberof PopupAddLink
-   */
   function PopupAddLink(options) {
     _classCallCheck(this, PopupAddLink);
 
-    var POPUP_CONTENT = '\n            <label for="linkText">' + _i18n2.default.get('Link text') + '</label>\n            <input type="text" class="te-link-text-input" />\n            <label for="url">' + _i18n2.default.get('URL') + '</label>\n            <input type="text" class="te-url-input" />\n            <div class="te-button-section">\n                <button type="button" class="te-ok-button">' + _i18n2.default.get('OK') + '</button>\n                <button type="button" class="te-close-button">' + _i18n2.default.get('Cancel') + '</button>\n            </div>\n        ';
+    var POPUP_CONTENT = '\n            <label for="url">' + _i18n2.default.get('URL') + '</label>\n            <input type="text" class="te-url-input" />\n            <label for="linkText">' + _i18n2.default.get('Link text') + '</label>\n            <input type="text" class="te-link-text-input" />\n            <div class="te-button-section">\n                <button type="button" class="te-ok-button">' + _i18n2.default.get('OK') + '</button>\n                <button type="button" class="te-close-button">' + _i18n2.default.get('Cancel') + '</button>\n            </div>\n        ';
     options = _tuiCodeSnippet2.default.extend({
       header: true,
       title: _i18n2.default.get('Insert link'),
@@ -28903,8 +28823,7 @@ var PopupAddLink = function (_LayerPopup) {
    * init instance.
    * store properties & prepare before initialize DOM
    * @param {LayerPopupOption} options - layer popup options
-   * @memberof PopupAddLink
-   * @protected
+   * @private
    * @override
    */
 
@@ -28920,8 +28839,7 @@ var PopupAddLink = function (_LayerPopup) {
 
     /**
      * initialize DOM, render popup
-     * @memberof PopupAddLink
-     * @protected
+     * @private
      * @override
      */
 
@@ -28937,8 +28855,7 @@ var PopupAddLink = function (_LayerPopup) {
 
     /**
      * bind DOM events
-     * @memberof PopupAddLink
-     * @protected
+     * @private
      * @override
      */
 
@@ -28967,12 +28884,7 @@ var PopupAddLink = function (_LayerPopup) {
           inputURL.value = selectedText;
         }
 
-        if (selectedText.length > 0 && inputURL.value.length < 1) {
-          inputURL.focus();
-        } else {
-          inputText.focus();
-          inputText.setSelectionRange(0, selectedText.length);
-        }
+        inputURL.focus();
       });
 
       this.on('hidden', function () {
@@ -28982,9 +28894,8 @@ var PopupAddLink = function (_LayerPopup) {
 
     /**
      * bind editor events
-     * @memberof PopupAddLink
-     * @protected
-     * @abstract
+     * @private
+     * @override
      */
 
   }, {
@@ -29119,17 +29030,13 @@ var TYPE_UI = 'ui';
 /**
  * Class PopupAddImage
  * It implements a Image Add Popup
- * @extends {LayerPopup}
+ * @param {LayerPopupOption} options - layer popup option
+ * @ignore
  */
 
 var PopupAddImage = function (_LayerPopup) {
   _inherits(PopupAddImage, _LayerPopup);
 
-  /**
-   * Creates an instance of PopupAddImage.
-   * @param {LayerPopupOption} options - layer popup option
-   * @memberof PopupAddImage
-   */
   function PopupAddImage(options) {
     _classCallCheck(this, PopupAddImage);
 
@@ -29147,8 +29054,7 @@ var PopupAddImage = function (_LayerPopup) {
    * init instance.
    * store properties & prepare before initialize DOM
    * @param {LayerPopupOption} options - layer popup options
-   * @memberof PopupAddImage
-   * @protected
+   * @private
    * @override
    */
 
@@ -29163,8 +29069,7 @@ var PopupAddImage = function (_LayerPopup) {
 
     /**
      * initialize DOM, render popup
-     * @memberof PopupAddImage
-     * @protected
+     * @private
      * @override
      */
 
@@ -29192,8 +29097,7 @@ var PopupAddImage = function (_LayerPopup) {
 
     /**
      * bind DOM events
-     * @memberof PopupAddImage
-     * @protected
+     * @private
      * @override
      */
 
@@ -29249,9 +29153,8 @@ var PopupAddImage = function (_LayerPopup) {
 
     /**
      * bind editor events
-     * @memberof PopupAddImage
-     * @protected
-     * @abstract
+     * @private
+     * @override
      */
 
   }, {
@@ -29287,6 +29190,12 @@ var PopupAddImage = function (_LayerPopup) {
     value: function _resetInputs() {
       this.$el.find('input').val('');
     }
+
+    /**
+     * Remove popup
+     * @override
+     */
+
   }, {
     key: 'remove',
     value: function remove() {
@@ -29310,6 +29219,7 @@ exports.default = PopupAddImage;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.DISABLED_MENU_CLASS_NAME = exports.REMOVE_ROW_MENU_CLASS_NAME = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -29343,19 +29253,18 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
+var REMOVE_ROW_MENU_CLASS_NAME = exports.REMOVE_ROW_MENU_CLASS_NAME = 'te-table-remove-row';
+var DISABLED_MENU_CLASS_NAME = exports.DISABLED_MENU_CLASS_NAME = 'te-context-menu-disabled';
+
 /**
  * PopupTableUtils
  * It implements table utils popup
- * @extends {LayerPopup}
+ * @param {LayerPopupOption} options - layer popup options
  */
+
 var PopupTableUtils = function (_LayerPopup) {
   _inherits(PopupTableUtils, _LayerPopup);
 
-  /**
-   * Creates an instance of PopupTableUtils.
-   * @param {LayerPopupOption} options - layer popup options
-   * @memberof PopupTableUtils
-   */
   function PopupTableUtils(options) {
     _classCallCheck(this, PopupTableUtils);
 
@@ -29372,8 +29281,7 @@ var PopupTableUtils = function (_LayerPopup) {
    * init instance.
    * store properties & prepare before initialize DOM
    * @param {LayerPopupOption} options - layer popup options
-   * @memberof PopupTableUtils
-   * @protected
+   * @private
    * @override
    */
 
@@ -29387,8 +29295,7 @@ var PopupTableUtils = function (_LayerPopup) {
 
     /**
      * bind DOM events
-     * @memberof PopupTableUtils
-     * @protected
+     * @private
      * @override
      */
 
@@ -29405,9 +29312,6 @@ var PopupTableUtils = function (_LayerPopup) {
       this.on('click .te-table-add-col', function () {
         return _this2.eventManager.emit('command', 'AddCol');
       });
-      this.on('click .te-table-remove-row', function () {
-        return _this2.eventManager.emit('command', 'RemoveRow');
-      });
       this.on('click .te-table-col-align-left', function () {
         return _this2.eventManager.emit('command', 'AlignCol', 'left');
       });
@@ -29423,13 +29327,13 @@ var PopupTableUtils = function (_LayerPopup) {
       this.on('click .te-table-remove', function () {
         return _this2.eventManager.emit('command', 'RemoveTable');
       });
+      this._bindClickEventOnRemoveRowMenu();
     }
 
     /**
      * bind editor events
-     * @memberof PopupTableUtils
-     * @protected
-     * @abstract
+     * @private
+     * @override
      */
 
   }, {
@@ -29448,21 +29352,48 @@ var PopupTableUtils = function (_LayerPopup) {
       this.eventManager.listen('closeAllPopup', function () {
         return _this3.hide();
       });
-
-      this.eventManager.listen('openPopupTableUtils', function (event) {
+      this.eventManager.listen('openPopupTableUtils', function (ev) {
         var offset = _this3.$el.parent().offset();
-        var x = event.clientX - offset.left;
-        var y = event.clientY - offset.top + (0, _jquery2.default)(window).scrollTop();
+        var x = ev.clientX - offset.left;
+        var y = ev.clientY - offset.top + (0, _jquery2.default)(window).scrollTop();
+
+        _this3._disableRemoveRowMenu(ev.target);
 
         _this3.$el.css({
           position: 'absolute',
           top: y + 5, // beside mouse pointer
           left: x + 10
         });
-
         _this3.eventManager.emit('closeAllPopup');
         _this3.show();
       });
+    }
+  }, {
+    key: '_bindClickEventOnRemoveRowMenu',
+    value: function _bindClickEventOnRemoveRowMenu() {
+      var _this4 = this;
+
+      this.on('click .' + REMOVE_ROW_MENU_CLASS_NAME, function (ev) {
+        var target = ev.target;
+
+
+        if ((0, _jquery2.default)(target).hasClass(DISABLED_MENU_CLASS_NAME)) {
+          ev.preventDefault();
+        } else {
+          _this4.eventManager.emit('command', 'RemoveRow');
+        }
+      });
+    }
+  }, {
+    key: '_disableRemoveRowMenu',
+    value: function _disableRemoveRowMenu(target) {
+      var $menu = this.$el.find('.' + REMOVE_ROW_MENU_CLASS_NAME);
+
+      if (target.nodeName === 'TH') {
+        $menu.addClass(DISABLED_MENU_CLASS_NAME);
+      } else {
+        $menu.removeClass(DISABLED_MENU_CLASS_NAME);
+      }
     }
   }]);
 
@@ -29528,22 +29459,15 @@ var LAST_BORDER = 1;
 /**
  * Class PopupAddTable
  * It implements Popup to add a table
- * @extends {LayerPopup}
+ * @param {LayerPopupOption} options - layer popup option
+ * @ignore
  */
 
 var PopupAddTable = function (_LayerPopup) {
   _inherits(PopupAddTable, _LayerPopup);
 
   /**
-   * Creates an instance of PopupAddTable.
-   * @param {LayerPopupOption} options - layer popup option
-   * @memberof PopupAddTable
-   */
-
-  /**
    * Toolbar Button which the Popup is bound to.
-   *
-   * @memberof PopupAddTable
    * @type {jQuery}
    * @private
    */
@@ -29562,16 +29486,13 @@ var PopupAddTable = function (_LayerPopup) {
    * init instance.
    * store properties & prepare before initialize DOM
    * @param {LayerPopupOption} options - layer popup options
-   * @memberof PopupAddTable
-   * @protected
+   * @private
    * @override
    */
 
 
   /**
    * EventManager instance
-   *
-   * @memberof PopupAddTabe
    * @type {EventManager}
    * @private
    */
@@ -29590,8 +29511,7 @@ var PopupAddTable = function (_LayerPopup) {
 
     /**
      * initialize DOM, render popup
-     * @memberof PopupAddTable
-     * @protected
+     * @private
      * @override
      */
 
@@ -29606,8 +29526,7 @@ var PopupAddTable = function (_LayerPopup) {
 
     /**
      * bind DOM events
-     * @memberof PopupAddTable
-     * @protected
+     * @private
      * @override
      */
 
@@ -29638,9 +29557,8 @@ var PopupAddTable = function (_LayerPopup) {
 
     /**
      * bind editor events
-     * @memberof PopupAddTable
-     * @protected
-     * @abstract
+     * @private
+     * @override
      */
 
   }, {
@@ -29675,7 +29593,6 @@ var PopupAddTable = function (_LayerPopup) {
     }
 
     /**
-     * _cacheElements
      * Cache elements for use
      * @private
      */
@@ -29690,7 +29607,6 @@ var PopupAddTable = function (_LayerPopup) {
     }
 
     /**
-     * _resizeTableBySelectionIfNeed
      * Resize table if need
      * @param {number} col column index
      * @param {number} row row index
@@ -29708,7 +29624,6 @@ var PopupAddTable = function (_LayerPopup) {
     }
 
     /**
-     * _getResizedTableBound
      * Get resized table bound if Need
      * @param {number} col column index
      * @param {number} row row index
@@ -29746,7 +29661,6 @@ var PopupAddTable = function (_LayerPopup) {
     }
 
     /**
-     * _isNeedResizeTable
      * check if need resize table
      * @param {number} col column index
      * @param {number} row row index
@@ -29761,7 +29675,6 @@ var PopupAddTable = function (_LayerPopup) {
     }
 
     /**
-     * _getBoundByOffset
      * Get bound by offset
      * @param {number} x offset
      * @param {number} y offset
@@ -29782,7 +29695,6 @@ var PopupAddTable = function (_LayerPopup) {
     }
 
     /**
-     * _getOffsetByBound
      * Get offset by bound
      * @param {number} col column index
      * @param {number} row row index
@@ -29803,7 +29715,6 @@ var PopupAddTable = function (_LayerPopup) {
     }
 
     /**
-     * _setTableSizeByBound
      * Set table size with bound
      * @param {number} col column index
      * @param {number} row row index
@@ -29820,7 +29731,6 @@ var PopupAddTable = function (_LayerPopup) {
     }
 
     /**
-     * _getSelectionBoundByOffset
      * Get selection bound that process with range by offset
      * @param {number} x offset
      * @param {number} y offset
@@ -29849,7 +29759,6 @@ var PopupAddTable = function (_LayerPopup) {
     }
 
     /**
-     * _setSelectionAreaByBound
      * Set selection area with bound
      * @param {number} col column index
      * @param {number} row row index
@@ -29864,7 +29773,6 @@ var PopupAddTable = function (_LayerPopup) {
     }
 
     /**
-     * _setSelectedBound
      * Set selected bound
      * @param {number} col column index
      * @param {number} row row index
@@ -29879,7 +29787,6 @@ var PopupAddTable = function (_LayerPopup) {
     }
 
     /**
-     * _getSelectedTableSize
      * Get selected table size
      * @returns {object} bound
      * @private
@@ -29895,7 +29802,6 @@ var PopupAddTable = function (_LayerPopup) {
     }
 
     /**
-     * _setDisplayText
      * Set selected table size text for display
      * @param {number} col column index
      * @param {number} row row index
@@ -29909,7 +29815,6 @@ var PopupAddTable = function (_LayerPopup) {
     }
 
     /**
-     * _setTableSize
      * Set table element size
      * @param {number} x offset
      * @param {number} y offset
@@ -29938,7 +29843,6 @@ var PopupAddTable = function (_LayerPopup) {
     }
 
     /**
-     * _setSelectionArea
      * Set selection element size
      * @param {number} x offset
      * @param {number} y offset
@@ -30006,24 +29910,20 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Implements PopupAddTable
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Implements PopupAddHeading
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
 /**
- * Class PopupHeading
+ * Class PopupAddHeading
  * It implements Popup to add headings
- * @extends {LayerPopup}
+ * @param {LayerPopupOption} options - layer popup option
+ * @ignore
  */
 var PopupAddHeading = function (_LayerPopup) {
   _inherits(PopupAddHeading, _LayerPopup);
 
-  /**
-   * Creates an instance of PopupAddHeading.
-   * @param {LayerPopupOption} options - layer popup option
-   * @memberof PopupAddHeading
-   */
   function PopupAddHeading(options) {
     _classCallCheck(this, PopupAddHeading);
 
@@ -30040,8 +29940,7 @@ var PopupAddHeading = function (_LayerPopup) {
    * init instance.
    * store properties & prepare before initialize DOM
    * @param {LayerPopupOption} options - layer popup options
-   * @memberof PopupAddHeading
-   * @protected
+   * @private
    * @override
    */
 
@@ -30057,8 +29956,7 @@ var PopupAddHeading = function (_LayerPopup) {
 
     /**
      * bind DOM events
-     * @memberof PopupAddHeading
-     * @protected
+     * @private
      * @override
      */
 
@@ -30077,9 +29975,8 @@ var PopupAddHeading = function (_LayerPopup) {
 
     /**
      * bind editor events
-     * @memberof PopupAddHeading
-     * @protected
-     * @abstract
+     * @private
+     * @override
      */
 
   }, {
@@ -30157,17 +30054,13 @@ var BUTTON_CLASS_PREFIX = 'te-popup-code-block-lang-';
 
 /**
  * Class Popup code block languages select list
- * @extends {LayerPopup}
+ * @param {LayerPopupOption} options - layer popup option
+ * @ignore
  */
 
 var PopupCodeBlockLanguages = function (_LayerPopup) {
   _inherits(PopupCodeBlockLanguages, _LayerPopup);
 
-  /**
-   * Creates an instance of PopupCodeBlockLanguages.
-   * @param {LayerPopupOption} options - layer popup option
-   * @memberof PopupCodeBlockLanguages
-   */
   function PopupCodeBlockLanguages(options) {
     _classCallCheck(this, PopupCodeBlockLanguages);
 
@@ -30191,8 +30084,7 @@ var PopupCodeBlockLanguages = function (_LayerPopup) {
    * init instance.
    * store properties & prepare before initialize DOM
    * @param {LayerPopupOption} options - layer popup options
-   * @memberof PopupCodeBlockLanguages
-   * @protected
+   * @private
    * @override
    */
 
@@ -30213,8 +30105,7 @@ var PopupCodeBlockLanguages = function (_LayerPopup) {
 
     /**
      * initialize DOM, render popup
-     * @memberof PopupCodeBlockLanguages
-     * @protected
+     * @private
      * @override
      */
 
@@ -30231,8 +30122,7 @@ var PopupCodeBlockLanguages = function (_LayerPopup) {
 
     /**
      * bind DOM events
-     * @memberof PopupCodeBlockLanguages
-     * @protected
+     * @private
      * @override
      */
 
@@ -30257,9 +30147,8 @@ var PopupCodeBlockLanguages = function (_LayerPopup) {
 
     /**
      * bind editor events
-     * @memberof PopupCodeBlockLanguages
-     * @protected
-     * @abstract
+     * @private
+     * @override
      */
 
   }, {
@@ -30299,7 +30188,6 @@ var PopupCodeBlockLanguages = function (_LayerPopup) {
      * activate an item by index
      * @param {number} index - item index
      * @private
-     * @memberof PopupCodeBlockLanguages
      */
 
   }, {
@@ -30315,7 +30203,6 @@ var PopupCodeBlockLanguages = function (_LayerPopup) {
 
     /**
      * move to prev language
-     * @memberof PopupCodeBlockLanguages
      */
 
   }, {
@@ -30330,7 +30217,6 @@ var PopupCodeBlockLanguages = function (_LayerPopup) {
 
     /**
      * move to next language
-     * @memberof PopupCodeBlockLanguages
      */
 
   }, {
@@ -30345,8 +30231,6 @@ var PopupCodeBlockLanguages = function (_LayerPopup) {
 
     /**
      * current language
-     * @public
-     * @memberof PopupCodeBlockLanguages
      * @returns {string} language
      */
 
@@ -30361,7 +30245,6 @@ var PopupCodeBlockLanguages = function (_LayerPopup) {
     /**
      * set current language
      * @param {string} language - current language
-     * @memberof PopupCodeBlockLanguages
      */
 
   }, {
@@ -30377,8 +30260,7 @@ var PopupCodeBlockLanguages = function (_LayerPopup) {
     /**
      * show popup
      * @param {object} callback - to be called on language selected & dismissed
-     * @protected
-     * @memberof PopupCodeBlockLanguages
+     * @override
      */
 
   }, {
@@ -30391,8 +30273,7 @@ var PopupCodeBlockLanguages = function (_LayerPopup) {
 
     /**
      * hide popup
-     * @memberof PopupCodeBlockLanguages
-     * @protected
+     * @override
      */
 
   }, {
@@ -30479,17 +30360,13 @@ var TEMPLATE_HEADER_BUTTONS = '\n    <button type="button" class="' + CLASS_PREF
 
 /**
  * Class popup code block editor
- * @extends {LayerPopup}
+ * @param {LayerPopupOption} options - layer popup option
+ * @ignore
  */
 
 var PopupCodeBlockEditor = function (_LayerPopup) {
   _inherits(PopupCodeBlockEditor, _LayerPopup);
 
-  /**
-   * Creates an instance of PopupCodeBlockEditor.
-   * @param {LayerPopupOption} options - layer popup option
-   * @memberof PopupCodeBlockEditor
-   */
   function PopupCodeBlockEditor(options) {
     _classCallCheck(this, PopupCodeBlockEditor);
 
@@ -30509,8 +30386,7 @@ var PopupCodeBlockEditor = function (_LayerPopup) {
    * init instance.
    * store properties & prepare before initialize DOM
    * @param {LayerPopupOption} options - layer popup options
-   * @memberof PopupCodeBlockEditor
-   * @protected
+   * @private
    * @override
    */
 
@@ -30526,8 +30402,7 @@ var PopupCodeBlockEditor = function (_LayerPopup) {
 
     /**
      * initialize DOM, render popup
-     * @memberof PopupCodeBlockEditor
-     * @protected
+     * @private
      * @override
      */
 
@@ -30557,8 +30432,7 @@ var PopupCodeBlockEditor = function (_LayerPopup) {
 
     /**
      * bind DOM events
-     * @memberof PopupCodeBlockEditor
-     * @protected
+     * @private
      * @override
      */
 
@@ -30599,9 +30473,8 @@ var PopupCodeBlockEditor = function (_LayerPopup) {
 
     /**
      * bind editor events
-     * @memberof PopupCodeBlockEditor
-     * @protected
-     * @abstract
+     * @private
+     * @override
      */
 
   }, {
@@ -30711,7 +30584,6 @@ var PopupCodeBlockEditor = function (_LayerPopup) {
 
     /**
      * store code mirror text to wysiwyg code block
-     * @memberof PopupCodeBlockEditor
      * @private
      */
 
@@ -30726,7 +30598,6 @@ var PopupCodeBlockEditor = function (_LayerPopup) {
      * load code mirror text from wysiwyg code block
      * @param {HTMLElement} codeBlockElement - code block element instance to load code from
      * @private
-     * @memberof PopupCodeBlockEditor
      */
 
   }, {
@@ -30742,7 +30613,6 @@ var PopupCodeBlockEditor = function (_LayerPopup) {
     /**
      * show popup
      * @param {HTMLElement} codeBlockElement - code block element
-     * @memberof PopupCodeBlockEditor
      * @override
      */
 
@@ -30759,7 +30629,6 @@ var PopupCodeBlockEditor = function (_LayerPopup) {
 
     /**
      * hide popup
-     * @memberof PopupCodeBlockEditor
      * @override
      */
 
@@ -30831,20 +30700,17 @@ var CLASS_CONTENT = {
 
 /**
  * Class ScrollSyncSplit
+ * @param {Element} baseElement - an element which attach a splitSyncSplit
+ * @param {Element} leftElement - an element to be on left side split view
+ * @param {Element} rightElement - an element to be on right side split view
+ * @param {object} options - options
+ *     @param {boolean} [options.showScrollSyncButton=false] - show scroll sync button on top right corner
+ *     @param {boolean} [options.scrollSync=true] - true for enable scroll sync
+ *     @param {boolean} [options.splitView=true] - true for split, false for single view
+ * @ignore
  */
 
 var ScrollSyncSplit = function () {
-  /**
-   * Creates an instance of ScrollSyncSplit.
-   * @param {Element} baseElement - an element which attach a splitSyncSplit
-   * @param {Element} leftElement - an element to be on left side split view
-   * @param {Element} rightElement - an element to be on right side split view
-   * @param {object} options - options
-   *  @param {boolean} [options.showScrollSyncButton=false] - show scroll sync button on top right corner
-   *  @param {boolean} [options.scrollSync=true] - true for enable scroll sync
-   *  @param {boolean} [options.splitView=true] - true for split, false for single view
-   * @memberof ScrollSyncSplit
-   */
   function ScrollSyncSplit(baseElement, leftElement, rightElement) {
     var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 
@@ -30858,8 +30724,10 @@ var ScrollSyncSplit = function () {
     this._baseElement = baseElement;
 
     /**
-       * left, right side content elements
-       */
+     * left, right side content elements
+     * @type {HTMLElement[]}
+     * @private
+     */
     this._contentElements = [];
 
     this._initDom(leftElement, rightElement, options);
@@ -30940,7 +30808,6 @@ var ScrollSyncSplit = function () {
      * set content element for given side
      * @param {Element} element - content element
      * @param {string} side - 'left' | 'right'
-     * @memberof ScrollSyncSplit
      * @private
      */
 
@@ -30972,7 +30839,6 @@ var ScrollSyncSplit = function () {
     /**
      * set left side element
      * @param {Element} element - an element to be on left side split view
-     * @memberof ScrollSyncSplit
      * @private
      */
 
@@ -30985,7 +30851,6 @@ var ScrollSyncSplit = function () {
     /**
      * set right side element
      * @param {Element} element - an element to be on right side split view
-     * @memberof ScrollSyncSplit
      * @private
      */
 
@@ -31002,7 +30867,6 @@ var ScrollSyncSplit = function () {
 
     /**
      * toggle multi scroll
-     * @memberof ScrollSyncSplit
      */
 
   }, {
@@ -31018,7 +30882,6 @@ var ScrollSyncSplit = function () {
 
     /**
      * toggle split
-     * @memberof ScrollSyncSplit
      */
 
   }, {
@@ -31030,7 +30893,6 @@ var ScrollSyncSplit = function () {
     /**
      * is scroll synced
      * @returns {boolean} - true for synced, false for each scroll
-     * @memberof ScrollSyncSplit
      */
 
   }, {
@@ -31042,7 +30904,6 @@ var ScrollSyncSplit = function () {
     /**
      * is split view
      * @returns {boolean} - true for split view, false for single view
-     * @memberof ScrollSyncSplit
      */
 
   }, {
@@ -31053,7 +30914,6 @@ var ScrollSyncSplit = function () {
 
     /**
      * sync scroll
-     * @memberof ScrollSyncSplit
      */
 
   }, {
@@ -31084,7 +30944,6 @@ var ScrollSyncSplit = function () {
     /**
      * scroll top
      * @param {number} top - scroll top in pixel
-     * @memberof ScrollSyncSplit
      */
 
   }, {
@@ -31116,7 +30975,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _codeMirrorExt = __webpack_require__(31);
+var _codeMirrorExt = __webpack_require__(32);
 
 var _codeMirrorExt2 = _interopRequireDefault(_codeMirrorExt);
 
@@ -31136,18 +30995,14 @@ var EVENT_LANGUAGE_CHANGED = 'language-changed';
 
 /**
  * Class Code Block Editor
- * @extends {CodeMirrorExt}
+ * @param {HTMLElement} el - code block editor container element
+ * @param {EventManager} eventManager - event manager
+ * @ignore
  */
 
 var CodeBlockEditor = function (_CodeMirrorExt) {
   _inherits(CodeBlockEditor, _CodeMirrorExt);
 
-  /**
-   * Creates an instance of CodeBlockEditor.
-   * @param {HTMLElement} el - code block editor container element
-   * @param {EventManager} eventManager - event manager
-   * @memberof CodeBlockEditor
-   */
   function CodeBlockEditor(el, eventManager) {
     _classCallCheck(this, CodeBlockEditor);
 
@@ -31195,7 +31050,6 @@ var CodeBlockEditor = function (_CodeMirrorExt) {
     /**
      * load code from code block element
      * @param {HTMLElement} codeBlockElement - code block element
-     * @memberof CodeBlockEditor
      */
 
   }, {
@@ -31209,7 +31063,6 @@ var CodeBlockEditor = function (_CodeMirrorExt) {
     /**
      * save code to code block element
      * @param {HTMLElement} codeBlockElement - code block element
-     * @memberof CodeBlockEditor
      */
 
   }, {
@@ -31223,7 +31076,6 @@ var CodeBlockEditor = function (_CodeMirrorExt) {
 
     /**
      * clear code and language
-     * @memberof CodeBlockEditor
      */
 
   }, {
@@ -31236,7 +31088,6 @@ var CodeBlockEditor = function (_CodeMirrorExt) {
     /**
      * get code language
      * @returns {string} - code language
-     * @memberof CodeBlockEditor
      */
 
   }, {
@@ -31248,7 +31099,6 @@ var CodeBlockEditor = function (_CodeMirrorExt) {
     /**
      * set code language
      * @param {string} [language=''] - code language
-     * @memberof CodeBlockEditor
      */
 
   }, {
@@ -31262,7 +31112,6 @@ var CodeBlockEditor = function (_CodeMirrorExt) {
     /**
      * get code text
      * @returns {string} - code text
-     * @memberof CodeBlockEditor
      */
 
   }, {
@@ -31274,7 +31123,6 @@ var CodeBlockEditor = function (_CodeMirrorExt) {
     /**
      * set code text
      * @param {string} [code=''] - code text
-     * @memberof CodeBlockEditor
      */
 
   }, {
@@ -31287,7 +31135,6 @@ var CodeBlockEditor = function (_CodeMirrorExt) {
 
     /**
      * refresh. call if codemirror resized
-     * @memberof CodeBlockEditor
      */
 
   }, {
@@ -31317,7 +31164,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _preview = __webpack_require__(34);
+var _preview = __webpack_require__(35);
 
 var _preview2 = _interopRequireDefault(_preview);
 
@@ -31337,20 +31184,16 @@ var EVENT_REQUIRE_SCROLL_SYNC = 'requireScrollSync';
 
 /**
  * Class Code block preview
- * @extends {Preview}
+ * @param {jQuery} $el - base element
+ * @param {EventManager} eventManager - event manager
+ * @param {Convertor} convertor - convertor
+ * @param {CodeBlockEditor} codeBlockEditor - code block editor
+ * @ignore
  */
 
 var CodeBlockPreview = function (_Preview) {
   _inherits(CodeBlockPreview, _Preview);
 
-  /**
-   * Creates an instance of CodeBlockPreview.
-   * @param {jQuery} $el - base element
-   * @param {EventManager} eventManager - event manager
-   * @param {Convertor} convertor - convertor
-   * @param {CodeBlockEditor} codeBlockEditor - code block editor
-   * @memberof CodeBlockPreview
-   */
   function CodeBlockPreview($el, eventManager, convertor, codeBlockEditor) {
     _classCallCheck(this, CodeBlockPreview);
 
@@ -31374,7 +31217,6 @@ var CodeBlockPreview = function (_Preview) {
 
     /**
      * refresh preview
-     * @memberof CodeBlockPreview
      * @override
      */
 
@@ -31390,7 +31232,6 @@ var CodeBlockPreview = function (_Preview) {
 
     /**
      * clear preview
-     * @memberof CodeBlockPreview
      */
 
   }, {
@@ -31440,13 +31281,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * Class CodeBlockLanguagesCombo
+ * @param {EventManager} eventManager - event manager instance
+ * @ignore
  */
 var CodeBlockLanguagesCombo = function () {
-  /**
-   * Creates an instance of CodeBlockLanguagesCombo.
-   * @param {EventManager} eventManager - event manager instance
-   * @memberof CodeBlockLanguagesCombo
-   */
   function CodeBlockLanguagesCombo(eventManager) {
     _classCallCheck(this, CodeBlockLanguagesCombo);
 
@@ -31489,7 +31327,6 @@ var CodeBlockLanguagesCombo = function () {
     /**
      * show popup
      * @private
-     * @memberof CodeBlockGadget
      */
 
   }, {
@@ -31574,7 +31411,7 @@ var CodeBlockLanguagesCombo = function () {
     /**
      * set a callback to be called on language selected
      * @param {function} callback - callback function
-     * @memberof CodeBlockLanguagesCombo
+     * @protected
      */
 
   }, {
@@ -31586,7 +31423,6 @@ var CodeBlockLanguagesCombo = function () {
     /**
      * hide popup
      * @private
-     * @memberof CodeBlockGadget
      */
 
   }, {
@@ -31598,7 +31434,7 @@ var CodeBlockLanguagesCombo = function () {
     /**
      * set language
      * @param {string} language - code block language
-     * @memberof CodeBlockLanguagesCombo
+     * @protected
      */
 
   }, {
@@ -31611,7 +31447,6 @@ var CodeBlockLanguagesCombo = function () {
     /**
      * store selection(typed) language & hide popup
      * @private
-     * @memberof CodeBlockGadget
      */
 
   }, {
@@ -31630,7 +31465,7 @@ var CodeBlockLanguagesCombo = function () {
     /**
      * get element body
      * @returns {HTMLElement} - CodeBlockLanguagesCombo body element
-     * @memberof CodeBlockLanguagesCombo
+     * @protected
      */
 
   }, {
@@ -31656,11 +31491,97 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _toMark = __webpack_require__(24);
+
+var _toMark2 = _interopRequireDefault(_toMark);
+
+var _domUtils = __webpack_require__(4);
+
+var _domUtils2 = _interopRequireDefault(_domUtils);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Check if given node is valid delimiter run.
+ * According to common-mark spec, following examples are not valid delimiter runs.
+ * 1. opening (*|**) preceded by an alphanumeric and followed by a punctuation.
+ *    (ex: a**~~c~~b**)
+ * 2. closing (*|**) preceded by a punctuation and followed by an alphanumeric.
+ *    (ex: **b~~c~~**a)
+ * @see {@link https://spec.commonmark.org/0.29/#delimiter-run}
+ * @see {@link https://github.com/commonmark/commonmark-spec/issues/611#issuecomment-533578503}
+ */
+function isValidDelimiterRun(node) {
+  var isElemNode = _domUtils2.default.isElemNode,
+      isTextNode = _domUtils2.default.isTextNode;
+
+  var isInvalidOpener = isTextNode(node.previousSibling) && isElemNode(node.firstChild);
+  var isInvalidCloser = isTextNode(node.nextSibling) && isElemNode(node.lastChild);
+
+  return !isInvalidOpener && !isInvalidCloser;
+}
+
+function convertEmphasis(node, subContent, delimiter) {
+  var FIND_BEFORE_AND_AFTER_SPACES_RX = /^(\s*)((?:.|\n)*\S)(\s*)$/m;
+
+  var _subContent$match = subContent.match(FIND_BEFORE_AND_AFTER_SPACES_RX),
+      beforeSpaces = _subContent$match[1],
+      trimmedContent = _subContent$match[2],
+      afterSpaces = _subContent$match[3];
+
+  var convertedContent = void 0;
+
+  if (isValidDelimiterRun(node)) {
+    convertedContent = '' + delimiter + trimmedContent + delimiter;
+  } else {
+    var tagName = node.nodeName.toLowerCase();
+
+    convertedContent = '<' + tagName + '>' + trimmedContent + '</' + tagName + '>';
+  }
+
+  return '' + beforeSpaces + convertedContent + afterSpaces;
+}
+
+exports.default = _toMark2.default.Renderer.factory(_toMark2.default.gfmRenderer, {
+  'EM, I': function EMI(node, subContent) {
+    if (this.isEmptyText(subContent)) {
+      return '';
+    }
+
+    return convertEmphasis(node, subContent, '*');
+  },
+  'STRONG, B': function STRONGB(node, subContent) {
+    if (this.isEmptyText(subContent)) {
+      return '';
+    }
+
+    return convertEmphasis(node, subContent, '**');
+  },
+  'DEL, S': function DELS(node, subContent) {
+    if (this.isEmptyText(subContent)) {
+      return '';
+    }
+
+    return convertEmphasis(node, subContent, '~~');
+  }
+});
+
+/***/ }),
+/* 114 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
 var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _emphasisCommon = __webpack_require__(25);
+var _emphasisCommon = __webpack_require__(26);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -31700,7 +31621,7 @@ var Bold = _commandManager2.default.command('markdown', /** @lends Bold */{
 exports.default = Bold;
 
 /***/ }),
-/* 114 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31714,7 +31635,7 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _emphasisCommon = __webpack_require__(25);
+var _emphasisCommon = __webpack_require__(26);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -31849,7 +31770,7 @@ var Italic = _commandManager2.default.command('markdown', /** @lends Italic */{
 exports.default = Italic;
 
 /***/ }),
-/* 115 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31863,7 +31784,7 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _emphasisCommon = __webpack_require__(25);
+var _emphasisCommon = __webpack_require__(26);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -31903,7 +31824,7 @@ var Strike = _commandManager2.default.command('markdown', /** @lends Strike */{
 exports.default = Strike;
 
 /***/ }),
-/* 116 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32043,7 +31964,7 @@ var Blockquote = _commandManager2.default.command('markdown', /** @lends Blockqu
 exports.default = Blockquote;
 
 /***/ }),
-/* 117 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32144,7 +32065,7 @@ function getHeadingMarkdown(text, size) {
 exports.default = Heading;
 
 /***/ }),
-/* 118 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32225,7 +32146,7 @@ function getParagraphMarkdown(lineText) {
 exports.default = Paragraph;
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32296,7 +32217,7 @@ var HR = _commandManager2.default.command('markdown', /** @lends HR */{
 exports.default = HR;
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32373,7 +32294,7 @@ var AddLink = _commandManager2.default.command('markdown', /** @lends AddLink */
 exports.default = AddLink;
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32449,7 +32370,7 @@ var AddImage = _commandManager2.default.command('markdown', /** @lends AddImage 
 exports.default = AddImage;
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32492,7 +32413,7 @@ var UL = _commandManager2.default.command('markdown', /** @lends UL */{
 exports.default = UL;
 
 /***/ }),
-/* 123 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32536,7 +32457,7 @@ var OL = _commandManager2.default.command('markdown', /** @lends OL */{
 exports.default = OL;
 
 /***/ }),
-/* 124 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32577,7 +32498,7 @@ var Indent = _commandManager2.default.command('markdown', /** @lends Indent */{
 exports.default = Indent;
 
 /***/ }),
-/* 125 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32618,7 +32539,7 @@ var Outdent = _commandManager2.default.command('markdown', /** @lends Outdent */
 exports.default = Outdent;
 
 /***/ }),
-/* 126 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32739,7 +32660,7 @@ function makeBody(col, row, data) {
 exports.default = Table;
 
 /***/ }),
-/* 127 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32781,7 +32702,7 @@ var Task = _commandManager2.default.command('markdown', /** @lends Task */{
 exports.default = Task;
 
 /***/ }),
-/* 128 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32900,7 +32821,7 @@ var Code = _commandManager2.default.command('markdown', /** @lends Code */{
 exports.default = Code;
 
 /***/ }),
-/* 129 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32958,7 +32879,7 @@ var CodeBlock = _commandManager2.default.command('markdown', /** @lends CodeBloc
 exports.default = CodeBlock;
 
 /***/ }),
-/* 130 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32972,6 +32893,10 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
+var _domUtils = __webpack_require__(4);
+
+var _domUtils2 = _interopRequireDefault(_domUtils);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -32980,6 +32905,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @extends Command
  * @module wysiwygCommands/Bold
  * @ignore
+ */
+/**
+ * @fileoverview Implements bold WysiwygCommand
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var Bold = _commandManager2.default.command('wysiwyg', /** @lends Bold */{
   name: 'Bold',
@@ -33002,6 +32931,7 @@ var Bold = _commandManager2.default.command('wysiwyg', /** @lends Bold */{
       sq.setSelection(range);
     } else {
       styleBold(sq);
+      _domUtils2.default.optimizeRange(sq.getSelection(), 'B');
     }
   }
 });
@@ -33010,14 +32940,10 @@ var Bold = _commandManager2.default.command('wysiwyg', /** @lends Bold */{
  * Style bold.
  * @param {object} sq - squire editor instance
  */
-/**
- * @fileoverview Implements bold WysiwygCommand
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
 function styleBold(sq) {
   if (sq.hasFormat('b') || sq.hasFormat('strong')) {
     sq.changeFormat(null, { tag: 'b' });
-  } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
+  } else if (!sq.hasFormat('PRE')) {
     if (sq.hasFormat('code')) {
       sq.changeFormat(null, { tag: 'code' });
     }
@@ -33028,7 +32954,7 @@ function styleBold(sq) {
 exports.default = Bold;
 
 /***/ }),
-/* 131 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33042,6 +32968,10 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
+var _domUtils = __webpack_require__(4);
+
+var _domUtils2 = _interopRequireDefault(_domUtils);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -33051,6 +32981,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @module wysiwygCommands/Italic
  * @ignore
  */
+/**
+ * @fileoverview Implements italic WysiwygCommand
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
 var Italic = _commandManager2.default.command('wysiwyg', /** @lends Italic */{
   name: 'Italic',
   keyMap: ['CTRL+I', 'META+I'],
@@ -33072,6 +33007,7 @@ var Italic = _commandManager2.default.command('wysiwyg', /** @lends Italic */{
       sq.setSelection(range);
     } else {
       styleItalic(sq);
+      _domUtils2.default.optimizeRange(sq.getSelection(), 'I');
     }
   }
 });
@@ -33080,15 +33016,10 @@ var Italic = _commandManager2.default.command('wysiwyg', /** @lends Italic */{
  * Style italic.
  * @param {object} sq - squire editor instance
  */
-/**
- * @fileoverview Implements italic WysiwygCommand
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
-
 function styleItalic(sq) {
   if (sq.hasFormat('i') || sq.hasFormat('em')) {
     sq.changeFormat(null, { tag: 'i' });
-  } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
+  } else if (!sq.hasFormat('PRE')) {
     if (sq.hasFormat('code')) {
       sq.changeFormat(null, { tag: 'code' });
     }
@@ -33099,7 +33030,7 @@ function styleItalic(sq) {
 exports.default = Italic;
 
 /***/ }),
-/* 132 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33113,6 +33044,10 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
+var _domUtils = __webpack_require__(4);
+
+var _domUtils2 = _interopRequireDefault(_domUtils);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -33122,6 +33057,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @module wysiwygCommands/Strike
  * @ignore
  */
+/**
+ * @fileoverview Implements strike WysiwygCommand
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
 var Strike = _commandManager2.default.command('wysiwyg', /** @lends Strike */{
   name: 'Strike',
   keyMap: ['CTRL+S', 'META+S'],
@@ -33143,6 +33083,7 @@ var Strike = _commandManager2.default.command('wysiwyg', /** @lends Strike */{
       sq.setSelection(range);
     } else {
       styleStrike(sq);
+      _domUtils2.default.optimizeRange(sq.getSelection(), 'S');
     }
   }
 });
@@ -33151,15 +33092,10 @@ var Strike = _commandManager2.default.command('wysiwyg', /** @lends Strike */{
  * Style strike.
  * @param {object} sq - squire editor instance
  */
-/**
- * @fileoverview Implements strike WysiwygCommand
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
-
 function styleStrike(sq) {
   if (sq.hasFormat('S')) {
     sq.changeFormat(null, { tag: 'S' });
-  } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
+  } else if (!sq.hasFormat('PRE')) {
     if (sq.hasFormat('code')) {
       sq.changeFormat(null, { tag: 'code' });
     }
@@ -33170,7 +33106,7 @@ function styleStrike(sq) {
 exports.default = Strike;
 
 /***/ }),
-/* 133 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33221,7 +33157,7 @@ var Blockquote = _commandManager2.default.command('wysiwyg', /** @lends Blockquo
 exports.default = Blockquote;
 
 /***/ }),
-/* 134 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33282,7 +33218,7 @@ var AddImage = _commandManager2.default.command('wysiwyg', /** @lends AddImage *
 exports.default = AddImage;
 
 /***/ }),
-/* 135 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33363,7 +33299,7 @@ var AddLink = _commandManager2.default.command('wysiwyg', /** @lends AddLink */{
 exports.default = AddLink;
 
 /***/ }),
-/* 136 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33404,21 +33340,24 @@ var HR = _commandManager2.default.command('wysiwyg', /** @lends HR */{
   exec: function exec(wwe) {
     var sq = wwe.getEditor();
     var range = sq.getSelection();
-    var currentNode = void 0,
-        nextBlockNode = void 0,
-        previousSibling = void 0;
 
     if (range.collapsed && !sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
-      currentNode = _domUtils2.default.getChildNodeByOffset(range.startContainer, range.startOffset);
-      nextBlockNode = _domUtils2.default.getTopNextNodeUnder(currentNode, wwe.get$Body()[0]);
+      var hr = document.createElement('hr');
+      var currentNode = _domUtils2.default.getChildNodeByOffset(range.startContainer, range.startOffset);
+      var nextBlockNode = _domUtils2.default.getTopNextNodeUnder(currentNode, wwe.get$Body()[0]);
 
-      if (!nextBlockNode) {
-        nextBlockNode = sq.createDefaultBlock();
-        wwe.get$Body().append(nextBlockNode);
+      // If nextBlockNode is div that has hr and has contenteditable as false,
+      // nextBlockNode should be set as nextSibling that is normal block.
+      if (nextBlockNode && !_domUtils2.default.isTextNode(nextBlockNode)) {
+        while (nextBlockNode && nextBlockNode.getAttribute('contenteditable') === 'false') {
+          nextBlockNode = nextBlockNode.nextSibling;
+        }
       }
 
-      var hr = sq.createElement('HR');
-      hr.setAttribute('contenteditable', false);
+      if (!nextBlockNode) {
+        nextBlockNode = _domUtils2.default.createEmptyLine();
+        wwe.get$Body().append(nextBlockNode);
+      }
 
       sq.modifyBlocks(function (frag) {
         frag.appendChild(hr);
@@ -33426,16 +33365,19 @@ var HR = _commandManager2.default.command('wysiwyg', /** @lends HR */{
         return frag;
       });
 
-      previousSibling = hr.previousSibling;
+      var previousSibling = hr.previousSibling;
 
       if (previousSibling && _domUtils2.default.isTextNode(previousSibling) && _domUtils2.default.getTextLength(previousSibling) === 0) {
         hr.parentNode.removeChild(previousSibling);
       }
 
+      hr.parentNode.replaceChild(_domUtils2.default.createHorizontalRule(), hr);
+
       range.selectNodeContents(nextBlockNode);
       range.collapse(true);
 
       sq.setSelection(range);
+      sq.saveUndoState(range);
     }
 
     wwe.focus();
@@ -33445,7 +33387,7 @@ var HR = _commandManager2.default.command('wysiwyg', /** @lends HR */{
 exports.default = HR;
 
 /***/ }),
-/* 137 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33515,7 +33457,7 @@ var Heading = _commandManager2.default.command('wysiwyg', /** @lends Heading */{
 exports.default = Heading;
 
 /***/ }),
-/* 138 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33582,7 +33524,7 @@ var Paragraph = _commandManager2.default.command('wysiwyg', /** @lends Paragraph
 exports.default = Paragraph;
 
 /***/ }),
-/* 139 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33685,7 +33627,7 @@ var UL = _commandManager2.default.command('wysiwyg', /** @lends UL */{
 exports.default = UL;
 
 /***/ }),
-/* 140 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33789,7 +33731,7 @@ var OL = _commandManager2.default.command('wysiwyg', /** @lends OL */{
 exports.default = OL;
 
 /***/ }),
-/* 141 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33929,7 +33871,7 @@ function makeBody(col, row, data) {
 exports.default = Table;
 
 /***/ }),
-/* 142 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34054,7 +33996,7 @@ function focusToFirstTd(sq, $tr) {
 exports.default = TableAddRow;
 
 /***/ }),
-/* 143 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34203,7 +34145,7 @@ function focusToNextCell(sq, $cell) {
 exports.default = TableAddCol;
 
 /***/ }),
-/* 144 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34332,7 +34274,7 @@ function getTrs(range, selectionMgr, $table) {
 exports.default = TableRemoveRow;
 
 /***/ }),
-/* 145 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34478,7 +34420,7 @@ function focusToCell(sq, $cell, tableMgr) {
 exports.default = TableRemoveCol;
 
 /***/ }),
-/* 146 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34630,7 +34572,7 @@ function getRangeInformation(range, selectionMgr) {
 exports.default = TableAlignCol;
 
 /***/ }),
-/* 147 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34685,7 +34627,7 @@ var TableRemove = _commandManager2.default.command('wysiwyg', /** @lends RemoveT
 exports.default = TableRemove;
 
 /***/ }),
-/* 148 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34761,7 +34703,7 @@ var Indent = _commandManager2.default.command('wysiwyg', /** @lends Indent */{
 exports.default = Indent;
 
 /***/ }),
-/* 149 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34841,7 +34783,7 @@ function getCurrent$Li(wwe) {
 exports.default = Outdent;
 
 /***/ }),
-/* 150 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34952,7 +34894,7 @@ var Task = _commandManager2.default.command('wysiwyg', /** @lends Task */{
 exports.default = Task;
 
 /***/ }),
-/* 151 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35057,7 +34999,7 @@ function styleCode(editor, sq) {
 exports.default = Code;
 
 /***/ }),
-/* 152 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35163,7 +35105,7 @@ function getCodeBlockBody(range, wwe) {
 exports.default = CodeBlock;
 
 /***/ }),
-/* 153 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35226,7 +35168,7 @@ _i18n2.default.setLanguage(['en', 'en_US'], {
     */
 
 /***/ }),
-/* 154 */
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35289,7 +35231,7 @@ _i18n2.default.setLanguage(['ko', 'ko_KR'], {
     */
 
 /***/ }),
-/* 155 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35352,7 +35294,7 @@ _i18n2.default.setLanguage(['zh', 'zh_CN'], {
     */
 
 /***/ }),
-/* 156 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35415,7 +35357,7 @@ _i18n2.default.setLanguage(['ja', 'ja_JP'], {
     */
 
 /***/ }),
-/* 157 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35478,7 +35420,7 @@ _i18n2.default.setLanguage(['nl', 'nl_NL'], {
     */
 
 /***/ }),
-/* 158 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35541,7 +35483,7 @@ _i18n2.default.setLanguage(['es', 'es_ES'], {
     */
 
 /***/ }),
-/* 159 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35604,7 +35546,7 @@ _i18n2.default.setLanguage(['de', 'de_DE'], {
     */
 
 /***/ }),
-/* 160 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35667,7 +35609,7 @@ _i18n2.default.setLanguage(['ru', 'ru_RU'], {
     */
 
 /***/ }),
-/* 161 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35730,7 +35672,7 @@ _i18n2.default.setLanguage(['fr', 'fr_FR'], {
     */
 
 /***/ }),
-/* 162 */
+/* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35793,7 +35735,7 @@ _i18n2.default.setLanguage(['uk', 'uk_UA'], {
     */
 
 /***/ }),
-/* 163 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35856,7 +35798,7 @@ _i18n2.default.setLanguage(['tr', 'tr_TR'], {
     */
 
 /***/ }),
-/* 164 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35919,7 +35861,7 @@ _i18n2.default.setLanguage(['fi', 'fi_FI'], {
     */
 
 /***/ }),
-/* 165 */
+/* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35982,7 +35924,7 @@ _i18n2.default.setLanguage(['cs', 'cs_CZ'], {
     */
 
 /***/ }),
-/* 166 */
+/* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36045,7 +35987,7 @@ _i18n2.default.setLanguage(['ar', 'ar_AR'], {
     */
 
 /***/ }),
-/* 167 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36108,7 +36050,7 @@ _i18n2.default.setLanguage(['pl', 'pl_PL'], {
     */
 
 /***/ }),
-/* 168 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36171,7 +36113,7 @@ _i18n2.default.setLanguage(['zhtw', 'zh_TW'], {
     */
 
 /***/ }),
-/* 169 */
+/* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36234,7 +36176,7 @@ _i18n2.default.setLanguage(['gl', 'gl_ES'], {
     */
 
 /***/ }),
-/* 170 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36297,7 +36239,70 @@ _i18n2.default.setLanguage(['sv', 'sv_SE'], {
      */
 
 /***/ }),
-/* 171 */
+/* 172 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _i18n = __webpack_require__(3);
+
+var _i18n2 = _interopRequireDefault(_i18n);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_i18n2.default.setLanguage(['it', 'it_IT'], {
+  'Markdown': 'Markdown',
+  'WYSIWYG': 'WYSIWYG',
+  'Write': 'Scrivere',
+  'Preview': 'Anteprima',
+  'Headings': 'Intestazioni',
+  'Paragraph': 'Paragrafo',
+  'Bold': 'Grassetto',
+  'Italic': 'Corsivo',
+  'Strike': 'Barrato',
+  'Code': 'Codice',
+  'Line': 'Linea',
+  'Blockquote': 'Blocco citazione',
+  'Unordered list': 'Lista puntata',
+  'Ordered list': 'Lista numerata',
+  'Task': 'Attività',
+  'Indent': 'Aggiungi indentazione',
+  'Outdent': 'Rimuovi indentazione',
+  'Insert link': 'Inserisci link',
+  'Insert CodeBlock': 'Inserisci blocco di codice',
+  'Insert table': 'Inserisci tabella',
+  'Insert image': 'Inserisci immagine',
+  'Heading': 'Intestazione',
+  'Image URL': 'URL immagine',
+  'Select image file': 'Seleziona file immagine',
+  'Description': 'Descrizione',
+  'OK': 'OK',
+  'More': 'Più',
+  'Cancel': 'Cancella',
+  'File': 'File',
+  'URL': 'URL',
+  'Link text': 'Testo del collegamento',
+  'Add row': 'Aggiungi riga',
+  'Add col': 'Aggiungi colonna',
+  'Remove row': 'Rimuovi riga',
+  'Remove col': 'Rimuovi colonna',
+  'Align left': 'Allinea a sinistra',
+  'Align center': 'Allinea al centro',
+  'Align right': 'Allinea a destra',
+  'Remove table': 'Rimuovi tabella',
+  'Would you like to paste as table?': 'Desideri incollare sotto forma di tabella?',
+  'Text color': 'Colore del testo',
+  'Auto scroll enabled': 'Scrolling automatico abilitato',
+  'Auto scroll disabled': 'Scrolling automatico disabilitato',
+  'Choose language': 'Scegli la lingua'
+}); /**
+    * @fileoverview I18N for Italian
+    * @author Massimo Redaelli <massimo@typish.io>
+    */
+
+/***/ }),
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36547,7 +36552,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     };
 
     CSV.stream.json = function () {
-        var os = __webpack_require__(184);
+        var os = __webpack_require__(187);
         var stream = __webpack_require__(47);
         var s = new streamTransform({ objectMode: true });
         s._transform = function (chunk, encoding, done) {
@@ -36656,7 +36661,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     // Node, PhantomJS, etc
     // eg.  var CSV = require("CSV"); CSV.parse(...);
-    if (typeof module != 'undefined' && module.exports) {
+    if ( true && module.exports) {
         module.exports = CSV;
     }
 
@@ -36668,21 +36673,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         // AMD https://github.com/amdjs/amdjs-api/wiki/AMD
         // eg.  require(['./csv.js'], function (CSV) { CSV.parse(...); } );
-        else if (typeof define == 'function' && _typeof(define.amd) == 'object') {
-                define([], function () {
-                    return CSV;
-                });
-            }
-
-            // standard js global
-            // eg. CSV.parse(...);
-            else if (global) {
-                    global.CSV = CSV;
-                }
+        else {}
 })(undefined);
 
 /***/ }),
-/* 172 */
+/* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36702,68 +36697,103 @@ for (var i = 0, len = code.length; i < len; ++i) {
   revLookup[code.charCodeAt(i)] = i
 }
 
+// Support decoding URL-safe base64 strings, as Node.js does.
+// See: https://en.wikipedia.org/wiki/Base64#URL_applications
 revLookup['-'.charCodeAt(0)] = 62
 revLookup['_'.charCodeAt(0)] = 63
 
-function placeHoldersCount (b64) {
+function getLens (b64) {
   var len = b64.length
+
   if (len % 4 > 0) {
     throw new Error('Invalid string. Length must be a multiple of 4')
   }
 
-  // the number of equal signs (place holders)
-  // if there are two placeholders, than the two characters before it
-  // represent one byte
-  // if there is only one, then the three characters before it represent 2 bytes
-  // this is just a cheap hack to not do indexOf twice
-  return b64[len - 2] === '=' ? 2 : b64[len - 1] === '=' ? 1 : 0
+  // Trim off extra bytes after placeholder bytes are found
+  // See: https://github.com/beatgammit/base64-js/issues/42
+  var validLen = b64.indexOf('=')
+  if (validLen === -1) validLen = len
+
+  var placeHoldersLen = validLen === len
+    ? 0
+    : 4 - (validLen % 4)
+
+  return [validLen, placeHoldersLen]
 }
 
+// base64 is 4/3 + up to two characters of the original data
 function byteLength (b64) {
-  // base64 is 4/3 + up to two characters of the original data
-  return (b64.length * 3 / 4) - placeHoldersCount(b64)
+  var lens = getLens(b64)
+  var validLen = lens[0]
+  var placeHoldersLen = lens[1]
+  return ((validLen + placeHoldersLen) * 3 / 4) - placeHoldersLen
+}
+
+function _byteLength (b64, validLen, placeHoldersLen) {
+  return ((validLen + placeHoldersLen) * 3 / 4) - placeHoldersLen
 }
 
 function toByteArray (b64) {
-  var i, l, tmp, placeHolders, arr
-  var len = b64.length
-  placeHolders = placeHoldersCount(b64)
+  var tmp
+  var lens = getLens(b64)
+  var validLen = lens[0]
+  var placeHoldersLen = lens[1]
 
-  arr = new Arr((len * 3 / 4) - placeHolders)
+  var arr = new Arr(_byteLength(b64, validLen, placeHoldersLen))
+
+  var curByte = 0
 
   // if there are placeholders, only get up to the last complete 4 chars
-  l = placeHolders > 0 ? len - 4 : len
+  var len = placeHoldersLen > 0
+    ? validLen - 4
+    : validLen
 
-  var L = 0
-
-  for (i = 0; i < l; i += 4) {
-    tmp = (revLookup[b64.charCodeAt(i)] << 18) | (revLookup[b64.charCodeAt(i + 1)] << 12) | (revLookup[b64.charCodeAt(i + 2)] << 6) | revLookup[b64.charCodeAt(i + 3)]
-    arr[L++] = (tmp >> 16) & 0xFF
-    arr[L++] = (tmp >> 8) & 0xFF
-    arr[L++] = tmp & 0xFF
+  var i
+  for (i = 0; i < len; i += 4) {
+    tmp =
+      (revLookup[b64.charCodeAt(i)] << 18) |
+      (revLookup[b64.charCodeAt(i + 1)] << 12) |
+      (revLookup[b64.charCodeAt(i + 2)] << 6) |
+      revLookup[b64.charCodeAt(i + 3)]
+    arr[curByte++] = (tmp >> 16) & 0xFF
+    arr[curByte++] = (tmp >> 8) & 0xFF
+    arr[curByte++] = tmp & 0xFF
   }
 
-  if (placeHolders === 2) {
-    tmp = (revLookup[b64.charCodeAt(i)] << 2) | (revLookup[b64.charCodeAt(i + 1)] >> 4)
-    arr[L++] = tmp & 0xFF
-  } else if (placeHolders === 1) {
-    tmp = (revLookup[b64.charCodeAt(i)] << 10) | (revLookup[b64.charCodeAt(i + 1)] << 4) | (revLookup[b64.charCodeAt(i + 2)] >> 2)
-    arr[L++] = (tmp >> 8) & 0xFF
-    arr[L++] = tmp & 0xFF
+  if (placeHoldersLen === 2) {
+    tmp =
+      (revLookup[b64.charCodeAt(i)] << 2) |
+      (revLookup[b64.charCodeAt(i + 1)] >> 4)
+    arr[curByte++] = tmp & 0xFF
+  }
+
+  if (placeHoldersLen === 1) {
+    tmp =
+      (revLookup[b64.charCodeAt(i)] << 10) |
+      (revLookup[b64.charCodeAt(i + 1)] << 4) |
+      (revLookup[b64.charCodeAt(i + 2)] >> 2)
+    arr[curByte++] = (tmp >> 8) & 0xFF
+    arr[curByte++] = tmp & 0xFF
   }
 
   return arr
 }
 
 function tripletToBase64 (num) {
-  return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F]
+  return lookup[num >> 18 & 0x3F] +
+    lookup[num >> 12 & 0x3F] +
+    lookup[num >> 6 & 0x3F] +
+    lookup[num & 0x3F]
 }
 
 function encodeChunk (uint8, start, end) {
   var tmp
   var output = []
   for (var i = start; i < end; i += 3) {
-    tmp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
+    tmp =
+      ((uint8[i] << 16) & 0xFF0000) +
+      ((uint8[i + 1] << 8) & 0xFF00) +
+      (uint8[i + 2] & 0xFF)
     output.push(tripletToBase64(tmp))
   }
   return output.join('')
@@ -36773,42 +36803,45 @@ function fromByteArray (uint8) {
   var tmp
   var len = uint8.length
   var extraBytes = len % 3 // if we have 1 byte left, pad 2 bytes
-  var output = ''
   var parts = []
   var maxChunkLength = 16383 // must be multiple of 3
 
   // go through the array every three bytes, we'll deal with trailing stuff later
   for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
-    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)))
+    parts.push(encodeChunk(
+      uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)
+    ))
   }
 
   // pad the end with zeros, but make sure to not forget the extra bytes
   if (extraBytes === 1) {
     tmp = uint8[len - 1]
-    output += lookup[tmp >> 2]
-    output += lookup[(tmp << 4) & 0x3F]
-    output += '=='
+    parts.push(
+      lookup[tmp >> 2] +
+      lookup[(tmp << 4) & 0x3F] +
+      '=='
+    )
   } else if (extraBytes === 2) {
-    tmp = (uint8[len - 2] << 8) + (uint8[len - 1])
-    output += lookup[tmp >> 10]
-    output += lookup[(tmp >> 4) & 0x3F]
-    output += lookup[(tmp << 2) & 0x3F]
-    output += '='
+    tmp = (uint8[len - 2] << 8) + uint8[len - 1]
+    parts.push(
+      lookup[tmp >> 10] +
+      lookup[(tmp >> 4) & 0x3F] +
+      lookup[(tmp << 2) & 0x3F] +
+      '='
+    )
   }
-
-  parts.push(output)
 
   return parts.join('')
 }
 
 
 /***/ }),
-/* 173 */
+/* 175 */
 /***/ (function(module, exports) {
 
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
-  var eLen = nBytes * 8 - mLen - 1
+  var eLen = (nBytes * 8) - mLen - 1
   var eMax = (1 << eLen) - 1
   var eBias = eMax >> 1
   var nBits = -7
@@ -36821,12 +36854,12 @@ exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   e = s & ((1 << (-nBits)) - 1)
   s >>= (-nBits)
   nBits += eLen
-  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+  for (; nBits > 0; e = (e * 256) + buffer[offset + i], i += d, nBits -= 8) {}
 
   m = e & ((1 << (-nBits)) - 1)
   e >>= (-nBits)
   nBits += mLen
-  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+  for (; nBits > 0; m = (m * 256) + buffer[offset + i], i += d, nBits -= 8) {}
 
   if (e === 0) {
     e = 1 - eBias
@@ -36841,7 +36874,7 @@ exports.read = function (buffer, offset, isLE, mLen, nBytes) {
 
 exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   var e, m, c
-  var eLen = nBytes * 8 - mLen - 1
+  var eLen = (nBytes * 8) - mLen - 1
   var eMax = (1 << eLen) - 1
   var eBias = eMax >> 1
   var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
@@ -36874,7 +36907,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
       m = 0
       e = eMax
     } else if (e + eBias >= 1) {
-      m = (value * c - 1) * Math.pow(2, mLen)
+      m = ((value * c) - 1) * Math.pow(2, mLen)
       e = e + eBias
     } else {
       m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
@@ -36893,24 +36926,22 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 
 /***/ }),
-/* 174 */
+/* 176 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 175 */
+/* 177 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-/*<replacement>*/
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Buffer = __webpack_require__(20).Buffer;
-/*</replacement>*/
+var util = __webpack_require__(178);
 
 function copyBuffer(src, target, offset) {
   src.copy(target, offset);
@@ -36978,19 +37009,35 @@ module.exports = function () {
   return BufferList;
 }();
 
+if (util && util.inspect && util.inspect.custom) {
+  module.exports.prototype[util.inspect.custom] = function () {
+    var obj = util.inspect({ length: this.length });
+    return this.constructor.name + ' ' + obj;
+  };
+}
+
 /***/ }),
-/* 176 */
+/* 178 */
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
+/* 179 */
 /***/ (function(module, exports, __webpack_require__) {
 
+/* WEBPACK VAR INJECTION */(function(global) {var scope = (typeof global !== "undefined" && global) ||
+            (typeof self !== "undefined" && self) ||
+            window;
 var apply = Function.prototype.apply;
 
 // DOM APIs, for completeness
 
 exports.setTimeout = function() {
-  return new Timeout(apply.call(setTimeout, window, arguments), clearTimeout);
+  return new Timeout(apply.call(setTimeout, scope, arguments), clearTimeout);
 };
 exports.setInterval = function() {
-  return new Timeout(apply.call(setInterval, window, arguments), clearInterval);
+  return new Timeout(apply.call(setInterval, scope, arguments), clearInterval);
 };
 exports.clearTimeout =
 exports.clearInterval = function(timeout) {
@@ -37005,7 +37052,7 @@ function Timeout(id, clearFn) {
 }
 Timeout.prototype.unref = Timeout.prototype.ref = function() {};
 Timeout.prototype.close = function() {
-  this._clearFn.call(window, this._id);
+  this._clearFn.call(scope, this._id);
 };
 
 // Does not start the time, just sets up the members needed.
@@ -37032,13 +37079,21 @@ exports._unrefActive = exports.active = function(item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(177);
-exports.setImmediate = setImmediate;
-exports.clearImmediate = clearImmediate;
+__webpack_require__(180);
+// On some exotic environments, it's not clear which object `setimmediate` was
+// able to install onto.  Search each possibility in the same order as the
+// `setimmediate` library.
+exports.setImmediate = (typeof self !== "undefined" && self.setImmediate) ||
+                       (typeof global !== "undefined" && global.setImmediate) ||
+                       (this && this.setImmediate);
+exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
+                         (typeof global !== "undefined" && global.clearImmediate) ||
+                         (this && this.clearImmediate);
 
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(11)))
 
 /***/ }),
-/* 177 */
+/* 180 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -37228,10 +37283,10 @@ exports.clearImmediate = clearImmediate;
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12), __webpack_require__(18)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(11), __webpack_require__(18)))
 
 /***/ }),
-/* 178 */
+/* 181 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {
@@ -37302,10 +37357,10 @@ function config (name) {
   return String(val).toLowerCase() === 'true';
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(11)))
 
 /***/ }),
-/* 179 */
+/* 182 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37358,35 +37413,35 @@ PassThrough.prototype._transform = function (chunk, encoding, cb) {
 };
 
 /***/ }),
-/* 180 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(28);
-
-
-/***/ }),
-/* 181 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(11);
-
-
-/***/ }),
-/* 182 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(27).Transform
-
-
-/***/ }),
 /* 183 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(27).PassThrough
+module.exports = __webpack_require__(29);
 
 
 /***/ }),
 /* 184 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(12);
+
+
+/***/ }),
+/* 185 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(28).Transform
+
+
+/***/ }),
+/* 186 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(28).PassThrough
+
+
+/***/ }),
+/* 187 */
 /***/ (function(module, exports) {
 
 exports.endianness = function () { return 'LE' };
@@ -37441,7 +37496,7 @@ exports.homedir = function () {
 
 
 /***/ }),
-/* 185 */
+/* 188 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37459,11 +37514,11 @@ var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
-var _scrollManager = __webpack_require__(186);
+var _scrollManager = __webpack_require__(189);
 
 var _scrollManager2 = _interopRequireDefault(_scrollManager);
 
-var _sectionManager = __webpack_require__(187);
+var _sectionManager = __webpack_require__(190);
 
 var _sectionManager2 = _interopRequireDefault(_sectionManager);
 
@@ -37560,11 +37615,16 @@ function scrollSyncExtension(editor) {
   }
 
   editor.on('previewRenderAfter', function () {
-    sectionManager.sectionMatch();
-    if (isActive) {
-      scrollManager.syncPreviewScrollTopToMarkdown();
-    }
-    isScrollable = true;
+    // Immediately after the 'previewRenderAfter' event has occurred,
+    // browser rendering is not yet complete.
+    // So the size of elements can not be accurately measured.
+    setTimeout(function () {
+      sectionManager.sectionMatch();
+      if (isActive) {
+        scrollManager.syncPreviewScrollTopToMarkdown(true);
+      }
+      isScrollable = true;
+    }, 200);
   });
 
   editor.eventManager.listen('scroll', function (event) {
@@ -37574,7 +37634,7 @@ function scrollSyncExtension(editor) {
 
     if (isScrollable && editor.preview.isVisible()) {
       if (event.source === 'markdown' && !scrollManager.isMarkdownScrollEventBlocked) {
-        scrollManager.syncPreviewScrollTopToMarkdown();
+        scrollManager.syncPreviewScrollTopToMarkdown(false);
       } else if (event.source === 'preview' && !scrollManager.isPreviewScrollEventBlocked) {
         scrollManager.syncMarkdownScrollTopToPreview();
       }
@@ -37589,7 +37649,7 @@ _editorProxy2.default.defineExtension('scrollSync', scrollSyncExtension);
 exports.default = scrollSyncExtension;
 
 /***/ }),
-/* 186 */
+/* 189 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37620,16 +37680,13 @@ var SCROLL_BOCKING_RESET_DELAY = 15;
 /**
  * Class ScrollManager
  * manage scroll sync between markdown editor and preview
+ * @param {SectionManager} sectionManager - sectionManager
+ * @param {CodeMirror} cm - CodeMirror
+ * @param {jQuery} $previewContainerEl - preview container
+ * @ignore
  */
 
 var ScrollManager = function () {
-  /**
-   * Creates an instance of ScrollManager.
-   * @param {SectionManager} sectionManager - sectionManager
-   * @param {CodeMirror} cm - CodeMirror
-   * @param {jQuery} $previewContainerEl - preview container
-   * @memberof ScrollManager
-   */
   function ScrollManager(sectionManager, cm, $previewContainerEl) {
     _classCallCheck(this, ScrollManager);
 
@@ -37638,21 +37695,23 @@ var ScrollManager = function () {
     this.$previewContainerEl = $previewContainerEl;
     this.$contents = this.$previewContainerEl.find('.tui-editor-contents');
     this.releaseTimer = null;
+
     /**
      * current timeout id needs animation
      * @type {number}
+     * @private
      */
     this._currentTimeoutId = null;
 
     /**
      * Saved scrollInfo object of CodeMirror
      * @type {object}
+     * @private
      */
     this._savedScrollInfo = null;
   }
 
   /**
-   * _getEditorSectionHeight
    * Return section height of editor
    * @param {object} section section be calculated height
    * @returns {number} height
@@ -37670,7 +37729,6 @@ var ScrollManager = function () {
     }
 
     /**
-     * _getLineHeightGapInSection
      * Return height gap between passed line in passed section
      * @param {object} section section be calculated
      * @param {number} line line number
@@ -37688,7 +37746,6 @@ var ScrollManager = function () {
     }
 
     /**
-     * _getSectionScrollRatio
      * Return ratio of height between scrollTop line and scrollTop section
      * @param {object} section section be calculated
      * @param {number} line line number
@@ -37712,7 +37769,6 @@ var ScrollManager = function () {
     }
 
     /**
-     * _getScrollFactorsOfEditor
      * Return Scroll Information of editor for preview scroll sync
      * @returns {object} scroll factors
      * @private
@@ -37756,6 +37812,42 @@ var ScrollManager = function () {
       }
 
       return factors;
+    }
+
+    /**
+     * Return cursor position information of editor for preview scroll sync
+     * @returns {object} scroll factors
+     * @private
+     */
+
+  }, {
+    key: '_getCursorFactorsOfEditor',
+    value: function _getCursorFactorsOfEditor() {
+      var cm = this.cm;
+
+      var cursorInfo = cm.cursorCoords(true, 'local');
+
+      // if codemirror has not visible scrollInfo have incorrect value
+      // so we use saved scroll info for alternative
+      var scrollInfo = this._fallbackScrollInfoIfIncorrect(cm.getScrollInfo());
+      var cursorLine = cm.coordsChar({
+        left: cursorInfo.left,
+        top: cursorInfo.top
+      }, 'local').line;
+
+      var cusrsorSection = this.sectionManager.sectionByLine(cursorLine);
+
+      if (cusrsorSection && cusrsorSection.$previewSectionEl && cusrsorSection.$previewSectionEl.length) {
+        var ratio = this._getEditorSectionScrollRatio(cusrsorSection, cursorLine);
+
+        return {
+          section: cusrsorSection,
+          sectionRatio: ratio,
+          relativeCursorTop: cursorInfo.top - scrollInfo.top
+        };
+      }
+
+      return null;
     }
 
     /**
@@ -37812,7 +37904,6 @@ var ScrollManager = function () {
     }
 
     /**
-     * _getScrollTopForPreview
      * Return scrollTop value for preview
      * @returns {number|undefined} scrollTop value, when something wrong then return undefined
      * @private
@@ -37834,6 +37925,38 @@ var ScrollManager = function () {
         scrollTop = section.$previewSectionEl[0].offsetTop;
         scrollTop += section.$previewSectionEl.height() * sectionRatio - SCROLL_TOP_PADDING;
       }
+
+      scrollTop = scrollTop && Math.max(scrollTop, 0);
+
+      return scrollTop;
+    }
+
+    /**
+     * Return scrollTop value for preview according cursor position
+     * @returns {number} scrollTop value
+     * @private
+     */
+
+  }, {
+    key: '_getScrollTopForPreviewBaseCursor',
+    value: function _getScrollTopForPreviewBaseCursor() {
+      var cursorFactors = this._getCursorFactorsOfEditor();
+
+      if (!cursorFactors) {
+        return 0;
+      }
+
+      var section = cursorFactors.section,
+          sectionRatio = cursorFactors.sectionRatio,
+          relativeCursorTop = cursorFactors.relativeCursorTop;
+
+      var scrollTop = section.$previewSectionEl[0].offsetTop;
+
+      // Moves the preview so that the line of cursor is positioned at top of the preview.
+      scrollTop += section.$previewSectionEl.height() * sectionRatio - SCROLL_TOP_PADDING;
+
+      // Moves the preview by the position of the cursor at markdown.
+      scrollTop -= relativeCursorTop;
 
       scrollTop = scrollTop && Math.max(scrollTop, 0);
 
@@ -37877,19 +38000,19 @@ var ScrollManager = function () {
     }
 
     /**
-     * syncPreviewScrollTopToMarkdown
      * sync preview scroll to markdown
+     * @param {boolean} isCursorBase whether sync according to cursor position
      */
 
   }, {
     key: 'syncPreviewScrollTopToMarkdown',
-    value: function syncPreviewScrollTopToMarkdown() {
+    value: function syncPreviewScrollTopToMarkdown(isCursorBase) {
       var _this2 = this;
 
       var $previewContainerEl = this.$previewContainerEl;
 
       var sourceScrollTop = $previewContainerEl.scrollTop();
-      var targetScrollTop = this._getScrollTopForPreview();
+      var targetScrollTop = isCursorBase ? this._getScrollTopForPreviewBaseCursor() : this._getScrollTopForPreview();
 
       this.isPreviewScrollEventBlocked = true;
 
@@ -37905,7 +38028,6 @@ var ScrollManager = function () {
     }
 
     /**
-     * syncMarkdownScrollTopToPreview
      * sync markdown scroll to preview
      */
 
@@ -37933,7 +38055,6 @@ var ScrollManager = function () {
     }
 
     /**
-     * _animateRun
      * animate with passed Callback
      * @param {number} originValue original value
      * @param {number} targetValue target value
@@ -37990,7 +38111,6 @@ var ScrollManager = function () {
 
     /**
      * Save Codemirror's scrollInfo for alternative use
-     * memberOf ScrollManager
      */
 
   }, {
@@ -38026,7 +38146,7 @@ var ScrollManager = function () {
 exports.default = ScrollManager;
 
 /***/ }),
-/* 187 */
+/* 190 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38062,15 +38182,12 @@ var FIND_SPACE = /\s/g;
 /**
  * Class SectionManager
  * manage logical markdown content sections
+ * @param {CodeMirror} cm - codemirror
+ * @param {Preview} preview - preview
+ * @ignore
  */
 
 var SectionManager = function () {
-  /**
-   * Creates an instance of SectionManager.
-   * @param {CodeMirror} cm - codemirror
-   * @param {Preview} preview - preview
-   * @memberof SectionManager
-   */
   function SectionManager(cm, preview) {
     _classCallCheck(this, SectionManager);
 
@@ -38079,20 +38196,21 @@ var SectionManager = function () {
     this.$previewContent = preview.$el.find('.tui-editor-contents');
 
     /**
-     *  section list
+     * section list
      * @type {object[]}
+     * @private
      */
     this._sectionList = null;
 
     /**
      * current working section needs making section list
      * @type {object}
+     * @private
      */
     this._currentSection = null;
   }
 
   /**
-   * _addNewSection
    * add new section
    * @param {number} start initial start line number
    * @param {number} end initial end line number
@@ -38109,7 +38227,6 @@ var SectionManager = function () {
     }
 
     /**
-     * getSectionList
      * return section list
      * @returns {object[]} section object list
      */
@@ -38125,7 +38242,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _makeSectionData
      * make default section object
      * @param {number} start initial start line number
      * @param {number} end initial end line number
@@ -38144,7 +38260,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _updateCurrentSectionEnd
      * update current section's end line number
      * @param {number} end end value to update
      * @private
@@ -38157,7 +38272,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _eachLineState
      * iterate codemiror lines, callback function parameter pass line type and line number
      * @param {function} iteratee callback function
      * @private
@@ -38172,8 +38286,8 @@ var SectionManager = function () {
           nextLineString = void 0,
           prevLineString = void 0,
           isTrimming = true,
-          onTable = false,
-          onCodeBlock = false,
+          isInTable = false,
+          isInCodeBlock = false,
           trimCapture = '';
       var isRightAfterImageSection = false;
       var isEnsuredSection = false;
@@ -38188,22 +38302,22 @@ var SectionManager = function () {
         prevLineString = this.cm.getLine(i - 1) || '';
         var isCodeBlockEnded = this._isCodeBlockEnd(prevLineString) && codeblockStartLineIndex !== i - 1;
 
-        if (onTable && (!lineString || !this._isTableCode(lineString))) {
-          onTable = false;
-        } else if (!onTable && this._isTable(lineString, nextLineString)) {
-          onTable = true;
+        if (isInTable && (!lineString || !this._isTableCode(lineString))) {
+          isInTable = false;
+        } else if (!isInTable && this._isTable(lineString, nextLineString)) {
+          isInTable = true;
         }
 
-        if (onCodeBlock && isCodeBlockEnded) {
-          onCodeBlock = false;
+        if (isInCodeBlock && isCodeBlockEnded) {
+          isInCodeBlock = false;
         }
-        if (!onCodeBlock && this._isCodeBlockStart(lineString)) {
-          onCodeBlock = this._doFollowedLinesHaveCodeBlockEnd(i, lineLength);
+        if (!isInCodeBlock && this._isCodeBlockStart(lineString)) {
+          isInCodeBlock = this._doFollowedLinesHaveCodeBlockEnd(i, lineLength);
           codeblockStartLineIndex = i;
         }
 
         if (isEnsuredSection && lineString.length !== 0) {
-          if (this._isIndependentImage(onCodeBlock, onTable, lineString, prevLineString)) {
+          if (this._isIndependentImage(isInCodeBlock, isInTable, lineString, prevLineString)) {
             isRightAfterImageSection = true;
             isEnsuredSection = true;
           } else {
@@ -38212,16 +38326,16 @@ var SectionManager = function () {
           }
 
           isSection = true;
-        } else if (this._isAtxHeader(lineString)) {
+        } else if (!isInCodeBlock && this._isAtxHeader(lineString)) {
           isRightAfterImageSection = false;
           isSection = true;
           isEnsuredSection = false;
           // setext header
-        } else if (!this._isCodeBlockEnd(lineString) && !onTable && this._isSeTextHeader(lineString, nextLineString)) {
+        } else if (!this._isCodeBlockEnd(lineString) && !isInTable && this._isSeTextHeader(lineString, nextLineString)) {
           isRightAfterImageSection = false;
           isSection = true;
           isEnsuredSection = false;
-        } else if (this._isIndependentImage(onCodeBlock, onTable, lineString, prevLineString)) {
+        } else if (this._isIndependentImage(isInCodeBlock, isInTable, lineString, prevLineString)) {
           isRightAfterImageSection = true;
           isSection = true;
           isEnsuredSection = false;
@@ -38247,8 +38361,8 @@ var SectionManager = function () {
 
     /**
      * Return whether is independent image line with padding lines top and bottom
-     * @param {boolean} onCodeBlock Is on codeblock
-     * @param {boolean} onTable Is on table
+     * @param {boolean} isInCodeBlock Is on codeblock
+     * @param {boolean} isInTable Is on table
      * @param {string} lineString Current line string
      * @param {string} prevLineString Previous line string
      * @returns {boolean}
@@ -38257,12 +38371,11 @@ var SectionManager = function () {
 
   }, {
     key: '_isIndependentImage',
-    value: function _isIndependentImage(onCodeBlock, onTable, lineString, prevLineString) {
-      return !onCodeBlock && !onTable && this._isImage(lineString) && !this._isList(lineString) && !this._isQuote(lineString) && prevLineString.length === 0;
+    value: function _isIndependentImage(isInCodeBlock, isInTable, lineString, prevLineString) {
+      return !isInCodeBlock && !isInTable && this._isImage(lineString) && !this._isList(lineString) && !this._isQuote(lineString) && prevLineString.length === 0;
     }
 
     /**
-     * _doFollowedLinesHaveCodeBlockEnd
      * Check if follow lines have codeblock end
      * @param {number} lineIndex current index
      * @param {number} lineLength line length
@@ -38286,7 +38399,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _isCodeBlockStart
      * Check if passed string have code block start
      * @param {string} string string to check
      * @returns {boolean} result
@@ -38300,7 +38412,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _isCodeBlockEnd
      * Check if passed string have code block end
      * @param {string} string string to check
      * @returns {boolean} result
@@ -38314,7 +38425,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _isTable
      * Check if passed string have table
      * @param {string} lineString current line string
      * @param {string} nextLineString next line string
@@ -38329,7 +38439,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _isTableCode
      * Check if passed string have table code
      * @param {string} string string to check
      * @returns {boolean} result
@@ -38344,7 +38453,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _isTableAligner
      * Check if passed string have table align code
      * @param {string} string string to check
      * @returns {boolean} result
@@ -38359,7 +38467,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _isAtxHeader
      * Check if passed string have atx header
      * @param {string} string string to check
      * @returns {boolean} result
@@ -38373,7 +38480,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _isSeTextHeader
      * @param {string} lineString current line string
      * @param {string} nextLineString next line string
      * @returns {boolean} result
@@ -38402,7 +38508,6 @@ var SectionManager = function () {
     }
 
     /**
-     * makeSectionList
      * make section list
      */
 
@@ -38423,7 +38528,6 @@ var SectionManager = function () {
     }
 
     /**
-     * sectionMatch
      * make preview sections then match section list with preview section element
      */
 
@@ -38437,7 +38541,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _matchPreviewSectionsWithSectionlist
      * match section list with preview section element
      * @param {HTMLNode[]} sections section nodes
      * @private
@@ -38457,7 +38560,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _getPreviewSections
      * get preview html section group to make section
      * @returns {array[]} element node array
      * @private
@@ -38475,7 +38577,7 @@ var SectionManager = function () {
       this.$previewContent.contents().filter(findElementNodeFilter).each(function (index, el) {
         var isParagraph = el.tagName === 'P';
         var isHeading = el.tagName.match(/^(H1|H2|H3|H4|H5|H6)$/);
-        var isImage = isParagraph && el.childNodes[0].nodeName === 'IMG';
+        var isImage = isParagraph && el.hasChildNodes() && el.childNodes[0].nodeName === 'IMG';
 
         if ((isHeading || isImage || isRightAfterImageSection) && sections[lastSection].length) {
           sections.push([]);
@@ -38494,7 +38596,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _sectionByLine
      * get section by markdown line
      * @param {number} line markdown editor line number
      * @returns {object} section
@@ -38526,7 +38627,6 @@ var SectionManager = function () {
 
 /**
  * findElementNodeFilter
- * @this Node
  * @returns {boolean} true or not
  * @ignore
  */
@@ -38539,7 +38639,7 @@ function findElementNodeFilter() {
 exports.default = SectionManager;
 
 /***/ }),
-/* 188 */
+/* 191 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38553,57 +38653,55 @@ var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
-__webpack_require__(189);
+__webpack_require__(192);
 
-var _mergedTableCreator = __webpack_require__(190);
+var _mergedTableCreator = __webpack_require__(193);
 
 var _mergedTableCreator2 = _interopRequireDefault(_mergedTableCreator);
 
-var _tableUnmergePreparer = __webpack_require__(191);
+var _tableUnmergePreparer = __webpack_require__(194);
 
 var _tableUnmergePreparer2 = _interopRequireDefault(_tableUnmergePreparer);
 
-var _toMarkRenderer = __webpack_require__(192);
+var _toMarkRenderer = __webpack_require__(195);
 
-var _toMarkRenderer2 = _interopRequireDefault(_toMarkRenderer);
-
-var _wwMergedTableManager = __webpack_require__(193);
+var _wwMergedTableManager = __webpack_require__(196);
 
 var _wwMergedTableManager2 = _interopRequireDefault(_wwMergedTableManager);
 
-var _wwMergedTableSelectionManager = __webpack_require__(194);
+var _wwMergedTableSelectionManager = __webpack_require__(197);
 
 var _wwMergedTableSelectionManager2 = _interopRequireDefault(_wwMergedTableSelectionManager);
 
-var _mergedTableAddRow = __webpack_require__(195);
+var _mergedTableAddRow = __webpack_require__(198);
 
 var _mergedTableAddRow2 = _interopRequireDefault(_mergedTableAddRow);
 
-var _mergedTableAddCol = __webpack_require__(196);
+var _mergedTableAddCol = __webpack_require__(199);
 
 var _mergedTableAddCol2 = _interopRequireDefault(_mergedTableAddCol);
 
-var _mergedTableRemoveRow = __webpack_require__(197);
+var _mergedTableRemoveRow = __webpack_require__(200);
 
 var _mergedTableRemoveRow2 = _interopRequireDefault(_mergedTableRemoveRow);
 
-var _mergedTableRemoveCol = __webpack_require__(198);
+var _mergedTableRemoveCol = __webpack_require__(201);
 
 var _mergedTableRemoveCol2 = _interopRequireDefault(_mergedTableRemoveCol);
 
-var _mergedTableAlignCol = __webpack_require__(199);
+var _mergedTableAlignCol = __webpack_require__(202);
 
 var _mergedTableAlignCol2 = _interopRequireDefault(_mergedTableAlignCol);
 
-var _mergeCell = __webpack_require__(200);
+var _mergeCell = __webpack_require__(203);
 
 var _mergeCell2 = _interopRequireDefault(_mergeCell);
 
-var _unmergeCell = __webpack_require__(201);
+var _unmergeCell = __webpack_require__(204);
 
 var _unmergeCell2 = _interopRequireDefault(_unmergeCell);
 
-var _mergedTableUI = __webpack_require__(202);
+var _mergedTableUI = __webpack_require__(205);
 
 var _mergedTableUI2 = _interopRequireDefault(_mergedTableUI);
 
@@ -38622,8 +38720,6 @@ function tableExtension(editor) {
   var eventManager = editor.eventManager;
 
 
-  editor.toMarkOptions = editor.toMarkOptions || {};
-  editor.toMarkOptions.renderer = _toMarkRenderer2.default;
   _bindEvents(eventManager);
 
   if (editor.isViewer()) {
@@ -38636,9 +38732,20 @@ function tableExtension(editor) {
   _addCommands(editor);
   _changeWysiwygManagers(wwComponentManager);
 
+  editor.toMarkOptions = getExtendedToMarkOptions(editor.toMarkOptions);
+
   if (popupTableUtils) {
     _mergedTableUI2.default.updateContextMenu(popupTableUtils, eventManager, wwComponentManager.getManager('tableSelection'));
   }
+}
+
+function getExtendedToMarkOptions(toMarkOptions) {
+  var extendedOptions = toMarkOptions || {};
+  var baseRenderer = extendedOptions.renderer;
+
+  extendedOptions.renderer = (0, _toMarkRenderer.createToMarkRenderer)(baseRenderer);
+
+  return extendedOptions;
 }
 
 /**
@@ -38743,7 +38850,7 @@ function _bindEvents(eventManager) {
 _editorProxy2.default.defineExtension('table', tableExtension);
 
 /***/ }),
-/* 189 */
+/* 192 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38886,10 +38993,17 @@ if (i18n) {
     'Cannot change part of merged cell': 'Ej möjligt att ändra en del av en sammanfogad cell',
     'Cannot paste row merged cells into the table header': 'Ej möjligt att klistra in rad-sammanfogade celler i tabellens huvud'
   });
+
+  i18n.setLanguage(['it', 'it_IT'], {
+    'Merge cells': 'Unisci celle',
+    'Unmerge cells': 'Separa celle',
+    'Cannot change part of merged cell': 'Non è possibile modificare parte di una cella unita',
+    'Cannot paste row merged cells into the table header': 'Non è possibile incollare celle unite per riga nell\'intestazione della tabella'
+  });
 }
 
 /***/ }),
-/* 190 */
+/* 193 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39120,7 +39234,7 @@ function createMergedTable(tableElement) {
 }
 
 /***/ }),
-/* 191 */
+/* 194 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39178,7 +39292,7 @@ function prepareTableUnmerge(tableElement) {
 }
 
 /***/ }),
-/* 192 */
+/* 195 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39189,6 +39303,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports._getAdditionalThCount = _getAdditionalThCount;
 exports._createTheadMarkdown = _createTheadMarkdown;
+exports.createToMarkRenderer = createToMarkRenderer;
 
 var _jquery = __webpack_require__(0);
 
@@ -39198,7 +39313,7 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _toMark = __webpack_require__(42);
+var _toMark = __webpack_require__(24);
 
 var _toMark2 = _interopRequireDefault(_toMark);
 
@@ -39293,12 +39408,14 @@ function _createTheadMarkdown(theadElement, theadContentMarkdown) {
   return theadContentMarkdown ? theadContentMarkdown + '|' + align + '\n' : '';
 }
 
-exports.default = _toMark2.default.Renderer.factory(_toMark2.default.gfmRenderer, {
-  'THEAD': _createTheadMarkdown
-});
+function createToMarkRenderer(baseRenderer) {
+  return _toMark2.default.Renderer.factory(baseRenderer || _toMark2.default.gfmRenderer, {
+    'THEAD': _createTheadMarkdown
+  });
+}
 
 /***/ }),
-/* 193 */
+/* 196 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39354,7 +39471,7 @@ var PASTE_TABLE_CELL_BOOKMARK = 'tui-paste-table-cell-bookmark';
 
 /**
  * Class WwMergedTableManager
- * @extends {WwTableManager}
+ * @ignore
  */
 
 var WwMergedTableManager = function (_WwTableManager) {
@@ -40000,7 +40117,7 @@ function any(arr, contition) {
 exports.default = WwMergedTableManager;
 
 /***/ }),
-/* 194 */
+/* 197 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40051,16 +40168,13 @@ var TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
 
 /**
  * Class WwMergedTableSelectionManager
+ * @param {WysiwygEditor} wwe - WysiwygEditor instance
+ * @ignore
  */
 
 var WwMergedTableSelectionManager = function (_WwTableSelectionMana) {
   _inherits(WwMergedTableSelectionManager, _WwTableSelectionMana);
 
-  /**
-   * Creates an instance of WwMergedTableSelectionManager.
-   * @param {WysiwygEditor} wwe - WysiwygEditor instance
-   * @memberof WwMergedTableSelectionManager
-   */
   function WwMergedTableSelectionManager(wwe) {
     _classCallCheck(this, WwMergedTableSelectionManager);
 
@@ -40202,7 +40316,7 @@ var WwMergedTableSelectionManager = function (_WwTableSelectionMana) {
 exports.default = WwMergedTableSelectionManager;
 
 /***/ }),
-/* 195 */
+/* 198 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40379,7 +40493,7 @@ function _findFocusTd($newTable, rowIndex, colIndex) {
 exports.default = AddRow;
 
 /***/ }),
-/* 196 */
+/* 199 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40580,7 +40694,7 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 exports.default = AddCol;
 
 /***/ }),
-/* 197 */
+/* 200 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40767,7 +40881,7 @@ function _findFocusTd($newTable, rowIndex, colIndex) {
 exports.default = RemoveRow;
 
 /***/ }),
-/* 198 */
+/* 201 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40947,7 +41061,7 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 exports.default = RemoveCol;
 
 /***/ }),
-/* 199 */
+/* 202 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -41062,7 +41176,7 @@ function _findFocusCell($newTable, $startContainer) {
 exports.default = AlignCol;
 
 /***/ }),
-/* 200 */
+/* 203 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -41284,7 +41398,7 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 exports.default = MergeCell;
 
 /***/ }),
-/* 201 */
+/* 204 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -41464,7 +41578,7 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 exports.default = UnmergeCell;
 
 /***/ }),
-/* 202 */
+/* 205 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -41566,7 +41680,7 @@ exports.default = {
 };
 
 /***/ }),
-/* 203 */
+/* 206 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -41580,7 +41694,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _tuiColorPicker = __webpack_require__(204);
+var _tuiColorPicker = __webpack_require__(207);
 
 var _tuiColorPicker2 = _interopRequireDefault(_tuiColorPicker);
 
@@ -41600,6 +41714,8 @@ var colorHtmlCompleteRx = /<span (?:class="colour" )?style="color:(.+?)"(?: clas
 var decimalColorRx = /rgb\((\d+)[, ]+(\d+)[, ]+(\d+)\)/g;
 
 var RESET_COLOR = '#181818';
+
+var lastScrollTop = 0;
 
 /**
  * color syntax extension
@@ -41699,6 +41815,12 @@ function colorSyntaxExtension(editor) {
 
         var sq = wwe.getEditor();
         var tableSelectionManager = wwe.componentManager.getManager('tableSelection');
+
+        // Cache scrollTop before change text color.
+        // Because scrollTop is set 0 when focus() is called.
+        // focus() is called when change text color.
+        lastScrollTop = getScrollTopForReFocus(sq);
+
         if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
           tableSelectionManager.styleToSelectedCells(styleColor, color);
 
@@ -41732,6 +41854,15 @@ function styleColor(sq, color) {
       sq.setTextColour(color);
     }
   }
+}
+
+/**
+ * Get scrollTop of squire
+ * @param {SquireExt} sq - squire ext instance
+ * @ignore
+ */
+function getScrollTopForReFocus(sq) {
+  return sq.getRoot().parentNode.scrollTop;
 }
 
 /**
@@ -41797,6 +41928,11 @@ function initUI(editor, preset) {
 
   editor.eventManager.listen('focus', function () {
     popup.hide();
+
+    if (editor.isWysiwygMode() && lastScrollTop) {
+      editor.getSquire().getRoot().parentNode.scrollTop = lastScrollTop;
+      lastScrollTop = 0;
+    }
   });
 
   editor.eventManager.listen('colorButtonClicked', function () {
@@ -41929,13 +42065,13 @@ _editorProxy2.default.defineExtension('colorSyntax', colorSyntaxExtension);
 exports.default = colorSyntaxExtension;
 
 /***/ }),
-/* 204 */
+/* 207 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_204__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__207__;
 
 /***/ }),
-/* 205 */
+/* 208 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -41945,7 +42081,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _plantumlEncoder = __webpack_require__(206);
+var _plantumlEncoder = __webpack_require__(209);
 
 var _plantumlEncoder2 = _interopRequireDefault(_plantumlEncoder);
 
@@ -42012,13 +42148,13 @@ _editorProxy2.default.defineExtension('uml', umlExtension);
 exports.default = umlExtension;
 
 /***/ }),
-/* 206 */
+/* 209 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_206__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__209__;
 
 /***/ }),
-/* 207 */
+/* 210 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -42030,7 +42166,7 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Editor = __webpack_require__(29);
+var Editor = __webpack_require__(30);
 
 // for jquery
 /**

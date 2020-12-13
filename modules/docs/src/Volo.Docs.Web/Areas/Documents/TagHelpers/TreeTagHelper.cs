@@ -1,9 +1,11 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using Volo.Docs.Documents;
+using Volo.Docs.Localization;
 using Volo.Docs.Utils;
 
 namespace Volo.Docs.Areas.Documents.TagHelpers
@@ -13,7 +15,9 @@ namespace Volo.Docs.Areas.Documents.TagHelpers
     [HtmlTargetElement("ul", Attributes = "root-node")]
     public class TreeTagHelper : TagHelper
     {
-        private readonly DocsUrlOptions _urlOptions;
+        private readonly DocsUiOptions _uiOptions;
+
+        private readonly IStringLocalizer<DocsResource> _localizer;
 
         private const string LiItemTemplateWithLink = @"<li class='{0}'><span class='plus-icon'><i class='fa fa-{1}'></i></span>{2}{3}</li>";
 
@@ -41,9 +45,10 @@ namespace Volo.Docs.Areas.Documents.TagHelpers
         [HtmlAttributeName("language")]
         public string LanguageCode { get; set; }
 
-        public TreeTagHelper(IOptions<DocsUrlOptions> urlOptions)
+        public TreeTagHelper(IOptions<DocsUiOptions> urlOptions, IStringLocalizer<DocsResource> localizer)
         {
-            _urlOptions = urlOptions.Value;
+            _localizer = localizer;
+            _uiOptions = urlOptions.Value;
         }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
@@ -118,7 +123,26 @@ namespace Volo.Docs.Areas.Documents.TagHelpers
             }
             else
             {
-                listInnerItem = string.Format(ListItemAnchor, NormalizePath(node.Path), textCss, node.Text.IsNullOrEmpty() ? "?" : node.Text);
+                var badge = "";
+
+                if (!node.Path.IsNullOrWhiteSpace() && node.CreationTime.HasValue && node.LastUpdatedTime.HasValue)
+                {
+                    if(node.CreationTime + TimeSpan.FromDays(14) > DateTime.Now)
+                    {
+                        var newBadge = "<span class='badge badge-primary ml-2' title=\"" + _localizer["NewExplanation"] + "\">" + _localizer["New"] + "</span>";
+                        badge += newBadge;
+                    }
+                    else if (node.LastSignificantUpdateTime != null && node.LastSignificantUpdateTime + TimeSpan.FromDays(14) > DateTime.Now)
+                    {
+                        var updBadge = "<span class='badge badge-light ml-2' title=\"" + _localizer["UpdatedExplanation"] + "\">" + _localizer["Upd"] + "</span>";
+                        badge += updBadge;
+                    }
+                }
+
+                listInnerItem = string.Format(ListItemAnchor, NormalizePath(node.Path), textCss,
+                    node.Text.IsNullOrEmpty()
+                        ? "?"
+                        : node.Text + badge);
             }
 
             return string.Format(LiItemTemplateWithLink,
@@ -142,7 +166,7 @@ namespace Volo.Docs.Areas.Documents.TagHelpers
                 return "javascript:;";
             }
 
-            var prefix = _urlOptions.RoutePrefix;
+            var prefix = _uiOptions.RoutePrefix;
 
             return  prefix + LanguageCode + "/" + ProjectName + "/" + Version + "/" + pathWithoutFileExtension;
         }

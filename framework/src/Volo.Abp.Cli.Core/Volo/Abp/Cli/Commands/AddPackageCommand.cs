@@ -34,9 +34,12 @@ namespace Volo.Abp.Cli.Commands
                 );
             }
 
+            var version = commandLineArgs.Options.GetOrNull(Options.Version.Short, Options.Version.Long);
+
             await ProjectNugetPackageAdder.AddAsync(
                 GetProjectFile(commandLineArgs),
-                commandLineArgs.Target
+                commandLineArgs.Target,
+                version
             );
         }
 
@@ -55,6 +58,7 @@ namespace Volo.Abp.Cli.Commands
             sb.AppendLine("Options:");
             sb.AppendLine("");
             sb.AppendLine("  -p|--project <project-file>    Specify the project file explicitly.");
+            sb.AppendLine("  -v|--version <version>         Specify the version of the package. Default is your project's ABP version or latest ABP version.");
             sb.AppendLine("");
             sb.AppendLine("Examples:");
             sb.AppendLine("");
@@ -68,9 +72,7 @@ namespace Volo.Abp.Cli.Commands
 
         public string GetShortDescription()
         {
-            return "Adds a new ABP package to a project by adding related nuget package" +
-                   " as a dependency to the project and adding [DependsOn(...)] attribute to" +
-                   " the module class in the project.";
+            return "Add a new ABP package to a project by adding related NuGet package dependencies and [DependsOn(...)] attributes.";
         }
 
         protected virtual string GetProjectFile(CommandLineArgs commandLineArgs)
@@ -113,13 +115,18 @@ namespace Volo.Abp.Cli.Commands
             throw new CliUsageException(sb.ToString());
         }
 
-
         public static class Options
         {
             public static class Project
             {
                 public const string Short = "p";
                 public const string Long = "project";
+            }
+
+            public static class Version
+            {
+                public const string Short = "v";
+                public const string Long = "version";
             }
         }
     }

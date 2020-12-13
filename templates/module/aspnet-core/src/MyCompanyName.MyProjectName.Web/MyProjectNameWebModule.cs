@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.DependencyInjection;
 using MyCompanyName.MyProjectName.Localization;
+using MyCompanyName.MyProjectName.Web.Menus;
 using Volo.Abp.AspNetCore.Mvc.Localization;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.Modularity;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.VirtualFileSystem;
+using MyCompanyName.MyProjectName.Permissions;
 
 namespace MyCompanyName.MyProjectName.Web
 {
@@ -23,27 +25,29 @@ namespace MyCompanyName.MyProjectName.Web
             {
                 options.AddAssemblyResource(typeof(MyProjectNameResource), typeof(MyProjectNameWebModule).Assembly);
             });
+
+            PreConfigure<IMvcBuilder>(mvcBuilder =>
+            {
+                mvcBuilder.AddApplicationPartIfNotExists(typeof(MyProjectNameWebModule).Assembly);
+            });
         }
 
         public override void ConfigureServices(ServiceConfigurationContext context)
         {
-            Configure<NavigationOptions>(options =>
+            Configure<AbpNavigationOptions>(options =>
             {
                 options.MenuContributors.Add(new MyProjectNameMenuContributor());
             });
 
-            Configure<VirtualFileSystemOptions>(options =>
+            Configure<AbpVirtualFileSystemOptions>(options =>
             {
-                options.FileSets.AddEmbedded<MyProjectNameWebModule>("MyCompanyName.MyProjectName.Web");
+                options.FileSets.AddEmbedded<MyProjectNameWebModule>();
             });
 
+            context.Services.AddAutoMapperObjectMapper<MyProjectNameWebModule>();
             Configure<AbpAutoMapperOptions>(options =>
             {
-                /* Using `true` for the `validate` parameter to
-                 * validate the profile on application startup.
-                 * See http://docs.automapper.org/en/stable/Configuration-validation.html for more info
-                 * about the configuration validation. */
-                options.AddProfile<MyProjectNameWebAutoMapperProfile>(validate: true);
+                options.AddMaps<MyProjectNameWebModule>(validate: true);
             });
 
             Configure<RazorPagesOptions>(options =>

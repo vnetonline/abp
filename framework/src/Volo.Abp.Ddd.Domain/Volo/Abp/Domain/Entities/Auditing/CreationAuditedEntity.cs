@@ -10,10 +10,10 @@ namespace Volo.Abp.Domain.Entities.Auditing
     public abstract class CreationAuditedEntity : Entity, ICreationAuditedObject
     {
         /// <inheritdoc />
-        public virtual DateTime CreationTime { get; set; }
+        public virtual DateTime CreationTime { get; protected set; }
 
         /// <inheritdoc />
-        public virtual Guid? CreatorId { get; set; }
+        public virtual Guid? CreatorId { get; protected set; }
     }
 
     /// <summary>
@@ -24,9 +24,20 @@ namespace Volo.Abp.Domain.Entities.Auditing
     public abstract class CreationAuditedEntity<TKey> : Entity<TKey>, ICreationAuditedObject
     {
         /// <inheritdoc />
-        public virtual DateTime CreationTime { get; set; }
+        public virtual DateTime CreationTime { get; protected set; }
 
         /// <inheritdoc />
-        public virtual Guid? CreatorId { get; set; }
+        public virtual Guid? CreatorId { get; protected set; }
+
+        protected CreationAuditedEntity()
+        {
+
+        }
+
+        protected CreationAuditedEntity(TKey id)
+            : base(id)
+        {
+
+        }
     }
 }

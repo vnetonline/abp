@@ -9,12 +9,12 @@ namespace Volo.Abp.Data
     //TODO: Create a Volo.Abp.Data.Seeding namespace?
     public class DataSeeder : IDataSeeder, ITransientDependency
     {
-        protected IHybridServiceScopeFactory ServiceScopeFactory { get; }
-        protected DataSeedOptions Options { get; }
+        protected IServiceScopeFactory ServiceScopeFactory { get; }
+        protected AbpDataSeedOptions Options { get; }
 
         public DataSeeder(
-            IOptions<DataSeedOptions> options,
-            IHybridServiceScopeFactory serviceScopeFactory)
+            IOptions<AbpDataSeedOptions> options,
+            IServiceScopeFactory serviceScopeFactory)
         {
             ServiceScopeFactory = serviceScopeFactory;
             Options = options.Value;

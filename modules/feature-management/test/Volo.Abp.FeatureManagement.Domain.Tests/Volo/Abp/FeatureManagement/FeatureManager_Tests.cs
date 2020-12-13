@@ -1,6 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Shouldly;
 using Volo.Abp.Features;
+using Volo.Abp.MultiTenancy;
 using Xunit;
 
 namespace Volo.Abp.FeatureManagement
@@ -8,10 +11,14 @@ namespace Volo.Abp.FeatureManagement
     public class FeatureManager_Tests : FeatureManagementDomainTestBase
     {
         private readonly IFeatureManager _featureManager;
+        private readonly ICurrentTenant _currentTenant;
+        private readonly IFeatureChecker _featureChecker;
 
         public FeatureManager_Tests()
         {
             _featureManager = GetRequiredService<IFeatureManager>();
+            _featureChecker = GetRequiredService<IFeatureChecker>();
+            _currentTenant = GetRequiredService<ICurrentTenant>();
         }
 
         [Fact]
@@ -79,5 +86,73 @@ namespace Volo.Abp.FeatureManagement
                 TestEditionIds.Ultimate
             )).ShouldBe("10");
         }
+
+        [Fact]
+        public async Task Should_Change_Feature_Value_And_Refresh_Cache()
+        {
+            var tenantId = Guid.NewGuid();
+
+            //It is "False" at the beginning
+            using (_currentTenant.Change(tenantId))
+            {
+                (await _featureChecker.IsEnabledAsync(TestFeatureDefinitionProvider.SocialLogins)).ShouldBeFalse();
+            }
+
+            //Set to "True" by host for the tenant
+            using (_currentTenant.Change(null))
+            {
+                (await _featureChecker.IsEnabledAsync(TestFeatureDefinitionProvider.SocialLogins)).ShouldBeFalse();
+                await _featureManager.SetForTenantAsync(tenantId, TestFeatureDefinitionProvider.SocialLogins, "True");
+                (await _featureManager.GetOrNullForTenantAsync(TestFeatureDefinitionProvider.SocialLogins, tenantId)).ShouldBe("True");
+            }
+
+            //Now, it should be "True"
+            using (_currentTenant.Change(tenantId))
+            {
+                (await _featureChecker.IsEnabledAsync(TestFeatureDefinitionProvider.SocialLogins)).ShouldBeTrue();
+            }
+        }
+
+
+        [Fact]
+        public async Task Should_Get_FeatureValues_With_Provider_For_A_Provider()
+        {
+            var featureNameValueWithGrantedProviders = await _featureManager.GetAllWithProviderAsync(
+                EditionFeatureValueProvider.ProviderName,
+                TestEditionIds.Enterprise.ToString()
+            );
+
+            featureNameValueWithGrantedProviders.ShouldContain(x =>
+                x.Name == TestFeatureDefinitionProvider.SocialLogins
+                && x.Value == true.ToString().ToLowerInvariant() &&
+                x.Provider.Name == EditionFeatureValueProvider.ProviderName);
+
+            featureNameValueWithGrantedProviders.ShouldContain(x =>
+                x.Name == TestFeatureDefinitionProvider.EmailSupport &&
+                x.Value == true.ToString().ToLowerInvariant() &&
+                x.Provider.Name == EditionFeatureValueProvider.ProviderName);
+
+            //Default Value
+            featureNameValueWithGrantedProviders.ShouldContain(x =>
+                x.Name == TestFeatureDefinitionProvider.DailyAnalysis &&
+                x.Value == false.ToString().ToLowerInvariant() &&
+                x.Provider.Name == DefaultValueFeatureValueProvider.ProviderName);
+
+            featureNameValueWithGrantedProviders.ShouldContain(x =>
+                x.Name == TestFeatureDefinitionProvider.UserCount &&
+                x.Value == "20" &&
+                x.Provider.Name == EditionFeatureValueProvider.ProviderName);
+
+            featureNameValueWithGrantedProviders.ShouldContain(x =>
+                x.Name == TestFeatureDefinitionProvider.ProjectCount &&
+                x.Value == "3" &&
+                x.Provider.Name == EditionFeatureValueProvider.ProviderName);
+
+            featureNameValueWithGrantedProviders.ShouldContain(x =>
+                x.Name == TestFeatureDefinitionProvider.BackupCount &&
+                x.Value == "5" &&
+                x.Provider.Name == EditionFeatureValueProvider.ProviderName);
+        }
+
     }
 }

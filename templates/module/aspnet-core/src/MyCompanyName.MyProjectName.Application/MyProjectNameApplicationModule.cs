@@ -1,24 +1,24 @@
-﻿using Volo.Abp.AutoMapper;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Volo.Abp.AutoMapper;
 using Volo.Abp.Modularity;
+using Volo.Abp.Application;
 
 namespace MyCompanyName.MyProjectName
 {
     [DependsOn(
         typeof(MyProjectNameDomainModule),
         typeof(MyProjectNameApplicationContractsModule),
+        typeof(AbpDddApplicationModule),
         typeof(AbpAutoMapperModule)
         )]
     public class MyProjectNameApplicationModule : AbpModule
     {
         public override void ConfigureServices(ServiceConfigurationContext context)
         {
+            context.Services.AddAutoMapperObjectMapper<MyProjectNameApplicationModule>();
             Configure<AbpAutoMapperOptions>(options =>
             {
-                /* Using `true` for the `validate` parameter to
-                 * validate the profile on application startup.
-                 * See http://docs.automapper.org/en/stable/Configuration-validation.html for more info
-                 * about the configuration validation. */
-                options.AddProfile<MyProjectNameApplicationAutoMapperProfile>(validate: true);
+                options.AddMaps<MyProjectNameApplicationModule>(validate: true);
             });
         }
     }

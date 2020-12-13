@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityModel;
@@ -8,30 +10,49 @@ using IdentityServer4.Models;
 using IdentityServer4.Services;
 using IdentityServer4.Validation;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Volo.Abp.DependencyInjection;
 using Volo.Abp.Identity;
+using Volo.Abp.IdentityServer.Localization;
 using Volo.Abp.Security.Claims;
 using Volo.Abp.Uow;
+using Volo.Abp.Validation;
+using IdentityUser = Volo.Abp.Identity.IdentityUser;
 
 namespace Volo.Abp.IdentityServer.AspNetIdentity
 {
-    public class AbpResourceOwnerPasswordValidator : IResourceOwnerPasswordValidator //ResourceOwnerPasswordValidator<IdentityUser>
+    public class AbpResourceOwnerPasswordValidator : IResourceOwnerPasswordValidator
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly IEventService _events;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly ILogger<ResourceOwnerPasswordValidator<IdentityUser>> _logger;
+        protected SignInManager<IdentityUser> SignInManager { get; }
+        protected UserManager<IdentityUser> UserManager { get; }
+        protected IdentitySecurityLogManager IdentitySecurityLogManager { get; }
+        protected ILogger<ResourceOwnerPasswordValidator<IdentityUser>> Logger { get; }
+        protected IStringLocalizer<AbpIdentityServerResource> Localizer { get; }
+        protected IHybridServiceScopeFactory ServiceScopeFactory { get; }
+        protected AbpIdentityOptions AbpIdentityOptions { get; }
+        protected IOptions<IdentityOptions> IdentityOptions { get; }
 
         public AbpResourceOwnerPasswordValidator(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
-            IEventService events,
-            ILogger<ResourceOwnerPasswordValidator<IdentityUser>> logger)
+            IdentitySecurityLogManager identitySecurityLogManager,
+            ILogger<ResourceOwnerPasswordValidator<IdentityUser>> logger,
+            IStringLocalizer<AbpIdentityServerResource> localizer,
+            IOptions<AbpIdentityOptions> abpIdentityOptions,
+            IHybridServiceScopeFactory serviceScopeFactory,
+            IOptions<IdentityOptions> identityOptions)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _events = events;
-            _logger = logger;
+            UserManager = userManager;
+            SignInManager = signInManager;
+            IdentitySecurityLogManager = identitySecurityLogManager;
+            Logger = logger;
+            Localizer = localizer;
+            ServiceScopeFactory = serviceScopeFactory;
+            AbpIdentityOptions = abpIdentityOptions.Value;
+            IdentityOptions = identityOptions;
         }
 
         /// <summary>
@@ -42,54 +63,147 @@ namespace Volo.Abp.IdentityServer.AspNetIdentity
         [UnitOfWork]
         public virtual async Task ValidateAsync(ResourceOwnerPasswordValidationContext context)
         {
-            var user = await _userManager.FindByNameAsync(context.UserName);
+            var clientId = context.Request?.Client?.ClientId;
+            using var scope = ServiceScopeFactory.CreateScope();
+
+            await ReplaceEmailToUsernameOfInputIfNeeds(context);
+
+            IdentityUser user = null;
+
+            async Task SetSuccessResultAsync()
+            {
+                var sub = await UserManager.GetUserIdAsync(user);
+
+                Logger.LogInformation("Credentials validated for username: {username}", context.UserName);
+
+                var additionalClaims = new List<Claim>();
+
+                await AddCustomClaimsAsync(additionalClaims, user, context);
+
+                context.Result = new GrantValidationResult(
+                    sub,
+                    OidcConstants.AuthenticationMethods.Password,
+                    additionalClaims.ToArray()
+                );
+
+                await IdentitySecurityLogManager.SaveAsync(
+                    new IdentitySecurityLogContext
+                    {
+                        Identity = IdentityServerSecurityLogIdentityConsts.IdentityServer,
+                        Action = IdentityServerSecurityLogActionConsts.LoginSucceeded,
+                        UserName = context.UserName,
+                        ClientId = clientId
+                    }
+                );
+            }
+
+            if (AbpIdentityOptions.ExternalLoginProviders.Any())
+            {
+                foreach (var externalLoginProviderInfo in AbpIdentityOptions.ExternalLoginProviders.Values)
+                {
+                    var externalLoginProvider = (IExternalLoginProvider) scope.ServiceProvider
+                        .GetRequiredService(externalLoginProviderInfo.Type);
+
+                    if (await externalLoginProvider.TryAuthenticateAsync(context.UserName, context.Password))
+                    {
+                        user = await UserManager.FindByNameAsync(context.UserName);
+                        if (user == null)
+                        {
+                            user = await externalLoginProvider.CreateUserAsync(context.UserName, externalLoginProviderInfo.Name);
+                        }
+                        else
+                        {
+                            await externalLoginProvider.UpdateUserAsync(user, externalLoginProviderInfo.Name);
+                        }
+
+                        await SetSuccessResultAsync();
+                        return;
+                    }
+                }
+            }
+
+            user = await UserManager.FindByNameAsync(context.UserName);
+            string errorDescription;
             if (user != null)
             {
-                var result = await _signInManager.CheckPasswordSignInAsync(user, context.Password, true);
+                await IdentityOptions.SetAsync();
+                var result = await SignInManager.CheckPasswordSignInAsync(user, context.Password, true);
                 if (result.Succeeded)
                 {
-                    var sub = await _userManager.GetUserIdAsync(user);
-
-                    _logger.LogInformation("Credentials validated for username: {username}", context.UserName);
-                    await _events.RaiseAsync(new UserLoginSuccessEvent(context.UserName, sub, context.UserName, interactive: false));
-
-                    context.Result = new GrantValidationResult(sub, OidcConstants.AuthenticationMethods.Password, GetAdditionalClaimsOrNull(user));
-
+                    await SetSuccessResultAsync();
                     return;
                 }
                 else if (result.IsLockedOut)
                 {
-                    _logger.LogInformation("Authentication failed for username: {username}, reason: locked out", context.UserName);
-                    await _events.RaiseAsync(new UserLoginFailureEvent(context.UserName, "locked out", interactive: false));
+                    Logger.LogInformation("Authentication failed for username: {username}, reason: locked out", context.UserName);
+                    errorDescription = Localizer["UserLockedOut"];
                 }
                 else if (result.IsNotAllowed)
                 {
-                    _logger.LogInformation("Authentication failed for username: {username}, reason: not allowed", context.UserName);
-                    await _events.RaiseAsync(new UserLoginFailureEvent(context.UserName, "not allowed", interactive: false));
+                    Logger.LogInformation("Authentication failed for username: {username}, reason: not allowed", context.UserName);
+                    errorDescription = Localizer["LoginIsNotAllowed"];
                 }
                 else
                 {
-                    _logger.LogInformation("Authentication failed for username: {username}, reason: invalid credentials", context.UserName);
-                    await _events.RaiseAsync(new UserLoginFailureEvent(context.UserName, "invalid credentials", interactive: false));
+                    Logger.LogInformation("Authentication failed for username: {username}, reason: invalid credentials", context.UserName);
+                    errorDescription = Localizer["InvalidUserNameOrPassword"];
                 }
+
+                await IdentitySecurityLogManager.SaveAsync(new IdentitySecurityLogContext
+                {
+                    Identity = IdentityServerSecurityLogIdentityConsts.IdentityServer,
+                    Action = result.ToIdentitySecurityLogAction(),
+                    UserName = context.UserName,
+                    ClientId = clientId
+                });
             }
             else
             {
-                _logger.LogInformation("No user found matching username: {username}", context.UserName);
-                await _events.RaiseAsync(new UserLoginFailureEvent(context.UserName, "invalid username", interactive: false));
+                Logger.LogInformation("No user found matching username: {username}", context.UserName);
+                errorDescription = Localizer["InvalidUsername"];
+
+                await IdentitySecurityLogManager.SaveAsync(new IdentitySecurityLogContext()
+                {
+                    Identity = IdentityServerSecurityLogIdentityConsts.IdentityServer,
+                    Action = IdentityServerSecurityLogActionConsts.LoginInvalidUserName,
+                    UserName = context.UserName,
+                    ClientId = clientId
+                });
             }
 
-            context.Result = new GrantValidationResult(TokenRequestErrors.InvalidGrant);
+            context.Result = new GrantValidationResult(TokenRequestErrors.InvalidGrant, errorDescription);
         }
 
-        protected virtual IEnumerable<Claim> GetAdditionalClaimsOrNull(IdentityUser user)
+        protected virtual async Task ReplaceEmailToUsernameOfInputIfNeeds(ResourceOwnerPasswordValidationContext context)
         {
-            if (!user.TenantId.HasValue)
+            if (!ValidationHelper.IsValidEmailAddress(context.UserName))
             {
-                return null;
+                return;
             }
 
-            return new[] { new Claim(AbpClaimTypes.TenantId, user.TenantId?.ToString()) };
+            var userByUsername = await UserManager.FindByNameAsync(context.UserName);
+            if (userByUsername != null)
+            {
+                return;
+            }
+
+            var userByEmail = await UserManager.FindByEmailAsync(context.UserName);
+            if (userByEmail == null)
+            {
+                return;
+            }
+
+            context.UserName = userByEmail.UserName;
+        }
+
+        protected virtual Task AddCustomClaimsAsync(List<Claim> customClaims, IdentityUser user, ResourceOwnerPasswordValidationContext context)
+        {
+            if (user.TenantId.HasValue)
+            {
+                customClaims.Add(new Claim(AbpClaimTypes.TenantId, user.TenantId?.ToString()));
+            }
+
+            return Task.CompletedTask;
         }
     }
 }

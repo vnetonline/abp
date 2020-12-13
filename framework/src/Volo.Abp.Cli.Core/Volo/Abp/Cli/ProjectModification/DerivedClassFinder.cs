@@ -29,8 +29,7 @@ namespace Volo.Abp.Cli.ProjectModification
 
             var csFiles = new DirectoryInfo(csprojFileDirectory)
                 .GetFiles("*.cs", SearchOption.AllDirectories)
-                .Where(f => !f.DirectoryName.StartsWith(binFile))
-                .Where(f => !f.DirectoryName.StartsWith(objFile))
+                .Where(f => f.DirectoryName != null && (!f.DirectoryName.StartsWith(binFile) || !f.DirectoryName.StartsWith(objFile)))
                 .Select(f => f.FullName)
                 .ToList();
 
@@ -54,7 +53,6 @@ namespace Volo.Abp.Cli.ProjectModification
 
         protected bool IsDerived(string csFile, string baseClass)
         {
-            Logger.LogDebug(csFile);
             var root = CSharpSyntaxTree.ParseText(File.ReadAllText(csFile)).GetRoot();
             var namespaceSyntax = root.DescendantNodes().OfType<NamespaceDeclarationSyntax>().First();
             var classDeclaration = (namespaceSyntax.DescendantNodes().OfType<ClassDeclarationSyntax>()).First();

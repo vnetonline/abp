@@ -10,17 +10,19 @@ namespace Volo.Abp.Http.Modeling
     {
         public IDictionary<string, ModuleApiDescriptionModel> Modules { get; set; }
 
-        private ApplicationApiDescriptionModel()
+        public IDictionary<string, TypeApiDescriptionModel> Types { get; set; }
+
+        public ApplicationApiDescriptionModel()
         {
-            
+
         }
 
         public static ApplicationApiDescriptionModel Create()
         {
             return new ApplicationApiDescriptionModel
             {
-                //TODO: Why ConcurrentDictionary?
-                Modules = new ConcurrentDictionary<string, ModuleApiDescriptionModel>()
+                Modules = new ConcurrentDictionary<string, ModuleApiDescriptionModel>(), //TODO: Why ConcurrentDictionary?
+                Types = new Dictionary<string, TypeApiDescriptionModel>()
             };
         }
 
@@ -34,9 +36,9 @@ namespace Volo.Abp.Http.Modeling
             return Modules[module.RootPath] = module;
         }
 
-        public ModuleApiDescriptionModel GetOrAddModule(string rootPath)
+        public ModuleApiDescriptionModel GetOrAddModule(string rootPath, string remoteServiceName)
         {
-            return Modules.GetOrAdd(rootPath, () => ModuleApiDescriptionModel.Create(rootPath));
+            return Modules.GetOrAdd(rootPath, () => ModuleApiDescriptionModel.Create(rootPath, remoteServiceName));
         }
 
         public ApplicationApiDescriptionModel CreateSubModel(string[] modules = null, string[] controllers = null, string[] actions = null)

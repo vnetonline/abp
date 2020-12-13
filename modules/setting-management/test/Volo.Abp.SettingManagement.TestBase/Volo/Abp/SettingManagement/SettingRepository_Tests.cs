@@ -30,7 +30,7 @@ namespace Volo.Abp.SettingManagement
 
             (await SettingRepository.FindAsync(
                 "MySetting2",
-                "User",
+                UserSettingValueProvider.ProviderName,
                 TestData.User1Id.ToString()
             )).Value.ShouldBe("user1-store-value");
 
@@ -45,6 +45,15 @@ namespace Volo.Abp.SettingManagement
         public async Task GetListAsync()
         {
             var settings = await SettingRepository.GetListAsync(GlobalSettingValueProvider.ProviderName, null);
+            settings.Any().ShouldBeTrue();
+            settings.ShouldContain(s => s.Name == "MySetting1" && s.Value == "42");
+            settings.ShouldContain(s => s.Name == "MySetting2" && s.Value == "default-store-value");
+        }
+
+        [Fact]
+        public async Task GetList_With_Names()
+        {
+            var settings = await SettingRepository.GetListAsync(new []{"MySetting1", "MySetting2"} ,GlobalSettingValueProvider.ProviderName, null);
             settings.Any().ShouldBeTrue();
             settings.ShouldContain(s => s.Name == "MySetting1" && s.Value == "42");
             settings.ShouldContain(s => s.Name == "MySetting2" && s.Value == "default-store-value");

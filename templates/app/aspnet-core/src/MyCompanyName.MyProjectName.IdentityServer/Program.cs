@@ -1,7 +1,6 @@
 ﻿using System;
-using System.IO;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.InProcess;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
 
@@ -11,8 +10,6 @@ namespace MyCompanyName.MyProjectName
     {
         public static int Main(string[] args)
         {
-            CurrentDirectoryHelpers.SetCurrentDirectory();
-
             Log.Logger = new LoggerConfiguration()
 #if DEBUG
                 .MinimumLevel.Debug()
@@ -20,14 +17,18 @@ namespace MyCompanyName.MyProjectName
                 .MinimumLevel.Information()
 #endif
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
                 .Enrich.FromLogContext()
                 .WriteTo.Async(c => c.File("Logs/logs.txt"))
+#if DEBUG
+                .WriteTo.Async(c => c.Console())
+#endif
                 .CreateLogger();
 
             try
             {
                 Log.Information("Starting MyCompanyName.MyProjectName.IdentityServer.");
-                BuildWebHostInternal(args).Run();
+                CreateHostBuilder(args).Build().Run();
                 return 0;
             }
             catch (Exception ex)
@@ -41,14 +42,13 @@ namespace MyCompanyName.MyProjectName
             }
         }
 
-        internal static IWebHost BuildWebHostInternal(string[] args) =>
-            new WebHostBuilder()
-                .UseKestrel()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseIIS()
-                .UseIISIntegration()
-                .UseStartup<Startup>()
-                .UseSerilog()
-                .Build();
+        internal static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                })
+                .UseAutofac()
+                .UseSerilog();
     }
 }

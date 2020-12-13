@@ -15,19 +15,28 @@ namespace Volo.Abp.SettingManagement.EntityFrameworkCore
         {
         }
 
-        public async Task<Setting> FindAsync(string name, string providerName, string providerKey)
+        public virtual async Task<Setting> FindAsync(string name, string providerName, string providerKey)
         {
             return await DbSet
+                .OrderBy(x => x.Id)
                 .FirstOrDefaultAsync(
                     s => s.Name == name && s.ProviderName == providerName && s.ProviderKey == providerKey
                 );
         }
 
-        public async Task<List<Setting>> GetListAsync(string providerName, string providerKey)
+        public virtual async Task<List<Setting>> GetListAsync(string providerName, string providerKey)
         {
             return await DbSet
                 .Where(
                     s => s.ProviderName == providerName && s.ProviderKey == providerKey
+                ).ToListAsync();
+        }
+
+        public virtual async Task<List<Setting>> GetListAsync(string[] names, string providerName, string providerKey)
+        {
+            return await DbSet
+                .Where(
+                    s => names.Contains(s.Name) && s.ProviderName == providerName && s.ProviderKey == providerKey
                 ).ToListAsync();
         }
     }

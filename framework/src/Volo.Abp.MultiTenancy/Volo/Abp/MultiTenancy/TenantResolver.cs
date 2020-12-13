@@ -1,6 +1,5 @@
 using System;
-using System.Linq;
-using JetBrains.Annotations;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Volo.Abp.DependencyInjection;
@@ -10,15 +9,15 @@ namespace Volo.Abp.MultiTenancy
     public class TenantResolver : ITenantResolver, ITransientDependency
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly TenantResolveOptions _options;
+        private readonly AbpTenantResolveOptions _options;
 
-        public TenantResolver(IOptions<TenantResolveOptions> options, IServiceProvider serviceProvider)
+        public TenantResolver(IOptions<AbpTenantResolveOptions> options, IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
             _options = options.Value;
         }
 
-        public TenantResolveResult ResolveTenantIdOrName()
+        public virtual async Task<TenantResolveResult> ResolveTenantIdOrNameAsync()
         {
             var result = new TenantResolveResult();
 
@@ -28,7 +27,7 @@ namespace Volo.Abp.MultiTenancy
 
                 foreach (var tenantResolver in _options.TenantResolvers)
                 {
-                    tenantResolver.Resolve(context);
+                    await tenantResolver.ResolveAsync(context);
 
                     result.AppliedResolvers.Add(tenantResolver.Name);
 

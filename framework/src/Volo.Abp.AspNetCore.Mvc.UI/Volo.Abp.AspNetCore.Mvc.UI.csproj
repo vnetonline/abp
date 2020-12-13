@@ -1,22 +1,21 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
+  <Import Project="..\..\..\configureawait.props" />
   <Import Project="..\..\..\common.props" />
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
     <AssemblyName>Volo.Abp.AspNetCore.Mvc.UI</AssemblyName>
     <PackageId>Volo.Abp.AspNetCore.Mvc.UI</PackageId>
     <AssetTargetFallback>$(AssetTargetFallback);portable-net45+win8+wp8+wpa81;</AssetTargetFallback>
+    <IsPackable>true</IsPackable>
+    <OutputType>Library</OutputType>
     <RootNamespace />
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Volo\**\*.cshtml" />
-    <Content Remove="Volo\**\*.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="NUglify" Version="1.5.13" />
+    <PackageReference Include="NUglify" Version="1.11.4" />
   </ItemGroup>
 
   <ItemGroup>

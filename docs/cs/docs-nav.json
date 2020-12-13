@@ -7,8 +7,12 @@
           "text": "Ze startovacích šablon",
           "items": [
             {
-              "text": "ASP.NET Core MVC",
+              "text": "Aplikace s MVC (Razor Pages) UI",
               "path": "Getting-Started-AspNetCore-MVC-Template.md"
+            },
+            {
+              "text": "Aplikace s Angular UI",
+              "path": "Getting-Started-Angular-Template.md"
             }
           ]
         },
@@ -34,8 +38,12 @@
           "text": "Vývoj aplikace",
           "items": [
             {
-              "text": "S ASP.NET Core MVC",
+              "text": "S ASP.NET Core MVC UI",
               "path": "Tutorials/AspNetCore-Mvc/Part-I.md"
+            },
+            {
+              "text": "S Angular UI",
+              "path": "Tutorials/Angular/Part-I.md"
             }
           ]
         }
@@ -48,6 +56,14 @@
     {
       "text": "Základy",
       "items": [
+        {
+          "text": "Konfigurace",
+          "path": "Configuration.md"
+        },
+        {
+          "text": "Možnosti",
+          "path": "Options.md"
+        },
         {
           "text": "Vkládání závislostí",
           "path": "Dependency-Injection.md",
@@ -71,19 +87,29 @@
           "path": "Exception-Handling.md"
         },
         {
-          "text": "Validace"
+          "text": "Validace",
+          "path": "Validation.md",
+          "items": [
+            {
+              "text": "FluentValidation integrace",
+              "path": "FluentValidation.md"
+            }
+          ]
         },
         {
-          "text": "Autorizace"
+          "text": "Autorizace",
+          "path": "Authorization.md"
         },
         {
-          "text": "Ukládání do mezipaměti"
+          "text": "Ukládání do mezipaměti",
+          "path": "Caching.md"
         },
         {
           "text": "Audit"
         },
         {
-          "text": "Správa nastavení"
+          "text": "Nastavení",
+          "path": "Settings.md"
         }
       ]
     },
@@ -106,6 +132,14 @@
     {
       "text": "Služby",
       "items": [
+        {
+          "text": "Současný uživatel",
+          "path": "CurrentUser.md"
+        },
+        {
+          "text": "Mapování objekt na objekt",
+          "path": "Object-To-Object-Mapping.md"
+        },
         {
           "text": "Serializace objektu"
         },
@@ -194,7 +228,7 @@
       "items": [
         {
           "text": "API",
-          "items": [            
+          "items": [
             {
               "text": "Automatické API řadiče",
               "path": "AspNetCore/Auto-API-Controllers.md"
@@ -234,14 +268,46 @@
     },
     {
       "text": "Přístup k datům",
+      "path": "Data-Access.md",
       "items": [
         {
-          "text": "Entity Framework Core integrace",
-          "path": "Entity-Framework-Core.md"
+          "text": "Connection stringy",
+          "path": "Connection-Strings.md"
         },
         {
-          "text": "MongoDB integrace",
-          "path": "MongoDB.md"
+          "text": "Poskytovatelé databází",
+          "items": [
+            {
+              "text": "Entity Framework Core",
+              "path": "Entity-Framework-Core.md",
+              "items": [
+                {
+                  "text": "Přepnutí na MySQL",
+                  "path": "Entity-Framework-Core-MySQL.md"
+                },
+                {
+                  "text": "Přepnutí na PostgreSQL",
+                  "path": "Entity-Framework-Core-PostgreSQL.md"
+                },
+                {
+                  "text": "Přepnutí na SQLite",
+                  "path": "Entity-Framework-Core-SQLite.md"
+                },
+                {
+                  "text": "Přepnutí na jiný DBMS",
+                  "path": "Entity-Framework-Core-Other-DBMS.md"
+                }
+              ]
+            },
+            {
+              "text": "MongoDB",
+              "path": "MongoDB.md"
+            },
+            {
+              "text": "Dapper",
+              "path": "Dapper.md"
+            }
+          ]
         }
       ]
     },
@@ -261,6 +327,20 @@
               "path": "Background-Jobs-RabbitMq.md"
             }
           ]
+        }
+      ]
+    },
+    {
+      "text": "Startovací šablony",
+      "path": "Startup-Templates/Index.md",
+      "items": [
+        {
+          "text": "Aplikace",
+          "path": "Startup-Templates/Application.md"
+        },
+        {
+          "text": "Modul",
+          "path": "Startup-Templates/Module.md"
         }
       ]
     },

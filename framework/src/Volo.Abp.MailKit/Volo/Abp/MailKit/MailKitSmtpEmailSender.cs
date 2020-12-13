@@ -28,7 +28,7 @@ namespace Volo.Abp.MailKit
             SmtpConfiguration = smtpConfiguration;
         }
 
-        protected override async Task SendEmailAsync(MailMessage mail)
+        protected async override Task SendEmailAsync(MailMessage mail)
         {
             using (var client = await BuildClientAsync())
             {
@@ -56,7 +56,7 @@ namespace Volo.Abp.MailKit
 
         protected virtual async Task ConfigureClient(SmtpClient client)
         {
-            client.Connect(
+            await client.ConnectAsync(
                 await SmtpConfiguration.GetHostAsync(),
                 await SmtpConfiguration.GetPortAsync(),
                 await GetSecureSocketOption()
@@ -67,7 +67,7 @@ namespace Volo.Abp.MailKit
                 return;
             }
 
-            client.Authenticate(
+            await client.AuthenticateAsync(
                 await SmtpConfiguration.GetUserNameAsync(),
                 await SmtpConfiguration.GetPasswordAsync()
             );

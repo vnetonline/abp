@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -9,21 +8,27 @@ using Volo.Abp.Domain.Entities;
 using Volo.Abp.ExceptionHandling;
 using Volo.Abp.Validation;
 
-namespace Volo.Abp.AspNetCore.Mvc.ExceptionHandling
+namespace Volo.Abp.AspNetCore.ExceptionHandling
 {
     public class DefaultHttpExceptionStatusCodeFinder : IHttpExceptionStatusCodeFinder, ITransientDependency
     {
-        protected ExceptionHttpStatusCodeOptions Options { get; }
+        protected AbpExceptionHttpStatusCodeOptions Options { get; }
 
         public DefaultHttpExceptionStatusCodeFinder(
-            IOptions<ExceptionHttpStatusCodeOptions> options)
+            IOptions<AbpExceptionHttpStatusCodeOptions> options)
         {
             Options = options.Value;
         }
 
         public virtual HttpStatusCode GetStatusCode(HttpContext httpContext, Exception exception)
         {
-            if (exception is IHasErrorCode exceptionWithErrorCode && 
+            if (exception is IHasHttpStatusCode exceptionWithHttpStatusCode &&
+                exceptionWithHttpStatusCode.HttpStatusCode > 0)
+            {
+                return (HttpStatusCode) exceptionWithHttpStatusCode.HttpStatusCode;
+            }
+
+            if (exception is IHasErrorCode exceptionWithErrorCode &&
                 !exceptionWithErrorCode.Code.IsNullOrWhiteSpace())
             {
                 if (Options.ErrorCodeToHttpStatusCodeMappings.TryGetValue(exceptionWithErrorCode.Code, out var status))
@@ -40,7 +45,7 @@ namespace Volo.Abp.AspNetCore.Mvc.ExceptionHandling
             }
 
             //TODO: Handle SecurityException..?
-            
+
             if (exception is AbpValidationException)
             {
                 return HttpStatusCode.BadRequest;
@@ -60,7 +65,7 @@ namespace Volo.Abp.AspNetCore.Mvc.ExceptionHandling
             {
                 return HttpStatusCode.Forbidden;
             }
-            
+
             return HttpStatusCode.InternalServerError;
         }
     }

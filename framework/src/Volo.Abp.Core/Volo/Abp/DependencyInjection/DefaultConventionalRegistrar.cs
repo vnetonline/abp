@@ -26,13 +26,18 @@ namespace Volo.Abp.DependencyInjection
                 return;
             }
 
-            var serviceTypes = ExposedServiceExplorer.GetExposedServices(type);
+            var exposedServiceTypes = ExposedServiceExplorer.GetExposedServices(type);
 
-            TriggerServiceExposing(services, type, serviceTypes);
+            TriggerServiceExposing(services, type, exposedServiceTypes);
 
-            foreach (var serviceType in serviceTypes)
+            foreach (var exposedServiceType in exposedServiceTypes)
             {
-                var serviceDescriptor = ServiceDescriptor.Describe(serviceType, type, lifeTime.Value);
+                var serviceDescriptor = CreateServiceDescriptor(
+                    type,
+                    exposedServiceType,
+                    exposedServiceTypes,
+                    lifeTime.Value
+                );
 
                 if (dependencyAttribute?.ReplaceServices == true)
                 {
@@ -49,22 +54,60 @@ namespace Volo.Abp.DependencyInjection
             }
         }
 
-        protected virtual void TriggerServiceExposing(IServiceCollection services, Type type, List<Type> serviceTypes)
+        protected virtual ServiceDescriptor CreateServiceDescriptor(
+            Type implementationType,
+            Type exposingServiceType,
+            List<Type> allExposingServiceTypes,
+            ServiceLifetime lifeTime)
         {
-            var exposeActions = services.GetExposingActionList();
-            if (exposeActions.Any())
+            if (lifeTime.IsIn(ServiceLifetime.Singleton, ServiceLifetime.Scoped))
             {
-                var args = new OnServiceExposingContext(type, serviceTypes);
-                foreach (var action in exposeActions)
+                var redirectedType = GetRedirectedTypeOrNull(
+                    implementationType,
+                    exposingServiceType,
+                    allExposingServiceTypes
+                );
+
+                if (redirectedType != null)
                 {
-                    action(args);
+                    return ServiceDescriptor.Describe(
+                        exposingServiceType,
+                        provider => provider.GetService(redirectedType),
+                        lifeTime
+                    );
                 }
             }
+
+            return ServiceDescriptor.Describe(
+                exposingServiceType,
+                implementationType,
+                lifeTime
+            );
         }
 
-        protected virtual bool IsConventionalRegistrationDisabled(Type type)
+        protected virtual Type GetRedirectedTypeOrNull(
+            Type implementationType,
+            Type exposingServiceType,
+            List<Type> allExposingServiceTypes)
         {
-            return type.IsDefined(typeof(DisableConventionalRegistrationAttribute), true);
+            if (allExposingServiceTypes.Count < 2)
+            {
+                return null;
+            }
+
+            if (exposingServiceType == implementationType)
+            {
+                return null;
+            }
+
+            if (allExposingServiceTypes.Contains(implementationType))
+            {
+                return implementationType;
+            }
+
+            return allExposingServiceTypes.FirstOrDefault(
+                t => t != exposingServiceType && exposingServiceType.IsAssignableFrom(t)
+            );
         }
 
         protected virtual DependencyAttribute GetDependencyAttributeOrNull(Type type)

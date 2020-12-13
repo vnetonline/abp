@@ -110,9 +110,11 @@ namespace Volo.Abp.Http.ProxyScripting.Generators
 
         public static string GetParamNameInJsFunc(ParameterApiDescriptionModel parameterInfo)
         {
+            var parameterInfoName = string.Join(".", parameterInfo.Name.Split(".").Select(x => NormalizeJsVariableName(x.ToCamelCase())));
+
             return parameterInfo.Name == parameterInfo.NameOnMethod
-                       ? NormalizeJsVariableName(parameterInfo.Name.ToCamelCase(), ".")
-                       : NormalizeJsVariableName(parameterInfo.NameOnMethod.ToCamelCase()) + "." + NormalizeJsVariableName(parameterInfo.Name.ToCamelCase(), ".");
+                ? parameterInfoName
+                : NormalizeJsVariableName(parameterInfo.NameOnMethod.ToCamelCase()) + "." + parameterInfoName;
         }
 
         public static string CreateJsObjectLiteral(ParameterApiDescriptionModel[] parameters, int indent = 0)
@@ -127,6 +129,33 @@ namespace Volo.Abp.Http.ProxyScripting.Generators
             }
 
             sb.Append(new string(' ', indent) + "}");
+
+            return sb.ToString();
+        }
+
+        public static string GetFormPostParamNameInJsFunc(ParameterApiDescriptionModel parameterInfo)
+        {
+            var parameterInfoName = string.Join(".", parameterInfo.Name.Split(".").Select(x => NormalizeJsVariableName(x.ToCamelCase())));
+
+            return parameterInfo.Name == parameterInfo.NameOnMethod
+                ? parameterInfoName
+                : NormalizeJsVariableName(parameterInfo.NameOnMethod.ToCamelCase()) + "." + parameterInfoName;
+        }
+
+        public static string CreateJsFormPostData(ParameterApiDescriptionModel[] parameters, int indent)
+        {
+            var sb = new StringBuilder();
+
+            for (var i = 0; i < parameters.Length; i++)
+            {
+                var and = i < parameters.Length - 1 ? " + '&' + " : string.Empty;
+
+                var parameterName = parameters[i].DescriptorName.IsNullOrWhiteSpace()
+                    ? parameters[i].Name
+                    : $"{parameters[i].DescriptorName}.{parameters[i].Name}";
+
+                sb.Append($"'{parameterName}=' + {GetFormPostParamNameInJsFunc(parameters[i])}{and}");
+            }
 
             return sb.ToString();
         }

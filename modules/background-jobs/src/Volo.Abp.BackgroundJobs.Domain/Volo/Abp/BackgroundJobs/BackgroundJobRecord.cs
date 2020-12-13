@@ -48,7 +48,13 @@ namespace Volo.Abp.BackgroundJobs
         /// </summary>
         public virtual BackgroundJobPriority Priority { get; set; }
 
-        public BackgroundJobRecord()
+        protected BackgroundJobRecord()
+        {
+            
+        }
+
+        public BackgroundJobRecord(Guid id)
+            : base(id)
         {
             
         }

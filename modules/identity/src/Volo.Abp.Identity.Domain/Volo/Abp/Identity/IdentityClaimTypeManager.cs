@@ -3,28 +3,28 @@ using Volo.Abp.Domain.Services;
 
 namespace Volo.Abp.Identity
 {
-    public class IdenityClaimTypeManager : DomainService
+    public class IdentityClaimTypeManager : DomainService
     {
-        private readonly IIdentityClaimTypeRepository _identityClaimTypeRepository;
+        protected IIdentityClaimTypeRepository IdentityClaimTypeRepository { get; }
 
-        public IdenityClaimTypeManager(IIdentityClaimTypeRepository identityClaimTypeRepository)
+        public IdentityClaimTypeManager(IIdentityClaimTypeRepository identityClaimTypeRepository)
         {
-            _identityClaimTypeRepository = identityClaimTypeRepository;
+            IdentityClaimTypeRepository = identityClaimTypeRepository;
         }
 
         public virtual async Task<IdentityClaimType> CreateAsync(IdentityClaimType claimType)
         {
-            if (await _identityClaimTypeRepository.AnyAsync(claimType.Name))
+            if (await IdentityClaimTypeRepository.AnyAsync(claimType.Name))
             {
                 throw new AbpException($"Name Exist: {claimType.Name}");
             }
 
-            return await _identityClaimTypeRepository.InsertAsync(claimType);
+            return await IdentityClaimTypeRepository.InsertAsync(claimType);
         }
 
         public virtual async Task<IdentityClaimType> UpdateAsync(IdentityClaimType claimType)
         {
-            if (await _identityClaimTypeRepository.AnyAsync(claimType.Name, claimType.Id))
+            if (await IdentityClaimTypeRepository.AnyAsync(claimType.Name, claimType.Id))
             {
                 throw new AbpException($"Name Exist: {claimType.Name}");
             }
@@ -35,7 +35,7 @@ namespace Volo.Abp.Identity
             }
             
 
-            return await _identityClaimTypeRepository.UpdateAsync(claimType);
+            return await IdentityClaimTypeRepository.UpdateAsync(claimType);
         }
     }
 }

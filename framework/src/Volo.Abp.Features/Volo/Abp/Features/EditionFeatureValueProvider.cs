@@ -6,7 +6,7 @@ namespace Volo.Abp.Features
 {
     public class EditionFeatureValueProvider : FeatureValueProvider
     {
-        public const string ProviderName = "Edition";
+        public const string ProviderName = "E";
 
         public override string Name => ProviderName;
 
@@ -18,7 +18,7 @@ namespace Volo.Abp.Features
             PrincipalAccessor = principalAccessor;
         }
 
-        public override async Task<string> GetOrNullAsync(FeatureDefinition feature)
+        public async override Task<string> GetOrNullAsync(FeatureDefinition feature)
         {
             var editionId = PrincipalAccessor.Principal?.FindEditionId();
             if (editionId == null)
@@ -26,7 +26,7 @@ namespace Volo.Abp.Features
                 return null;
             }
 
-            return await FeatureStore.GetOrNullAsync(feature.Name, Name, editionId.Value.ToString("N"));
+            return await FeatureStore.GetOrNullAsync(feature.Name, Name, editionId.Value.ToString());
         }
     }
 }

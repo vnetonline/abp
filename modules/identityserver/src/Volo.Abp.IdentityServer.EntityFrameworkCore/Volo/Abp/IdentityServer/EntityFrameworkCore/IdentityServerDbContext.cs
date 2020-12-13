@@ -2,32 +2,52 @@
 using Volo.Abp.Data;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.IdentityServer.ApiResources;
+using Volo.Abp.IdentityServer.ApiScopes;
 using Volo.Abp.IdentityServer.Clients;
+using Volo.Abp.IdentityServer.Devices;
 using Volo.Abp.IdentityServer.Grants;
 using Volo.Abp.IdentityServer.IdentityResources;
 
 namespace Volo.Abp.IdentityServer.EntityFrameworkCore
 {
-    [ConnectionStringName(AbpIdentityServerConsts.ConnectionStringName)]
+    [ConnectionStringName(AbpIdentityServerDbProperties.ConnectionStringName)]
     public class IdentityServerDbContext : AbpDbContext<IdentityServerDbContext>, IIdentityServerDbContext
     {
-        public static string TablePrefix { get; set; } = AbpIdentityServerConsts.DefaultDbTablePrefix;
-
-        public static string Schema { get; set; } = AbpIdentityServerConsts.DefaultDbSchema;
+        #region ApiResource
 
         public DbSet<ApiResource> ApiResources { get; set; }
 
-        public DbSet<ApiSecret> ApiSecrets { get; set; }
+        public DbSet<ApiResourceSecret> ApiResourceSecrets { get; set; }
 
         public DbSet<ApiResourceClaim> ApiResourceClaims { get; set; }
+
+        public DbSet<ApiResourceScope> ApiResourceScopes { get; set; }
+
+        public DbSet<ApiResourceProperty> ApiResourceProperties { get; set; }
+
+        #endregion
+
+        #region ApiScope
 
         public DbSet<ApiScope> ApiScopes { get; set; }
 
         public DbSet<ApiScopeClaim> ApiScopeClaims { get; set; }
 
+        public DbSet<ApiScopeProperty> ApiScopeProperties { get; set; }
+
+        #endregion
+
+        #region IdentityResource
+
         public DbSet<IdentityResource> IdentityResources { get; set; }
 
-        public DbSet<IdentityClaim> IdentityClaims { get; set; }
+        public DbSet<IdentityResourceClaim> IdentityClaims { get; set; }
+
+        public DbSet<IdentityResourceProperty> IdentityResourceProperties { get; set; }
+
+        #endregion
+
+        #region Client
 
         public DbSet<Client> Clients { get; set; }
 
@@ -49,7 +69,11 @@ namespace Volo.Abp.IdentityServer.EntityFrameworkCore
 
         public DbSet<ClientProperty> ClientProperties { get; set; }
 
+        #endregion
+
         public DbSet<PersistedGrant> PersistedGrants { get; set; }
+
+        public DbSet<DeviceFlowCodes> DeviceFlowCodes { get; set; }
 
         public IdentityServerDbContext(DbContextOptions<IdentityServerDbContext> options)
             : base(options)
@@ -60,7 +84,8 @@ namespace Volo.Abp.IdentityServer.EntityFrameworkCore
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.ConfigureIdentityServer(TablePrefix, Schema);
+
+            builder.ConfigureIdentityServer();
         }
     }
 }

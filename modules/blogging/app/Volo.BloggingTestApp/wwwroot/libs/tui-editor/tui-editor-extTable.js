@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.4.3
+ * @version 1.4.10
  * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
@@ -10,10 +10,10 @@
 	else if(typeof define === 'function' && define.amd)
 		define(["jquery", "tui-code-snippet", "tui-editor", "tui-editor/dist/tui-editor-Viewer", "to-mark"], factory);
 	else {
-		var a = typeof exports === 'object' ? factory(require("jquery"), require("tui-code-snippet"), (function webpackLoadOptionalExternalModule() { try { return require("tui-editor"); } catch(e) {} }()), (function webpackLoadOptionalExternalModule() { try { return require("tui-editor/dist/tui-editor-Viewer"); } catch(e) {} }()), require("to-mark")) : factory(root["$"], (root["tui"] && root["tui"]["util"]), (root["tui"] && root["tui"]["Editor"]), (root["tui"] && root["tui"]["Editor"]), root["toMark"]);
+		var a = typeof exports === 'object' ? factory(require("jquery"), require("tui-code-snippet"), (function webpackLoadOptionalExternalModule() { try { return require("tui-editor"); } catch(e) {} }()), (function webpackLoadOptionalExternalModule() { try { return require("tui-editor/dist/tui-editor-Viewer"); } catch(e) {} }()), require("to-mark")) : factory(root["$"], root["tui"]["util"], root["tui"]["Editor"], root["tui"]["Editor"], root["toMark"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_4__, __WEBPACK_EXTERNAL_MODULE_5__, __WEBPACK_EXTERNAL_MODULE_54__) {
+})(window, function(__WEBPACK_EXTERNAL_MODULE__0__, __WEBPACK_EXTERNAL_MODULE__2__, __WEBPACK_EXTERNAL_MODULE__4__, __WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__55__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -52,12 +52,32 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
 /******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
 /******/ 	};
 /******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -73,17 +93,18 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
 /******/
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "dist/";
+/******/ 	__webpack_require__.p = "/dist";
+/******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 49);
+/******/ 	return __webpack_require__(__webpack_require__.s = 50);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_0__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__0__;
 
 /***/ }),
 /* 1 */
@@ -117,7 +138,7 @@ exports.default = Editor;
 /* 2 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__2__;
 
 /***/ }),
 /* 3 */
@@ -557,15 +578,15 @@ exports.default = {
 /* 4 */
 /***/ (function(module, exports) {
 
-if(typeof __WEBPACK_EXTERNAL_MODULE_4__ === 'undefined') {var e = new Error("Cannot find module \"undefined\""); e.code = 'MODULE_NOT_FOUND'; throw e;}
-module.exports = __WEBPACK_EXTERNAL_MODULE_4__;
+if(typeof __WEBPACK_EXTERNAL_MODULE__4__ === 'undefined') {var e = new Error("Cannot find module 'undefined'"); e.code = 'MODULE_NOT_FOUND'; throw e;}
+module.exports = __WEBPACK_EXTERNAL_MODULE__4__;
 
 /***/ }),
 /* 5 */
 /***/ (function(module, exports) {
 
-if(typeof __WEBPACK_EXTERNAL_MODULE_5__ === 'undefined') {var e = new Error("Cannot find module \"undefined\""); e.code = 'MODULE_NOT_FOUND'; throw e;}
-module.exports = __WEBPACK_EXTERNAL_MODULE_5__;
+if(typeof __WEBPACK_EXTERNAL_MODULE__5__ === 'undefined') {var e = new Error("Cannot find module 'undefined'"); e.code = 'MODULE_NOT_FOUND'; throw e;}
+module.exports = __WEBPACK_EXTERNAL_MODULE__5__;
 
 /***/ }),
 /* 6 */
@@ -635,13 +656,13 @@ function _createTheadOrTbodyHtml(trs, wrapperNodeName) {
  * @private
  */
 function createTableHtml(renderData) {
-  var thead = [renderData[0]];
+  var thead = renderData[0] ? [renderData[0]] : [];
   var tbody = renderData.slice(1);
   var theadHtml = _createTheadOrTbodyHtml(thead, 'THEAD');
   var tbodyHtml = _createTheadOrTbodyHtml(tbody, 'TBODY');
   var className = renderData.className ? ' class="' + renderData.className + '"' : '';
 
-  return '<table' + className + '>' + (theadHtml + tbodyHtml) + '</renderData>';
+  return '<table' + className + '>' + (theadHtml + tbodyHtml) + '</table>';
 }
 
 /**
@@ -963,7 +984,8 @@ exports.default = {
 /* 46 */,
 /* 47 */,
 /* 48 */,
-/* 49 */
+/* 49 */,
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -977,57 +999,55 @@ var _editorProxy = __webpack_require__(1);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
-__webpack_require__(50);
+__webpack_require__(51);
 
-var _mergedTableCreator = __webpack_require__(51);
+var _mergedTableCreator = __webpack_require__(52);
 
 var _mergedTableCreator2 = _interopRequireDefault(_mergedTableCreator);
 
-var _tableUnmergePreparer = __webpack_require__(52);
+var _tableUnmergePreparer = __webpack_require__(53);
 
 var _tableUnmergePreparer2 = _interopRequireDefault(_tableUnmergePreparer);
 
-var _toMarkRenderer = __webpack_require__(53);
+var _toMarkRenderer = __webpack_require__(54);
 
-var _toMarkRenderer2 = _interopRequireDefault(_toMarkRenderer);
-
-var _wwMergedTableManager = __webpack_require__(55);
+var _wwMergedTableManager = __webpack_require__(56);
 
 var _wwMergedTableManager2 = _interopRequireDefault(_wwMergedTableManager);
 
-var _wwMergedTableSelectionManager = __webpack_require__(56);
+var _wwMergedTableSelectionManager = __webpack_require__(57);
 
 var _wwMergedTableSelectionManager2 = _interopRequireDefault(_wwMergedTableSelectionManager);
 
-var _mergedTableAddRow = __webpack_require__(57);
+var _mergedTableAddRow = __webpack_require__(58);
 
 var _mergedTableAddRow2 = _interopRequireDefault(_mergedTableAddRow);
 
-var _mergedTableAddCol = __webpack_require__(58);
+var _mergedTableAddCol = __webpack_require__(59);
 
 var _mergedTableAddCol2 = _interopRequireDefault(_mergedTableAddCol);
 
-var _mergedTableRemoveRow = __webpack_require__(59);
+var _mergedTableRemoveRow = __webpack_require__(60);
 
 var _mergedTableRemoveRow2 = _interopRequireDefault(_mergedTableRemoveRow);
 
-var _mergedTableRemoveCol = __webpack_require__(60);
+var _mergedTableRemoveCol = __webpack_require__(61);
 
 var _mergedTableRemoveCol2 = _interopRequireDefault(_mergedTableRemoveCol);
 
-var _mergedTableAlignCol = __webpack_require__(61);
+var _mergedTableAlignCol = __webpack_require__(62);
 
 var _mergedTableAlignCol2 = _interopRequireDefault(_mergedTableAlignCol);
 
-var _mergeCell = __webpack_require__(62);
+var _mergeCell = __webpack_require__(63);
 
 var _mergeCell2 = _interopRequireDefault(_mergeCell);
 
-var _unmergeCell = __webpack_require__(63);
+var _unmergeCell = __webpack_require__(64);
 
 var _unmergeCell2 = _interopRequireDefault(_unmergeCell);
 
-var _mergedTableUI = __webpack_require__(64);
+var _mergedTableUI = __webpack_require__(65);
 
 var _mergedTableUI2 = _interopRequireDefault(_mergedTableUI);
 
@@ -1046,8 +1066,6 @@ function tableExtension(editor) {
   var eventManager = editor.eventManager;
 
 
-  editor.toMarkOptions = editor.toMarkOptions || {};
-  editor.toMarkOptions.renderer = _toMarkRenderer2.default;
   _bindEvents(eventManager);
 
   if (editor.isViewer()) {
@@ -1060,9 +1078,20 @@ function tableExtension(editor) {
   _addCommands(editor);
   _changeWysiwygManagers(wwComponentManager);
 
+  editor.toMarkOptions = getExtendedToMarkOptions(editor.toMarkOptions);
+
   if (popupTableUtils) {
     _mergedTableUI2.default.updateContextMenu(popupTableUtils, eventManager, wwComponentManager.getManager('tableSelection'));
   }
+}
+
+function getExtendedToMarkOptions(toMarkOptions) {
+  var extendedOptions = toMarkOptions || {};
+  var baseRenderer = extendedOptions.renderer;
+
+  extendedOptions.renderer = (0, _toMarkRenderer.createToMarkRenderer)(baseRenderer);
+
+  return extendedOptions;
 }
 
 /**
@@ -1167,7 +1196,7 @@ function _bindEvents(eventManager) {
 _editorProxy2.default.defineExtension('table', tableExtension);
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1310,10 +1339,17 @@ if (i18n) {
     'Cannot change part of merged cell': 'Ej möjligt att ändra en del av en sammanfogad cell',
     'Cannot paste row merged cells into the table header': 'Ej möjligt att klistra in rad-sammanfogade celler i tabellens huvud'
   });
+
+  i18n.setLanguage(['it', 'it_IT'], {
+    'Merge cells': 'Unisci celle',
+    'Unmerge cells': 'Separa celle',
+    'Cannot change part of merged cell': 'Non è possibile modificare parte di una cella unita',
+    'Cannot paste row merged cells into the table header': 'Non è possibile incollare celle unite per riga nell\'intestazione della tabella'
+  });
 }
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1544,7 +1580,7 @@ function createMergedTable(tableElement) {
 }
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1602,7 +1638,7 @@ function prepareTableUnmerge(tableElement) {
 }
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1613,6 +1649,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports._getAdditionalThCount = _getAdditionalThCount;
 exports._createTheadMarkdown = _createTheadMarkdown;
+exports.createToMarkRenderer = createToMarkRenderer;
 
 var _jquery = __webpack_require__(0);
 
@@ -1622,7 +1659,7 @@ var _tuiCodeSnippet = __webpack_require__(2);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _toMark = __webpack_require__(54);
+var _toMark = __webpack_require__(55);
 
 var _toMark2 = _interopRequireDefault(_toMark);
 
@@ -1717,18 +1754,20 @@ function _createTheadMarkdown(theadElement, theadContentMarkdown) {
   return theadContentMarkdown ? theadContentMarkdown + '|' + align + '\n' : '';
 }
 
-exports.default = _toMark2.default.Renderer.factory(_toMark2.default.gfmRenderer, {
-  'THEAD': _createTheadMarkdown
-});
-
-/***/ }),
-/* 54 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_54__;
+function createToMarkRenderer(baseRenderer) {
+  return _toMark2.default.Renderer.factory(baseRenderer || _toMark2.default.gfmRenderer, {
+    'THEAD': _createTheadMarkdown
+  });
+}
 
 /***/ }),
 /* 55 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__55__;
+
+/***/ }),
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1784,7 +1823,7 @@ var PASTE_TABLE_CELL_BOOKMARK = 'tui-paste-table-cell-bookmark';
 
 /**
  * Class WwMergedTableManager
- * @extends {WwTableManager}
+ * @ignore
  */
 
 var WwMergedTableManager = function (_WwTableManager) {
@@ -2430,7 +2469,7 @@ function any(arr, contition) {
 exports.default = WwMergedTableManager;
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2481,16 +2520,13 @@ var TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
 
 /**
  * Class WwMergedTableSelectionManager
+ * @param {WysiwygEditor} wwe - WysiwygEditor instance
+ * @ignore
  */
 
 var WwMergedTableSelectionManager = function (_WwTableSelectionMana) {
   _inherits(WwMergedTableSelectionManager, _WwTableSelectionMana);
 
-  /**
-   * Creates an instance of WwMergedTableSelectionManager.
-   * @param {WysiwygEditor} wwe - WysiwygEditor instance
-   * @memberof WwMergedTableSelectionManager
-   */
   function WwMergedTableSelectionManager(wwe) {
     _classCallCheck(this, WwMergedTableSelectionManager);
 
@@ -2632,7 +2668,7 @@ var WwMergedTableSelectionManager = function (_WwTableSelectionMana) {
 exports.default = WwMergedTableSelectionManager;
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2809,7 +2845,7 @@ function _findFocusTd($newTable, rowIndex, colIndex) {
 exports.default = AddRow;
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3010,7 +3046,7 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 exports.default = AddCol;
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3197,7 +3233,7 @@ function _findFocusTd($newTable, rowIndex, colIndex) {
 exports.default = RemoveRow;
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3377,7 +3413,7 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 exports.default = RemoveCol;
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3492,7 +3528,7 @@ function _findFocusCell($newTable, $startContainer) {
 exports.default = AlignCol;
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3714,7 +3750,7 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 exports.default = MergeCell;
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3894,7 +3930,7 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 exports.default = UnmergeCell;
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

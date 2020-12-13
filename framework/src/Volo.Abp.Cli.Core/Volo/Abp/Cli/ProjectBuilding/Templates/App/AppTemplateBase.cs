@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Volo.Abp.Cli.ProjectBuilding.Building;
 using Volo.Abp.Cli.ProjectBuilding.Building.Steps;
 
@@ -9,7 +10,6 @@ namespace Volo.Abp.Cli.ProjectBuilding.Templates.App
         protected AppTemplateBase(string templateName)
             : base(templateName, DatabaseProvider.EntityFrameworkCore, UiFramework.Mvc)
         {
-            DocumentUrl = "https://docs.abp.io/en/abp/latest/Startup-Templates/Application";
         }
 
         public static bool IsAppTemplate(string templateName)
@@ -25,6 +25,7 @@ namespace Volo.Abp.Cli.ProjectBuilding.Templates.App
             SwitchDatabaseProvider(context, steps);
             DeleteUnrelatedProjects(context, steps);
             RandomizeSslPorts(context, steps);
+            RandomizeStringEncryption(context, steps);
             UpdateNuGetConfig(context, steps);
             CleanupFolderHierarchy(context, steps);
 
@@ -47,60 +48,141 @@ namespace Volo.Abp.Cli.ProjectBuilding.Templates.App
 
             if (context.BuildArgs.DatabaseProvider != DatabaseProvider.MongoDb)
             {
+                steps.Add(new AppTemplateRemoveMongodbCollectionFixtureStep());
                 steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.MongoDB"));
                 steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.MongoDB.Tests", projectFolderPath: "/aspnet-core/test/MyCompanyName.MyProjectName.MongoDB.Tests"));
             }
         }
 
-        private void DeleteUnrelatedProjects(ProjectBuildContext context, List<ProjectBuildPipelineStep> steps)
+        private static void DeleteUnrelatedProjects(ProjectBuildContext context, List<ProjectBuildPipelineStep> steps)
         {
-            if (context.BuildArgs.UiFramework == UiFramework.Mvc)
+            switch (context.BuildArgs.UiFramework)
             {
-                if (context.BuildArgs.ExtraProperties.ContainsKey("tiered"))
-                {
-                    steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.Web"));
-                    steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.Web.Tests", projectFolderPath: "/aspnet-core/test/MyCompanyName.MyProjectName.Web.Tests"));
-                    steps.Add(new AppTemplateProjectRenameStep("MyCompanyName.MyProjectName.Web.Host", "MyCompanyName.MyProjectName.Web"));
-                }
-                else
-                {
-                    steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.Web.Host"));
-                    steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.HttpApi.Host"));
-                    steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.IdentityServer"));
-                    steps.Add(new AppTemplateChangeConsoleTestClientPortSettingsStep("44303"));
-                }
+                case UiFramework.None:
+                    ConfigureWithoutUi(context, steps);
+                    break;
 
-                steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.HttpApi.HostWithIds"));
+                case UiFramework.Angular:
+                    ConfigureWithAngularUi(context, steps);
+                    break;
+
+
+                case UiFramework.Blazor:
+                    ConfigureWithBlazorUi(context, steps);
+                    break;
+
+                case UiFramework.Mvc:
+                case UiFramework.NotSpecified:
+                    ConfigureWithMvcUi(context, steps);
+                    break;
             }
 
-            if (context.BuildArgs.UiFramework != UiFramework.Mvc)
+            if (context.BuildArgs.UiFramework != UiFramework.Blazor)
             {
-                steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.Web"));
-                steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.Web.Host"));
-                steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.Web.Tests", projectFolderPath: "/aspnet-core/test/MyCompanyName.MyProjectName.Web.Tests"));
-
-                if (context.BuildArgs.ExtraProperties.ContainsKey("separate-identity-server"))
-                {
-                    steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.HttpApi.HostWithIds"));
-                    steps.Add(new AngularEnvironmentFilePortChangeForSeparatedIdentityServersStep());
-                }
-                else
-                {
-                    steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.HttpApi.Host"));
-                    steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.IdentityServer"));
-                    steps.Add(new AppTemplateProjectRenameStep("MyCompanyName.MyProjectName.HttpApi.HostWithIds", "MyCompanyName.MyProjectName.HttpApi.Host"));
-                    steps.Add(new AppTemplateChangeConsoleTestClientPortSettingsStep("44305"));
-                }
+                steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.Blazor"));
             }
 
             if (context.BuildArgs.UiFramework != UiFramework.Angular)
             {
                 steps.Add(new RemoveFolderStep("/angular"));
             }
+
+            if (context.BuildArgs.MobileApp != MobileApp.ReactNative)
+            {
+                steps.Add(new RemoveFolderStep(MobileApp.ReactNative.GetFolderName().EnsureStartsWith('/')));
+            }
+        }
+
+        private static void ConfigureWithoutUi(ProjectBuildContext context, List<ProjectBuildPipelineStep> steps)
+        {
+            steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.Web"));
+            steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.Web.Host"));
+            steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.Web.Tests", projectFolderPath: "/aspnet-core/test/MyCompanyName.MyProjectName.Web.Tests"));
+
+            if (context.BuildArgs.ExtraProperties.ContainsKey("separate-identity-server"))
+            {
+                steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.HttpApi.HostWithIds"));
+            }
+            else
+            {
+                steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.HttpApi.Host"));
+                steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.IdentityServer"));
+                steps.Add(new AppTemplateProjectRenameStep("MyCompanyName.MyProjectName.HttpApi.HostWithIds", "MyCompanyName.MyProjectName.HttpApi.Host"));
+                steps.Add(new AppTemplateChangeConsoleTestClientPortSettingsStep("44305"));
+            }
+        }
+
+        private static void ConfigureWithBlazorUi(ProjectBuildContext context, List<ProjectBuildPipelineStep> steps)
+        {
+            steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.Web"));
+            steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.Web.Host"));
+            steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.Web.Tests", projectFolderPath: "/aspnet-core/test/MyCompanyName.MyProjectName.Web.Tests"));
+
+            if (context.BuildArgs.ExtraProperties.ContainsKey("separate-identity-server"))
+            {
+                steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.HttpApi.HostWithIds"));
+                steps.Add(new BlazorAppsettingsFilePortChangeForSeparatedIdentityServersStep());
+            }
+            else
+            {
+                steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.HttpApi.Host"));
+                steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.IdentityServer"));
+                steps.Add(new AppTemplateProjectRenameStep("MyCompanyName.MyProjectName.HttpApi.HostWithIds", "MyCompanyName.MyProjectName.HttpApi.Host"));
+                steps.Add(new AppTemplateChangeConsoleTestClientPortSettingsStep("44305"));
+            }
+        }
+
+        private static void ConfigureWithMvcUi(ProjectBuildContext context, List<ProjectBuildPipelineStep> steps)
+        {
+            if (context.BuildArgs.ExtraProperties.ContainsKey("tiered"))
+            {
+                steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.Web"));
+                steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.Web.Tests", projectFolderPath: "/aspnet-core/test/MyCompanyName.MyProjectName.Web.Tests"));
+                steps.Add(new AppTemplateProjectRenameStep("MyCompanyName.MyProjectName.Web.Host", "MyCompanyName.MyProjectName.Web"));
+            }
+            else
+            {
+                steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.Web.Host"));
+                steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.HttpApi.Host"));
+                steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.IdentityServer"));
+                steps.Add(new AppTemplateChangeConsoleTestClientPortSettingsStep("44303"));
+            }
+
+            steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.HttpApi.HostWithIds"));
+        }
+
+        private static void ConfigureWithAngularUi(ProjectBuildContext context, List<ProjectBuildPipelineStep> steps)
+        {
+            steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.Web"));
+            steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.Web.Host"));
+            steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.Web.Tests", projectFolderPath: "/aspnet-core/test/MyCompanyName.MyProjectName.Web.Tests"));
+
+            if (context.BuildArgs.ExtraProperties.ContainsKey("separate-identity-server"))
+            {
+                steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.HttpApi.HostWithIds"));
+                steps.Add(new AngularEnvironmentFilePortChangeForSeparatedIdentityServersStep());
+
+                if (context.BuildArgs.MobileApp == MobileApp.ReactNative)
+                {
+                    steps.Add(new ReactEnvironmentFilePortChangeForSeparatedIdentityServersStep());
+                }
+            }
+            else
+            {
+                steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.HttpApi.Host"));
+                steps.Add(new RemoveProjectFromSolutionStep("MyCompanyName.MyProjectName.IdentityServer"));
+                steps.Add(new AppTemplateProjectRenameStep("MyCompanyName.MyProjectName.HttpApi.HostWithIds", "MyCompanyName.MyProjectName.HttpApi.Host"));
+                steps.Add(new AppTemplateChangeConsoleTestClientPortSettingsStep("44305"));
+            }
         }
 
         private static void RandomizeSslPorts(ProjectBuildContext context, List<ProjectBuildPipelineStep> steps)
         {
+            if (context.BuildArgs.ExtraProperties.ContainsKey("no-random-port"))
+            {
+                return;
+            }
+
             steps.Add(new TemplateRandomSslPortStep(
                     new List<string>
                     {
@@ -114,14 +196,19 @@ namespace Volo.Abp.Cli.ProjectBuilding.Templates.App
             );
         }
 
-        private void UpdateNuGetConfig(ProjectBuildContext context, List<ProjectBuildPipelineStep> steps)
+        private static void RandomizeStringEncryption(ProjectBuildContext context, List<ProjectBuildPipelineStep> steps)
+        {
+            steps.Add(new RandomizeStringEncryptionStep());
+        }
+
+        private static void UpdateNuGetConfig(ProjectBuildContext context, List<ProjectBuildPipelineStep> steps)
         {
             steps.Add(new UpdateNuGetConfigStep("/aspnet-core/NuGet.Config"));
         }
 
-        private void CleanupFolderHierarchy(ProjectBuildContext context, List<ProjectBuildPipelineStep> steps)
+        private static void CleanupFolderHierarchy(ProjectBuildContext context, List<ProjectBuildPipelineStep> steps)
         {
-            if (context.BuildArgs.UiFramework == UiFramework.Mvc)
+            if (context.BuildArgs.UiFramework == UiFramework.Mvc && context.BuildArgs.MobileApp == MobileApp.None)
             {
                 steps.Add(new MoveFolderStep("/aspnet-core/", "/"));
             }

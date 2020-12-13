@@ -13,14 +13,17 @@ namespace Volo.Abp
         [NotNull]
         public PlugInSourceList PlugInSources { get; }
 
+        /// <summary>
+        /// The options in this property only take effect when IConfiguration not registered.
+        /// </summary>
         [NotNull]
-        public ConfigurationBuilderOptions Configuration {get; }
+        public AbpConfigurationBuilderOptions Configuration {get; }
 
         public AbpApplicationCreationOptions([NotNull] IServiceCollection services)
         {
             Services = Check.NotNull(services, nameof(services));
             PlugInSources = new PlugInSourceList();
-            Configuration = new ConfigurationBuilderOptions();
+            Configuration = new AbpConfigurationBuilderOptions();
         }
     }
 }

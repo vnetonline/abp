@@ -6,10 +6,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Volo.Abp.AspNetCore.TestBase
 {
-    public abstract class AbpAspNetCoreIntegratedTestBase<TStartup> : AbpTestBaseWithServiceProvider
+    public abstract class AbpAspNetCoreIntegratedTestBase<TStartup> : AbpTestBaseWithServiceProvider, IDisposable
         where TStartup : class
     {
         protected TestServer Server { get; }
@@ -18,31 +19,38 @@ namespace Volo.Abp.AspNetCore.TestBase
 
         protected override IServiceProvider ServiceProvider { get; }
 
+        private readonly IHost _host;
+
         protected AbpAspNetCoreIntegratedTestBase()
         {
-            var builder = CreateWebHostBuilder();
-            Server = CreateTestServer(builder);
-            Client = Server.CreateClient();
-            ServiceProvider = Server.Host.Services;
+            var builder = CreateHostBuilder();
+
+            _host = builder.Build();
+            _host.Start();
+
+            Server = _host.GetTestServer();
+            Client = _host.GetTestClient();
+
+            ServiceProvider = Server.Services;
 
             ServiceProvider.GetRequiredService<ITestServerAccessor>().Server = Server;
         }
 
-        protected virtual IWebHostBuilder CreateWebHostBuilder()
+        protected virtual IHostBuilder CreateHostBuilder()
         {
-            return new WebHostBuilder()
-                .UseStartup<TStartup>()
+            return Host.CreateDefaultBuilder()
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<TStartup>();
+                    webBuilder.UseTestServer();
+                })
+                .UseAutofac()
                 .ConfigureServices(ConfigureServices);
         }
 
-        protected virtual void ConfigureServices(WebHostBuilderContext context, IServiceCollection services)
+        protected virtual void ConfigureServices(HostBuilderContext context, IServiceCollection services)
         {
-            
-        }
 
-        protected virtual TestServer CreateTestServer(IWebHostBuilder builder)
-        {
-            return new TestServer(builder);
         }
 
         #region GetUrl
@@ -83,5 +91,10 @@ namespace Volo.Abp.AspNetCore.TestBase
         }
 
         #endregion
+
+        public void Dispose()
+        {
+            _host?.Dispose();
+        }
     }
 }

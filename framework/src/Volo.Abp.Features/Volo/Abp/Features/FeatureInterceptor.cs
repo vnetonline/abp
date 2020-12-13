@@ -2,7 +2,6 @@
 using Volo.Abp.Aspects;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.DynamicProxy;
-using Volo.Abp.Threading;
 
 namespace Volo.Abp.Features
 {
@@ -16,19 +15,7 @@ namespace Volo.Abp.Features
             _methodInvocationFeatureCheckerService = methodInvocationFeatureCheckerService;
         }
 
-        public override void Intercept(IAbpMethodInvocation invocation)
-        {
-            if (AbpCrossCuttingConcerns.IsApplied(invocation.TargetObject, AbpCrossCuttingConcerns.FeatureChecking))
-            {
-                invocation.Proceed();
-                return;
-            }
-
-            AsyncHelper.RunSync(() => CheckFeaturesAsync(invocation));
-            invocation.Proceed();
-        }
-
-        public override async Task InterceptAsync(IAbpMethodInvocation invocation)
+        public async override Task InterceptAsync(IAbpMethodInvocation invocation)
         {
             if (AbpCrossCuttingConcerns.IsApplied(invocation.TargetObject, AbpCrossCuttingConcerns.FeatureChecking))
             {

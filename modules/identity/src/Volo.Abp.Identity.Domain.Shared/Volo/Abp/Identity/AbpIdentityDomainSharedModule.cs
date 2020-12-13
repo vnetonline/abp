@@ -1,20 +1,26 @@
-﻿using Volo.Abp.Identity.Localization;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Volo.Abp.Features;
+using Volo.Abp.Identity.Localization;
 using Volo.Abp.Localization;
 using Volo.Abp.Localization.ExceptionHandling;
-using Volo.Abp.Localization.Resources.AbpValidation;
 using Volo.Abp.Modularity;
 using Volo.Abp.Users;
+using Volo.Abp.Validation;
+using Volo.Abp.Validation.Localization;
 using Volo.Abp.VirtualFileSystem;
 
 namespace Volo.Abp.Identity
 {
-    [DependsOn(typeof(AbpUsersDomainSharedModule))]
-    [DependsOn(typeof(AbpLocalizationModule))]
+    [DependsOn(
+        typeof(AbpUsersDomainSharedModule),
+        typeof(AbpValidationModule),
+        typeof(AbpFeaturesModule)
+        )]
     public class AbpIdentityDomainSharedModule : AbpModule
     {
         public override void ConfigureServices(ServiceConfigurationContext context)
         {
-            Configure<VirtualFileSystemOptions>(options =>
+            Configure<AbpVirtualFileSystemOptions>(options =>
             {
                 options.FileSets.AddEmbedded<AbpIdentityDomainSharedModule>();
             });
@@ -28,7 +34,7 @@ namespace Volo.Abp.Identity
                     ).AddVirtualJson("/Volo/Abp/Identity/Localization");
             });
 
-            Configure<ExceptionLocalizationOptions>(options =>
+            Configure<AbpExceptionLocalizationOptions>(options =>
             {
                 options.MapCodeNamespace("Volo.Abp.Identity", typeof(IdentityResource));
             });

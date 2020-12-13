@@ -1,20 +1,35 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
-import { ConfigState } from '../states';
+import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { RestOccurError } from '../actions';
+import { RestOccurError } from '../actions/rest.actions';
+import { RoutesService } from '../services/routes.service';
+import { findRoute, getRoutePath } from '../utils/route-utils';
+import { PermissionService } from '../services/permission.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PermissionGuard implements CanActivate {
-  constructor(private store: Store) {}
+  constructor(
+    private router: Router,
+    private routesService: RoutesService,
+    private store: Store,
+    private permissionService: PermissionService,
+  ) {}
 
-  canActivate({ data }: ActivatedRouteSnapshot): Observable<boolean> {
-    const resource = data.requiredPolicy as string;
-    return this.store.select(ConfigState.getGrantedPolicy(resource)).pipe(
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+    let { requiredPolicy } = route.data || {};
+
+    if (!requiredPolicy) {
+      const routeFound = findRoute(this.routesService, getRoutePath(this.router, state.url));
+      requiredPolicy = routeFound?.requiredPolicy;
+    }
+
+    if (!requiredPolicy) return of(true);
+
+    return this.permissionService.getGrantedPolicy$(requiredPolicy).pipe(
       tap(access => {
         if (!access) {
           this.store.dispatch(new RestOccurError({ status: 403 }));

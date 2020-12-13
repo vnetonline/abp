@@ -26,13 +26,16 @@ namespace Volo.Abp.FluentValidation
                 return;
             }
 
-            var result = validator.Validate(context.ValidatingObject);
+            var result = validator.Validate((IValidationContext) Activator.CreateInstance(
+                typeof(ValidationContext<>).MakeGenericType(context.ValidatingObject.GetType()),
+                context.ValidatingObject));
+
             if (!result.IsValid)
             {
                 context.Errors.AddRange(
                     result.Errors.Select(
                         error =>
-                            new ValidationResult(error.ErrorMessage)
+                            new ValidationResult(error.ErrorMessage, new[] { error.PropertyName })
                     )
                 );
             }
